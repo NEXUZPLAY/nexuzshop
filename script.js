@@ -1,34 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-    getFirestore, 
-    collection, 
-    query, 
-    where, 
-    getDocs, 
-    doc, 
-    getDoc, 
-    updateDoc, 
-    setDoc,
-    addDoc, 
-    serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 1. Configuración de Firebase del Banco Pedro Carbo (Para validar y descontar saldo)
-const bancoConfig = {
-    apiKey: "AIzaSyAAQ4f1wD8W3WOoZANRO5KvOJW2gfP_wwE",
-    authDomain: "bancomovil-421ff.firebaseapp.com",
-    projectId: "bancomovil-421ff",
-    storageBucket: "bancomovil-421ff.firebasestorage.app",
-    messagingSenderId: "280973267975",
-    appId: "1:280973267975:web:5b95146da0f64ef0e346a2",
-    measurementId: "G-WMWQE7BCQ9"
-};
-
-const appBanco = initializeApp(bancoConfig, "bancoApp");
-const dbBanco = getFirestore(appBanco);
-
-// 2. Tu propia configuración de Firebase (Para registrar pedidos y puntos de tu tienda)
-const miFirebaseConfig = {
+const firebaseConfigTienda = {
     apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
     authDomain: "pc-recarga-77d05.firebaseapp.com",
     projectId: "pc-recarga-77d05",
@@ -38,231 +11,201 @@ const miFirebaseConfig = {
     measurementId: "G-3G3GLFY81L"
 };
 
-const appMiTienda = initializeApp(miFirebaseConfig, "tiendaApp");
-const dbTienda = getFirestore(appMiTienda);
+const appTienda = initializeApp(firebaseConfigTienda, "appTienda");
+const dbTienda = getFirestore(appTienda);
+
+// Estructura de productos y precios
+const productosTienda = {
+    'Free Fire': [
+        { nombre: '110 Diamantes', precio: 1.00, puntos: 10 },
+        { nombre: '341 Diamantes', precio: 3.00, puntos: 35 },
+        { nombre: '572 Diamantes', precio: 5.00, puntos: 60 },
+        { nombre: '1160 Diamantes', precio: 10.00, puntos: 130 },
+        { nombre: 'Pase de Élite / Booyah', precio: 2.50, puntos: 25 }
+    ],
+    'Mobile Legends': [
+        { nombre: '86 Diamantes', precio: 1.80, puntos: 15 },
+        { nombre: '172 Diamantes', precio: 3.50, puntos: 35 },
+        { nombre: '257 Diamantes', precio: 5.20, puntos: 55 },
+        { nombre: '706 Diamantes', precio: 14.00, puntos: 150 }
+    ],
+    'Roblox': [
+        { nombre: '400 Robux', precio: 5.00, puntos: 50 },
+        { nombre: '800 Robux', precio: 10.00, puntos: 110 },
+        { nombre: '1700 Robux', precio: 20.00, puntos: 230 }
+    ],
+    'Netflix': [
+        { nombre: 'Cuenta Completa 1 Mes', precio: 8.50, puntos: 90 },
+        { nombre: 'Pantalla Extra 1 Mes', precio: 3.00, puntos: 30 }
+    ],
+    'Spotify': [
+        { nombre: 'Individual 1 Mes', precio: 4.00, puntos: 40 },
+        { nombre: 'Familiar 2 Meses', precio: 7.50, puntos: 80 }
+    ],
+    'Disney+': [
+        { nombre: 'Estándar 1 Mes', precio: 5.99, puntos: 60 },
+        { nombre: 'Premium 1 Mes', precio: 8.99, puntos: 95 }
+    ]
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Filtrado de productos en la tienda
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.card');
-
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const filter = btn.getAttribute('data-filter');
-
-            cards.forEach(card => {
-                if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
+    // Vincular botones de recarga principales
+    document.querySelectorAll('.card').forEach(card => {
+        const tituloElement = card.querySelector('h3');
+        const botonRecargar = card.querySelector('button');
+        
+        if (tituloElement && botonRecargar) {
+            const nombreProd = tituloElement.textContent.trim();
+            if (productosTienda[nombreProd]) {
+                botonRecargar.addEventListener('click', () => {
+                    window.abrirModal(nombreProd, productosTienda[nombreProd]);
+                });
+            }
+        }
     });
 
-    // Manejo del formulario de recarga / compra
+    // Cerrar modal con la 'X'
+    const closeBtn = document.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            document.getElementById('modalCompra').style.display = 'none';
+        });
+    }
+
+    // Cambiar dinámicamente el resumen al modificar la opción
+    const opcionSelect = document.getElementById('opcionSelect');
+    if (opcionSelect) {
+        opcionSelect.addEventListener('change', window.actualizarResumen);
+    }
+
+    // Cambiar campos de pago según el método seleccionado
+    const metodoPagoSelect = document.getElementById('metodoPagoSelect');
+    if (metodoPagoSelect) {
+        metodoPagoSelect.addEventListener('change', (e) => {
+            const metodo = e.target.value;
+            const contenedorTarjeta = document.getElementById('camposTarjetaContainer');
+            
+            if (metodo === 'Tarjeta') {
+                contenedorTarjeta.innerHTML = `
+                    <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px solid #cbd5e1;">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: #334155;">Número de Tarjeta:</label>
+                        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" required style="width: 100%; padding: 8px; margin-top: 4px; margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem;">
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.85rem; font-weight: bold; color: #334155;">Expiración:</label>
+                                <input type="text" placeholder="MM/AA" maxlength="5" required style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.85rem; font-weight: bold; color: #334155;">CVV:</label>
+                                <input type="password" placeholder="123" maxlength="4" required style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem;">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (metodo === 'Transferencia') {
+                contenedorTarjeta.innerHTML = `
+                    <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px solid #cbd5e1; font-size: 0.85rem; color: #334155;">
+                        <p style="margin: 0 0 5px 0; font-weight: bold;">Datos Bancarios (Banco Pichincha):</p>
+                        <p style="margin: 0 0 3px 0;">Cuenta Ahorros: <b>2201938475</b></p>
+                        <p style="margin: 0 0 3px 0;">Titular: Nexus Gaming S.A.</p>
+                        <p style="margin: 0;">CI / RUC: 1792837465001</p>
+                        <p style="margin: 8px 0 0 0; color: #0284c7; font-size: 0.8rem;">Sube o reporta tu comprobante al soporte tras finalizar.</p>
+                    </div>
+                `;
+            } else {
+                contenedorTarjeta.innerHTML = '';
+            }
+        });
+    }
+
+    // Manejar envío del formulario de compra
     const formRecarga = document.getElementById('formRecarga');
     if (formRecarga) {
         formRecarga.addEventListener('submit', async (e) => {
             e.preventDefault();
-
+            
+            const email = document.getElementById('emailInput').value.trim();
+            const opcionSelectElement = document.getElementById('opcionSelect');
+            const precioSeleccionado = parseFloat(opcionSelectElement.value);
+            const textoOpcion = opcionSelectElement.options[opcionSelectElement.selectedIndex].text;
+            const tituloModal = document.getElementById('modalTitulo').textContent;
             const metodoPago = document.getElementById('metodoPagoSelect').value;
 
-            if (metodoPago === 'Transferencia Bancaria' || metodoPago === 'Persona Física') {
-                alert("Este método de pago se encuentra temporalmente deshabilitado.");
+            if (!metodoPago) {
+                alert("Por favor selecciona un método de pago.");
                 return;
             }
 
-            const producto = document.getElementById('modalTitulo').textContent.replace('Recargar ', '').replace('Comprar ', '');
-            const select = document.getElementById('opcionSelect');
-            const paqueteNombre = select.options[select.selectedIndex].text;
-            
-            const emailInputElem = document.getElementById('emailInput');
-            const correoCliente = emailInputElem ? emailInputElem.value.trim() : "cliente@pc-recarga.com";
+            const botonSubmit = document.getElementById('btnSubmitForm');
+            botonSubmit.disabled = true;
+            botonSubmit.textContent = "Procesando pago...";
 
-            let detalleDestino = "";
-            let ffIdValue = "";
-            let ffNombreValue = "";
-
-            if (producto === 'Free Fire') {
-                ffIdValue = document.getElementById('userInput').value.trim();
-                const nombreIngresadoElem = document.getElementById('nombreJugadorInput');
-                ffNombreValue = nombreIngresadoElem ? nombreIngresadoElem.value.trim() : "Jugador FF";
-                detalleDestino = `ID FF: ${ffIdValue} (${ffNombreValue})`;
-            } else if (producto === 'Mobile Legends') {
-                const userId = document.getElementById('userIdInput').value;
-                const zoneId = document.getElementById('zoneIdInput').value;
-                detalleDestino = `ID: ${userId} (Zona: ${zoneId})`;
-            } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+'].includes(producto)) {
-                const phone = document.getElementById('phoneInput').value;
-                detalleDestino = `Correo: ${correoCliente} | Teléfono: ${phone}`;
-            } else {
-                const userInputElem = document.getElementById('userInput');
-                detalleDestino = `ID de Cuenta: ${userInputElem ? userInputElem.value : 'N/A'}`;
+            // Calcular puntos basados en el catálogo
+            let puntosGanados = 10;
+            for (const categoria in productosTienda) {
+                const matchEncontrado = productosTienda[categoria].find(p => p.precio === precioSeleccionado);
+                if (matchEncontrado) {
+                    puntosGanados = matchEncontrado.puntos;
+                    break;
+                }
             }
 
-            const precio = parseFloat(select.value) || 0;
-            const comision = calcularComision(precio);
-            const montoTotal = precio + comision;
+            try {
+                // 1. Guardar Transacción
+                await addDoc(collection(dbTienda, "transacciones"), {
+                    userEmail: email,
+                    title: tituloModal + " - " + textoOpcion,
+                    amount: precioSeleccionado + (precioSeleccionado * 0.20), // Incluyendo comisión fija mostrada
+                    puntosGenerados: puntosGanados,
+                    metodoPago: metodoPago,
+                    date: new Date().toLocaleString()
+                });
 
-            if (metodoPago === 'Tarjeta de débito de Banco Pedro Carbo') {
-                const numTarjetaInput = document.getElementById('fb_tarjeta').value.trim();
-                const cvvInput = document.getElementById('fb_cvv').value.trim();
-                const expInput = document.getElementById('fb_exp').value.trim();
-                const boton = document.getElementById('btnSubmitForm');
+                // 2. Acumular Puntos al usuario
+                const userRef = doc(dbTienda, "usuarios_tienda", email);
+                const userSnap = await getDoc(userRef);
 
-                if (!numTarjetaInput || !cvvInput || !expInput) {
-                    alert("Por favor complete todos los datos de la tarjeta de débito.");
-                    return;
+                if (userSnap.exists()) {
+                    await updateDoc(userRef, {
+                        puntos: increment(puntosGanados)
+                    });
+                } else {
+                    await setDoc(userRef, {
+                        email: email,
+                        puntos: puntosGanados
+                    });
                 }
 
-                boton.disabled = true;
-                boton.textContent = "Procesando pago en Banco Pedro Carbo...";
-
-                try {
-                    const tarjetasRef = collection(dbBanco, "tarjetas_virtuales");
-                    const q = query(tarjetasRef, where("numero", "==", numTarjetaInput));
-                    const querySnapshot = await getDocs(q);
-
-                    if (querySnapshot.empty) {
-                        alert("La tarjeta de débito ingresada no existe en el Banco Pedro Carbo.");
-                        boton.disabled = false;
-                        boton.textContent = "Proceder al Pago";
-                        return;
+                // 3. Si es Free Fire, registrar automáticamente el ID y el nombre verificado
+                const userInputFF = document.getElementById('userInput');
+                const hiddenNombreFF = document.getElementById('nombreJugadorInput');
+                if (userInputFF && tituloModal.includes('Free Fire')) {
+                    const idVal = userInputFF.value.trim();
+                    const nombreVal = hiddenNombreFF ? hiddenNombreFF.value : "Jugador Nuevo FF";
+                    if (idVal) {
+                        await setDoc(doc(dbTienda, "jugadores_verificados", idVal), {
+                            idFreeFire: idVal,
+                            nombreJugador: nombreVal,
+                            actualizadoEn: new Date().toLocaleString()
+                        }, { merge: true });
                     }
-
-                    let tarjetaData = null;
-                    let docIdEncontrado = null;
-                    querySnapshot.forEach((docSnap) => {
-                        tarjetaData = docSnap.data();
-                        docIdEncontrado = docSnap.id; 
-                    });
-
-                    if (tarjetaData.cvv !== cvvInput || tarjetaData.expiracion !== expInput) {
-                        alert("Credenciales incorrectas (CVV o Fecha de Expiración erróneos).");
-                        boton.disabled = false;
-                        boton.textContent = "Proceder al Pago";
-                        return;
-                    }
-
-                    const userIdBanco = tarjetaData.userId || docIdEncontrado;
-
-                    if (!userIdBanco) {
-                        alert("Error: No se pudo asociar la tarjeta a ningún usuario.");
-                        boton.disabled = false;
-                        boton.textContent = "Proceder al Pago";
-                        return;
-                    }
-
-                    const userRef = doc(dbBanco, "usuarios", userIdBanco);
-                    const userSnap = await getDoc(userRef);
-
-                    if (!userSnap.exists()) {
-                        alert("Error: El usuario propietario de la tarjeta no fue encontrado en el banco.");
-                        boton.disabled = false;
-                        boton.textContent = "Proceder al Pago";
-                        return;
-                    }
-
-                    let saldoActual = userSnap.data().saldo ?? 0.00;
-
-                    if (saldoActual < montoTotal) {
-                        alert(`Fondos insuficientes. Su saldo actual es $${saldoActual.toFixed(2)} y el total a pagar es $${montoTotal.toFixed(2)}.`);
-                        boton.disabled = false;
-                        boton.textContent = "Proceder al Pago";
-                        return;
-                    }
-
-                    let nuevoSaldo = saldoActual - montoTotal;
-
-                    await updateDoc(userRef, { saldo: nuevoSaldo });
-
-                    await addDoc(collection(dbBanco, "transacciones"), {
-                        userId: userIdBanco,
-                        userEmail: correoCliente,
-                        userName: userSnap.data().nombre || "Cliente Externo",
-                        title: `Nexus Gaming: ${producto} (${paqueteNombre})`,
-                        category: "Pagos con Tarjeta",
-                        amount: -montoTotal,
-                        date: new Date().toLocaleString(),
-                        timestamp: serverTimestamp(),
-                        estado: "Completado"
-                    });
-
-                    let puntosGanados = 0;
-                    const matches = paqueteNombre.match(/[\d,]+/g);
-                    
-                    if (matches && (paqueteNombre.toLowerCase().includes('diamante') || paqueteNombre.toLowerCase().includes('uc') || paqueteNombre.toLowerCase().includes('token'))) {
-                        puntosGanados = parseInt(matches[0].replace(/,/g, ''), 10) || 0;
-                    } else {
-                        puntosGanados = Math.round(precio * 10);
-                    }
-
-                    try {
-                        await addDoc(collection(dbTienda, "transacciones"), {
-                            userName: userSnap.data().nombre || "Cliente Web",
-                            userEmail: correoCliente,
-                            title: `${producto} - ${paqueteNombre}`,
-                            category: producto,
-                            amount: montoTotal,
-                            puntosGenerados: puntosGanados,
-                            detalleDestino: detalleDestino,
-                            metodoPago: metodoPago,
-                            date: new Date().toLocaleString(),
-                            timestamp: serverTimestamp(),
-                            estado: "Completado"
-                        });
-
-                        const userPuntosRef = doc(dbTienda, "usuarios_tienda", correoCliente);
-                        const userPuntosSnap = await getDoc(userPuntosRef);
-
-                        if (userPuntosSnap.exists()) {
-                            const puntosActuales = userPuntosSnap.data().puntos || 0;
-                            await updateDoc(userPuntosRef, { puntos: puntosActuales + puntosGanados });
-                        } else {
-                            await setDoc(userPuntosRef, { email: correoCliente, puntos: puntosGanados });
-                        }
-
-                        // SI ES FREE FIRE, GUARDAR O ACTUALIZAR AUTOMÁTICAMENTE EL ID VERIFICADO EN LA BD
-                        if (producto === 'Free Fire' && ffIdValue && ffNombreValue) {
-                            const jugadorRef = doc(dbTienda, "jugadores_verificados", ffIdValue);
-                            await setDoc(jugadorRef, {
-                                idFreeFire: ffIdValue,
-                                nombreJugador: ffNombreValue,
-                                actualizadoEn: new Date().toLocaleString()
-                            }, { merge: true });
-                        }
-
-                    } catch (errTienda) {
-                        console.error("Error al guardar en tu tienda o sumar puntos:", errTienda);
-                    }
-
-                    alert(`¡Pago Exitoso!\n\nServicio: ${producto} - ${paqueteNombre}\nDestino: ${detalleDestino}\nMonto descontado: $${montoTotal.toFixed(2)}\n✨ ¡Has ganado ${puntosGanados} puntos para la ruleta!\nNuevo saldo en banco: $${nuevoSaldo.toFixed(2)}`);
-                    window.cerrarModal();
-                    formRecarga.reset();
-                    location.reload();
-
-                } catch (error) {
-                    console.error("Error al procesar el pago:", error);
-                    alert("Ocurrió un error al conectar con la base de datos.");
-                    boton.disabled = false;
-                    boton.textContent = "Proceder al Pago";
                 }
-            } else {
-                alert("Método de pago no disponible.");
-                window.cerrarModal();
+
+                alert(`¡Compra y pago procesados con éxito!\nHas acumulado +${puntosGanados} puntos en tu cuenta.`);
+                document.getElementById('modalCompra').style.display = 'none';
                 formRecarga.reset();
+
+            } catch (error) {
+                console.error("Error al procesar la compra:", error);
+                alert("Hubo un error al procesar tu transacción. Inténtalo de nuevo.");
+            } finally {
+                botonSubmit.disabled = false;
+                botonSubmit.textContent = "Proceder al Pago";
             }
         });
     }
 });
-
-// ==========================================
-// FUNCIONES GLOBALES EXPUESTAS AL OBJETO WINDOW
-// ==========================================
 
 window.abrirModal = function(nombreProducto, opciones) {
     const modal = document.getElementById('modalCompra');
@@ -293,20 +236,20 @@ window.abrirModal = function(nombreProducto, opciones) {
     camposTarjetaContainer.innerHTML = "";
     camposIdContainer.innerHTML = '';
     
-    // DINÁMICO SEGÚN EL PRODUCTO SELECCIONADO
+    // DINÁMICO CON BOTÓN DE VERIFICACIÓN PARA FREE FIRE
     if (nombreProducto === 'Free Fire') {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
             <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
 
             <label for="userInput">ID de Free Fire:</label>
-            <input type="text" id="userInput" placeholder="Ingresa tu ID (Ej: 123456789)" onblur="verificarIdFreeFire()" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 5px; background: #f8fafc; color: #000;">
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <input type="text" id="userInput" placeholder="Ej: 123456789" required style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #f8fafc; color: #000;">
+                <button type="button" onclick="verificarIdFreeFire()" style="background: #38bdf8; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Verificar</button>
+            </div>
             
-            <!-- Visor de estado estilo Pagostore -->
+            <!-- Visor de estado o apodo -->
             <div id="resultadoNombreFF" style="margin-bottom: 12px; font-size: 0.9rem; font-weight: bold; min-height: 20px;"></div>
-
-            <!-- Contenedor dinámico si el ID no existe -->
-            <div id="contenedorNombreExtra"></div>
         `;
     } else if (nombreProducto === 'Mobile Legends') {
         camposIdContainer.innerHTML = `
@@ -341,117 +284,67 @@ window.abrirModal = function(nombreProducto, opciones) {
     window.actualizarResumen();
 }
 
-// FUNCIÓN PARA VERIFICAR ID ESTILO PAGOSTORE EN FIREBASE
 window.verificarIdFreeFire = async function() {
     const idInput = document.getElementById('userInput').value.trim();
     const contenedorNombre = document.getElementById('resultadoNombreFF');
-    const contenedorExtra = document.getElementById('contenedorNombreExtra');
 
     if (!idInput) {
-        contenedorNombre.textContent = "";
-        contenedorExtra.innerHTML = "";
+        contenedorNombre.textContent = "⚠ Por favor ingresa un ID primero.";
+        contenedorNombre.style.color = "#fbbf24";
         return;
     }
 
-    contenedorNombre.textContent = "🔍 Buscando jugador...";
+    contenedorNombre.textContent = "🔍 Buscando ID...";
     contenedorNombre.style.color = "#94a3b8";
-    contenedorExtra.innerHTML = "";
 
     try {
         const docRef = doc(dbTienda, "jugadores_verificados", idInput);
         const docSnap = await getDoc(docRef);
 
+        let hiddenNombre = document.getElementById('nombreJugadorInput');
+        if (!hiddenNombre) {
+            hiddenNombre = document.createElement('input');
+            hiddenNombre.type = 'hidden';
+            hiddenNombre.id = 'nombreJugadorInput';
+            document.getElementById('formRecarga').appendChild(hiddenNombre);
+        }
+
         if (docSnap.exists()) {
             const data = docSnap.data();
-            contenedorNombre.textContent = `✅ Jugador Verificado: ${data.nombreJugador}`;
-            contenedorNombre.style.color = "#22c55e"; // Verde éxito
-            contenedorExtra.innerHTML = `<input type="hidden" id="nombreJugadorInput" value="${data.nombreJugador}">`;
+            contenedorNombre.innerHTML = `✅ Apodo: <span style="color: #38bdf8;">${data.nombreJugador}</span>`;
+            contenedorNombre.style.color = "#22c55e";
+            hiddenNombre.value = data.nombreJugador;
         } else {
-            contenedorNombre.textContent = `⚠️ ID nuevo. Ingresa tu nombre para registrarlo:`;
-            contenedorNombre.style.color = "#fbbf24"; // Amarillo
-            contenedorExtra.innerHTML = `
-                <input type="text" id="nombreJugadorInput" placeholder="Tu Nombre de Free Fire (Ej: 『NEXUS』Gamer)" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
-            `;
+            contenedorNombre.textContent = "ℹ️ Después de la compra se verificará el ID.";
+            contenedorNombre.style.color = "#fbbf24";
+            hiddenNombre.value = "Jugador Nuevo FF";
         }
     } catch (e) {
-        console.error("Error al buscar ID en Firebase:", e);
-        contenedorNombre.textContent = "";
+        console.error("Error al verificar ID:", e);
+        contenedorNombre.textContent = "ℹ️ Después de la compra se verificará el ID.";
+        contenedorNombre.style.color = "#fbbf24";
     }
-}
-
-window.manejarMetodoPago = function() {
-    const metodoPagoSelect = document.getElementById('metodoPagoSelect');
-    const camposTarjetaContainer = document.getElementById('camposTarjetaContainer');
-
-    if (metodoPagoSelect.value === 'Transferencia Bancaria' || metodoPagoSelect.value === 'Persona Física') {
-        alert("Este método de pago se encuentra temporalmente deshabilitado.");
-        metodoPagoSelect.value = "";
-        camposTarjetaContainer.innerHTML = '';
-        return;
-    }
-
-    if (metodoPagoSelect.value === 'Tarjeta de débito de Banco Pedro Carbo') {
-        camposTarjetaContainer.innerHTML = `
-            <div style="background: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #374151; color: #1e3a8a;">
-                <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; color: #1e3a8a;">
-                    💳 Pago con Tarjeta Banco Pedro Carbo
-                </h3>
-                <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 1rem;">Ingrese los datos de su tarjeta virtual para procesar el pago de forma segura.</p>
-                
-                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 5px; color: #334155;">Número de Tarjeta</label>
-                <input type="text" id="fb_tarjeta" placeholder="Ej. 4532XXXXXXXX1234" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;" required>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 5px;">
-                    <div style="flex: 1;">
-                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 5px; color: #334155;">CVV</label>
-                        <input type="password" id="fb_cvv" placeholder="123" maxlength="4" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 5px; color: #334155;">Expiración</label>
-                        <input type="text" id="fb_exp" placeholder="MM/AA" maxlength="5" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;" required>
-                    </div>
-                </div>
-            </div>
-        `;
-    } else {
-        camposTarjetaContainer.innerHTML = '';
-    }
-}
-
-function calcularComision(precio) {
-    let comision = precio * 0.08; 
-    if (comision > 4.00) {
-        comision = 4.00;
-    }
-    if (precio > 0 && comision < 0.20) {
-        comision = 0.20;
-    }
-    return comision;
 }
 
 window.actualizarResumen = function() {
-    const select = document.getElementById('opcionSelect');
-    const precio = parseFloat(select.value) || 0;
-    const comision = calcularComision(precio);
-    const total = precio + comision;
+    const opcionSelect = document.getElementById('opcionSelect');
+    if (!opcionSelect || opcionSelect.selectedIndex === -1) return;
 
-    const lblPrecio = document.getElementById('lblPrecio');
-    const lblComision = document.getElementById('lblComision');
-    const lblTotal = document.getElementById('lblTotal');
+    const precioBase = parseFloat(opcionSelect.value);
+    const comision = 0.20; // Tarifa fija de servicio
+    const total = precioBase + comision;
 
-    if (lblPrecio) lblPrecio.textContent = `$${precio.toFixed(2)}`;
-    if (lblComision) lblComision.textContent = `$${comision.toFixed(2)}`;
-    if (lblTotal) lblTotal.textContent = `$${total.toFixed(2)}`;
-}
-
-window.cerrarModal = function() {
-    const modal = document.getElementById('modalCompra');
-    if (modal) modal.style.display = 'none';
-}
-
-window.onclick = function(event) {
-    const modal = document.getElementById('modalCompra');
-    if (event.target === modal) {
-        window.cerrarModal();
-    }
+    // Actualizar textos informativos en el modal si existen
+    const spans = document.querySelectorAll('#modalCompra p');
+    spans.forEach(p => {
+        if (p.textContent.includes('Precio del producto:')) {
+            p.innerHTML = `Precio del producto: <b>$${precioBase.toFixed(2)}</b>`;
+        }
+        if (p.textContent.includes('Comisión por servicio:')) {
+            p.innerHTML = `Comisión por servicio: <b>$${comision.toFixed(2)}</b>`;
+        }
+        if (p.textContent.includes('Total a pagar:')) {
+            p.innerHTML = `Total a pagar: <b style="color: #38bdf8;">$${total.toFixed(2)}</b>`;
+        }
+    });
 }
