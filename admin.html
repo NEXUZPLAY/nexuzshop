@@ -34,6 +34,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
+            width: 100%;
         }
         .btn:hover {
             background: #0ea5e9;
@@ -168,8 +169,9 @@
                 <h2>Gestionar Catálogo de Canjes</h2>
                 <div style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
                     <h3>Agregar Nuevo Premio</h3>
-                    <input type="text" id="nombrePremio" placeholder="Nombre del Premio (Ej: 500 Diamantes / Cuenta Netflix)">
-                    <input type="number" id="costoPuntos" placeholder="Costo exacto en Puntos (Ej: 1000)">
+                    <input type="text" id="nombrePremio" placeholder="Nombre del Premio (Ej: 110 Diamantes Free Fire)">
+                    <input type="number" id="costoPuntos" placeholder="Costo exacto en Puntos (Ej: 500)">
+                    <input type="number" id="limiteCanjesGlobal" placeholder="Límite global de canjes (Dejar en blanco para ilimitado)">
                     <button class="btn" onclick="agregarPremioCatalogo()">Guardar en el Catálogo</button>
                 </div>
 
@@ -180,7 +182,7 @@
             <!-- SECCIÓN 3: SOLICITUDES DE CANJE DE LOS USUARIOS -->
             <div id="tab-solicitudes" class="section-panel">
                 <h2>Solicitudes de Canje Pendientes</h2>
-                <p style="color: #94a3b8; font-size: 0.85rem;">Aquí aparecen los premios que los usuarios han comprado usando sus puntos en la ruleta/tragamonedas.</p>
+                <p style="color: #94a3b8; font-size: 0.85rem;">Aquí aparecen los premios que los usuarios han solicitado usando sus puntos.</p>
                 <div id="listaSolicitudesCanje">Cargando solicitudes...</div>
             </div>
         </div>
@@ -190,7 +192,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const miFirebaseConfig = {
             apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
@@ -276,10 +278,11 @@
             }
         }
 
-        // 2. GESTIÓN DE CATÁLOGO DE CANJES
+        // 2. GESTIÓN DE CATÁLOGO DE CANJES CON LÍMITE GLOBAL
         window.agregarPremioCatalogo = async function() {
             const nombre = document.getElementById('nombrePremio').value.trim();
             const costo = parseInt(document.getElementById('costoPuntos').value);
+            const limiteInput = document.getElementById('limiteCanjesGlobal').value.trim();
 
             if (!nombre || isNaN(costo) || costo <= 0) {
                 alert("Por favor ingresa un nombre y un costo en puntos válido.");
@@ -287,10 +290,16 @@
             }
 
             try {
-                await addDoc(collection(db, "catalogo_canjes"), { nombre, costo });
+                await addDoc(collection(db, "catalogo_canjes"), { 
+                    nombre, 
+                    costo,
+                    limiteGlobal: limiteInput !== "" ? parseInt(limiteInput) : null,
+                    canjesRealizados: 0 
+                });
                 alert("¡Premio agregado al catálogo correctamente!");
                 document.getElementById('nombrePremio').value = '';
                 document.getElementById('costoPuntos').value = '';
+                document.getElementById('limiteCanjesGlobal').value = '';
                 cargarPremiosAdmin();
             } catch (e) {
                 console.error(e);
@@ -304,14 +313,22 @@
                 const snapshot = await getDocs(collection(db, "catalogo_canjes"));
                 contenedor.innerHTML = "";
                 if (snapshot.empty) {
+                    contenedor.json = "<p style='color: #94a3b8;'>No hay premios creados en el catálogo.</p>";
                     contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay premios creados en el catálogo.</p>";
                     return;
                 }
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
+                    let textoLimite = data.limiteGlobal !== null && data.limiteGlobal !== undefined 
+                        ? `Límite: ${data.canjesRealizados || 0}/${data.limiteGlobal}` 
+                        : `Límite: Ilimitado`;
+
                     contenedor.innerHTML += `
                         <div class="card-box">
-                            <span>🎁 <b>${data.nombre}</b> — Costo: <span style="color: #fbbf24;">${data.costo} Puntos</span></span>
+                            <div>
+                                🎁 <b>${data.nombre}</b> — Costo: <span style="color: #fbbf24;">${data.costo} Puntos</span><br>
+                                <span style="font-size: 0.8rem; color: #38bdf8;">${textoLimite}</span>
+                            </div>
                             <button onclick="eliminarPremio('${docSnap.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Eliminar</button>
                         </div>
                     `;
@@ -345,6 +362,7 @@
                             <div>
                                 👤 <b>Cliente:</b> ${s.email}<br>
                                 🎁 <b>Premio Canjeado:</b> ${s.premio} (${s.costoPuntos} pts)<br>
+                                🎮 <b>ID Free Fire:</b> ${s.idFreeFire || 'N/A'}<br>
                                 📅 <b>Fecha:</b> ${s.fecha || 'N/A'}
                             </div>
                             <button onclick="completarCanje('${docSnap.id}')" style="background: #22c55e; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;">Marcar Entregado</button>

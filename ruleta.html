@@ -321,20 +321,27 @@
                 const snapshot = await getDocs(collection(db, "catalogo_canjes"));
                 contenedor.innerHTML = "";
                 if (snapshot.empty) { contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay premios.</p>"; return; }
+                
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     let esPromoNuevo = (data.nombre.toLowerCase().includes("110") || data.nombre.toLowerCase().includes("diamante")) && Number(data.costo) === 500;
                     
+                    let limiteTexto = "";
+                    if (data.limiteGlobal !== null && data.limiteGlobal !== undefined) {
+                        let stockRestante = data.limiteGlobal - (data.canjesRealizados || 0);
+                        limiteTexto = `<br><span style="color: ${stockRestante > 0 ? '#38bdf8' : '#ef4444'}; font-size: 0.8rem;">Disponibles globalmente: ${stockRestante > 0 ? stockRestante : 'Agotado'}</span>`;
+                    }
+
                     contenedor.innerHTML += `
                         <div class="canje-card">
                             <div>
                                 <b>${data.nombre}</b><br>
                                 <span style="color: #fbbf24; font-size: 0.9rem;">Costo: ${data.costo} Puntos</span>
-                                ${esPromoNuevo ? '<br><span style="color: #38bdf8; font-size: 0.75rem;">(Exclusivo para Nuevos Usuarios - Requiere ID de FF)</span>' : ''}
+                                ${limiteTexto}
                             </div>
                             <div>
-                                ${esPromoNuevo ? '<input type="text" id="inputIdFreeFire" placeholder="Ingresa tu ID de Free Fire" style="margin-bottom: 5px;">' : ''}
-                                <button onclick="canjearPremio('${data.nombre}', ${data.costo}, ${esPromoNuevo})" style="background: #38bdf8; color: #000; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;">Canjear</button>
+                                ${esPromoNuevo ? `<input type="text" id="inputIdFreeFire_${docSnap.id}" placeholder="Ingresa tu ID de Free Fire" style="margin-bottom: 5px;">` : ''}
+                                <button onclick="canjearPremio('${data.nombre}', ${data.costo}, ${esPromoNuevo}, '${docSnap.id}')" style="background: #38bdf8; color: #000; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;">Canjear</button>
                             </div>
                         </div>
                     `;
@@ -342,24 +349,23 @@
             } catch (e) { console.error(e); }
         }
 
-        window.canjearPremio = async function(nombrePremio, costo, esPromoNuevo) {
+        window.canjearPremio = async function(nombrePremio, costo, esPromoNuevo, docIdPremio) {
             if (puntosActuales < costo) { alert("Puntos insuficientes."); return; }
 
             let idFreeFire = "";
             if (esPromoNuevo) {
-                const inputElem = document.getElementById('inputIdFreeFire');
+                const inputElem = document.getElementById(`inputIdFreeFire_${docIdPremio}`);
                 idFreeFire = inputElem ? inputElem.value.trim() : "";
                 if (!idFreeFire) {
                     alert("Por favor, ingresa tu ID de Free Fire para reclamar este premio exclusivo.");
                     return;
                 }
 
-                // VALIDACIÓN ANTIFRAUDE: Buscar en Firestore si este ID de Free Fire ya fue usado en otra solicitud de canje previa
                 try {
                     const q = query(collection(db, "solicitudes_canje"), where("idFreeFire", "==", idFreeFire));
                     const querySnapshot = await getDocs(q);
                     if (!querySnapshot.empty) {
-                        alert("❌ Ya reclamaste este premio en tu otra cuenta o con este mismo ID de Free Fire. Está prohibido el fraude.");
+                        alert("❌ Ya reclamaste este premio con este mismo ID de Free Fire. Está prohibido el fraude.");
                         return;
                     }
                 } catch (e) {
@@ -371,12 +377,28 @@
 
             if (confirm(`¿Canjear "${nombrePremio}" por ${costo} puntos?`)) {
                 try {
+                    // VALIDAR Y ACTUALIZAR LÍMITE GLOBAL
+                    const premioRef = doc(db, "catalogo_canjes", docIdPremio);
+                    const premioSnap = await getDoc(premioRef);
+                    
+                    if (premioSnap.exists()) {
+                        const dataPremio = premioSnap.data();
+                        if (dataPremio.limiteGlobal !== null && dataPremio.limiteGlobal !== undefined) {
+                            let realizados = dataPremio.canjesRealizados || 0;
+                            if (realizados >= dataPremio.limiteGlobal) {
+                                alert("❌ Lo sentimos, este artículo acaba de alcanzar su límite máximo de canjes globales.");
+                                cargarCatalogoCanjes();
+                                return;
+                            }
+                            await updateDoc(premioRef, { canjesRealizados: realizados + 1 });
+                        }
+                    }
+
                     puntosActuales -= costo;
                     const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
                     await updateDoc(userRef, { puntos: puntosActuales });
                     document.getElementById('puntosDisponibles').textContent = puntosActuales;
 
-                    // Guardamos la solicitud incluyendo el ID de Free Fire para el control antifraude futuro
                     await addDoc(collection(db, "solicitudes_canje"), {
                         email: usuarioActualEmail, 
                         premio: nombrePremio, 
@@ -388,8 +410,9 @@
                     });
                     
                     alert("¡Canje solicitado con éxito!");
-                    cargarCatalogoCanjes(); // Recargar para limpiar campos
+                    cargarCatalogoCanjes(); 
                 } catch (e) { 
+                    console.error(e);
                     alert("Error al procesar el canje."); 
                 }
             }
