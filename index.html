@@ -15,19 +15,17 @@
             padding: 0;
             box-sizing: border-box;
         }
-        /* Contenedor general adaptable para pantallas móviles y PC */
         .catalog-section {
             padding: 20px 15px;
             box-sizing: border-box;
         }
         .grid-container {
             display: grid;
-            grid-template-columns: 1fr; /* Por defecto para Android / móviles: 1 columna */
+            grid-template-columns: 1fr; 
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
-        /* Si es una pantalla grande (PC / Tablets horizontales), pasa automáticamente a 3 columnas */
         @media (min-width: 900px) {
             .grid-container {
                 grid-template-columns: repeat(3, 1fr) !important;
@@ -70,7 +68,7 @@
             <button class="filter-btn" data-filter="streaming">Streaming</button>
         </div>
 
-        <!-- Cuadrícula de Productos adaptada para PC y Android -->
+        <!-- Cuadrícula de Productos -->
         <div class="grid-container">
             <!-- Free Fire -->
             <div class="card" data-category="games">

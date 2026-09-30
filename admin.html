@@ -55,6 +55,7 @@
             margin: 20px 0;
             border-bottom: 2px solid #334155;
             padding-bottom: 10px;
+            flex-wrap: wrap;
         }
         .tab-btn {
             background: #334155;
@@ -139,8 +140,9 @@
             <!-- PESTAÑAS DE NAVEGACIÓN -->
             <div class="nav-tabs">
                 <button class="tab-btn active" onclick="cambiarTab('transacciones')">📦 Transacciones</button>
-                <button class="tab-btn" onclick="cambiarTab('catalogo')">🎁 Crear Premios (Canjes)</button>
-                <button class="tab-btn" onclick="cambiarTab('solicitudes')">📋 Solicitudes de Canje</button>
+                <button class="tab-btn" onclick="cambiarTab('catalogo')">🎁 Crear Premios</button>
+                <button class="tab-btn" onclick="cambiarTab('solicitudes')">📋 Solicitudes</button>
+                <button class="tab-btn" onclick="cambiarTab('jugadores')">🎮 Jugadores FF</button>
             </div>
 
             <!-- SECCIÓN 1: TRANSACCIONES -->
@@ -185,6 +187,22 @@
                 <p style="color: #94a3b8; font-size: 0.85rem;">Aquí aparecen los premios que los usuarios han solicitado usando sus puntos.</p>
                 <div id="listaSolicitudesCanje">Cargando solicitudes...</div>
             </div>
+
+            <!-- SECCIÓN 4: JUGADORES VERIFICADOS (FREE FIRE) -->
+            <div id="tab-jugadores" class="section-panel">
+                <h2>Directorio de IDs de Free Fire Verificados</h2>
+                <p style="color: #94a3b8; font-size: 0.85rem;">Estos son los nombres vinculados automáticamente o añadidos manualmente que aparecerán cuando un usuario ponga su ID estilo Pagostore[cite: 9].</p>
+                
+                <div style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
+                    <h3>Vincular / Agregar Nuevo Jugador</h3>
+                    <input type="text" id="adminIdFF" placeholder="ID de Free Fire (Ej: 123456789)">
+                    <input type="text" id="adminNombreFF" placeholder="Nombre del Jugador en Free Fire (Ej: 『NEXUS』Gamer)">
+                    <button class="btn" onclick="guardarJugadorAdmin()">Guardar / Actualizar Jugador</button>
+                </div>
+
+                <h3>Lista de Jugadores Registrados:</h3>
+                <div id="listaJugadoresAdmin">Cargando jugadores...</div>
+            </div>
         </div>
     </div>
 
@@ -192,7 +210,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const miFirebaseConfig = {
             apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
@@ -236,6 +254,7 @@
                 cargarTransacciones();
                 cargarPremiosAdmin();
                 cargarSolicitudesCanje();
+                cargarJugadoresAdmin();
             } else {
                 document.getElementById('authScreen').style.display = 'block';
                 document.getElementById('adminContent').style.display = 'none';
@@ -313,7 +332,6 @@
                 const snapshot = await getDocs(collection(db, "catalogo_canjes"));
                 contenedor.innerHTML = "";
                 if (snapshot.empty) {
-                    contenedor.json = "<p style='color: #94a3b8;'>No hay premios creados en el catálogo.</p>";
                     contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay premios creados en el catálogo.</p>";
                     return;
                 }
@@ -378,6 +396,67 @@
             if (confirm("¿Marcar este canje como entregado y eliminarlo de la lista?")) {
                 await deleteDoc(doc(db, "solicitudes_canje", id));
                 cargarSolicitudesCanje();
+            }
+        }
+
+        // 4. GESTIÓN MANUAL DE JUGADORES DE FREE FIRE (ESTILO PAGOSTORE)
+        window.guardarJugadorAdmin = async function() {
+            const idFreeFire = document.getElementById('adminIdFF').value.trim();
+            const nombreJugador = document.getElementById('adminNombreFF').value.trim();
+
+            if (!idFreeFire || !nombreJugador) {
+                alert("Por favor ingresa tanto el ID de Free Fire como el Nombre del jugador.");
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, "jugadores_verificados", idFreeFire), {
+                    idFreeFire: idFreeFire,
+                    nombreJugador: nombreJugador,
+                    actualizadoEn: new Date().toLocaleString()
+                });
+
+                alert("¡Jugador registrado/actualizado con éxito!");
+                document.getElementById('adminIdFF').value = '';
+                document.getElementById('adminNombreFF').value = '';
+                cargarJugadoresAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Error al guardar el jugador.");
+            }
+        }
+
+        async function cargarJugadoresAdmin() {
+            const contenedor = document.getElementById('listaJugadoresAdmin');
+            try {
+                const snapshot = await getDocs(collection(db, "jugadores_verificados"));
+                contenedor.innerHTML = "";
+                if (snapshot.empty) {
+                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay jugadores verificados en la base de datos.</p>";
+                    return;
+                }
+                snapshot.forEach((docSnap) => {
+                    const j = docSnap.data();
+                    contenedor.innerHTML += `
+                        <div class="card-box">
+                            <div>
+                                🎮 <b>ID:</b> ${j.idFreeFire}<br>
+                                👤 <b>Nombre de Jugador:</b> <span style="color: #38bdf8;">${j.nombreJugador}</span><br>
+                                <span style="font-size: 0.75rem; color: #94a3b8;">Última actualización: ${j.actualizadoEn || 'N/A'}</span>
+                            </div>
+                            <button onclick="eliminarJugador('${docSnap.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.eliminarJugador = async function(id) {
+            if (confirm("¿Estás seguro de eliminar este ID del registro de verificados?")) {
+                await deleteDoc(doc(db, "jugadores_verificados", id));
+                cargarJugadoresAdmin();
             }
         }
     </script>

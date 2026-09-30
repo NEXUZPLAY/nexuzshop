@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const metodoPago = document.getElementById('metodoPagoSelect').value;
 
-            // BLOQUEAR MÉTODOS DE PAGO DESACTIVADOS
             if (metodoPago === 'Transferencia Bancaria' || metodoPago === 'Persona Física') {
                 alert("Este método de pago se encuentra temporalmente deshabilitado.");
                 return;
@@ -81,12 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const select = document.getElementById('opcionSelect');
             const paqueteNombre = select.options[select.selectedIndex].text;
             
-            // Obtener el correo electrónico ingresado obligatoriamente en el formulario
             const emailInputElem = document.getElementById('emailInput');
             const correoCliente = emailInputElem ? emailInputElem.value.trim() : "cliente@pc-recarga.com";
 
             let detalleDestino = "";
-            if (producto === 'Mobile Legends') {
+            let ffIdValue = "";
+            let ffNombreValue = "";
+
+            if (producto === 'Free Fire') {
+                ffIdValue = document.getElementById('userInput').value.trim();
+                const nombreIngresadoElem = document.getElementById('nombreJugadorInput');
+                ffNombreValue = nombreIngresadoElem ? nombreIngresadoElem.value.trim() : "Jugador FF";
+                detalleDestino = `ID FF: ${ffIdValue} (${ffNombreValue})`;
+            } else if (producto === 'Mobile Legends') {
                 const userId = document.getElementById('userIdInput').value;
                 const zoneId = document.getElementById('zoneIdInput').value;
                 detalleDestino = `ID: ${userId} (Zona: ${zoneId})`;
@@ -117,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 boton.textContent = "Procesando pago en Banco Pedro Carbo...";
 
                 try {
-                    // 1. Buscar la tarjeta en la colección 'tarjetas_virtuales' del Banco
                     const tarjetasRef = collection(dbBanco, "tarjetas_virtuales");
                     const q = query(tarjetasRef, where("numero", "==", numTarjetaInput));
                     const querySnapshot = await getDocs(q);
@@ -136,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         docIdEncontrado = docSnap.id; 
                     });
 
-                    // 2. Validar CVV y Expiración
                     if (tarjetaData.cvv !== cvvInput || tarjetaData.expiracion !== expInput) {
                         alert("Credenciales incorrectas (CVV o Fecha de Expiración erróneos).");
                         boton.disabled = false;
@@ -153,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
 
-                    // 3. Obtener el saldo del usuario en el Banco
                     const userRef = doc(dbBanco, "usuarios", userIdBanco);
                     const userSnap = await getDoc(userRef);
 
@@ -166,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     let saldoActual = userSnap.data().saldo ?? 0.00;
 
-                    // 4. Verificar fondos suficientes
                     if (saldoActual < montoTotal) {
                         alert(`Fondos insuficientes. Su saldo actual es $${saldoActual.toFixed(2)} y el total a pagar es $${montoTotal.toFixed(2)}.`);
                         boton.disabled = false;
@@ -176,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     let nuevoSaldo = saldoActual - montoTotal;
 
-                    // 5. Descontar saldo y registrar transacción en el Banco
                     await updateDoc(userRef, { saldo: nuevoSaldo });
 
                     await addDoc(collection(dbBanco, "transacciones"), {
@@ -191,19 +192,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         estado: "Completado"
                     });
 
-                    // 6. CÁLCULO INTELIGENTE DE PUNTOS
                     let puntosGanados = 0;
                     const matches = paqueteNombre.match(/[\d,]+/g);
                     
                     if (matches && (paqueteNombre.toLowerCase().includes('diamante') || paqueteNombre.toLowerCase().includes('uc') || paqueteNombre.toLowerCase().includes('token'))) {
-                        // Si el paquete indica una cantidad explícita de diamantes/tokens (Ej: "5,600 Diamantes" o "110 Diamantes")
                         puntosGanados = parseInt(matches[0].replace(/,/g, ''), 10) || 0;
                     } else {
-                        // Si es un servicio o producto sin cantidad numérica de ítems, calcula por su precio (Ej: $10 = 100 puntos)
                         puntosGanados = Math.round(precio * 10);
                     }
 
-                    // 7. Registrar el pedido en TU propio Firebase y sumar puntos basados en el correo electrónico
                     try {
                         await addDoc(collection(dbTienda, "transacciones"), {
                             userName: userSnap.data().nombre || "Cliente Web",
@@ -219,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             estado: "Completado"
                         });
 
-                        // Sumar o crear puntos en la colección "usuarios_tienda" usando el correo como ID
                         const userPuntosRef = doc(dbTienda, "usuarios_tienda", correoCliente);
                         const userPuntosSnap = await getDoc(userPuntosRef);
 
@@ -228,6 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             await updateDoc(userPuntosRef, { puntos: puntosActuales + puntosGanados });
                         } else {
                             await setDoc(userPuntosRef, { email: correoCliente, puntos: puntosGanados });
+                        }
+
+                        // SI ES FREE FIRE, GUARDAR O ACTUALIZAR AUTOMÁTICAMENTE EL ID VERIFICADO EN LA BD
+                        if (producto === 'Free Fire' && ffIdValue && ffNombreValue) {
+                            const jugadorRef = doc(dbTienda, "jugadores_verificados", ffIdValue);
+                            await setDoc(jugadorRef, {
+                                idFreeFire: ffIdValue,
+                                nombreJugador: ffNombreValue,
+                                actualizadoEn: new Date().toLocaleString()
+                            }, { merge: true });
                         }
 
                     } catch (errTienda) {
@@ -287,8 +293,22 @@ window.abrirModal = function(nombreProducto, opciones) {
     camposTarjetaContainer.innerHTML = "";
     camposIdContainer.innerHTML = '';
     
-    // Todos los formularios solicitan el correo electrónico como campo obligatorio para acumular puntos
-    if (nombreProducto === 'Mobile Legends') {
+    // DINÁMICO SEGÚN EL PRODUCTO SELECCIONADO
+    if (nombreProducto === 'Free Fire') {
+        camposIdContainer.innerHTML = `
+            <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
+            <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
+
+            <label for="userInput">ID de Free Fire:</label>
+            <input type="text" id="userInput" placeholder="Ingresa tu ID (Ej: 123456789)" onblur="verificarIdFreeFire()" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 5px; background: #f8fafc; color: #000;">
+            
+            <!-- Visor de estado estilo Pagostore -->
+            <div id="resultadoNombreFF" style="margin-bottom: 12px; font-size: 0.9rem; font-weight: bold; min-height: 20px;"></div>
+
+            <!-- Contenedor dinámico si el ID no existe -->
+            <div id="contenedorNombreExtra"></div>
+        `;
+    } else if (nombreProducto === 'Mobile Legends') {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
             <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
@@ -319,6 +339,44 @@ window.abrirModal = function(nombreProducto, opciones) {
 
     modal.style.display = 'flex';
     window.actualizarResumen();
+}
+
+// FUNCIÓN PARA VERIFICAR ID ESTILO PAGOSTORE EN FIREBASE
+window.verificarIdFreeFire = async function() {
+    const idInput = document.getElementById('userInput').value.trim();
+    const contenedorNombre = document.getElementById('resultadoNombreFF');
+    const contenedorExtra = document.getElementById('contenedorNombreExtra');
+
+    if (!idInput) {
+        contenedorNombre.textContent = "";
+        contenedorExtra.innerHTML = "";
+        return;
+    }
+
+    contenedorNombre.textContent = "🔍 Buscando jugador...";
+    contenedorNombre.style.color = "#94a3b8";
+    contenedorExtra.innerHTML = "";
+
+    try {
+        const docRef = doc(dbTienda, "jugadores_verificados", idInput);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            contenedorNombre.textContent = `✅ Jugador Verificado: ${data.nombreJugador}`;
+            contenedorNombre.style.color = "#22c55e"; // Verde éxito
+            contenedorExtra.innerHTML = `<input type="hidden" id="nombreJugadorInput" value="${data.nombreJugador}">`;
+        } else {
+            contenedorNombre.textContent = `⚠️ ID nuevo. Ingresa tu nombre para registrarlo:`;
+            contenedorNombre.style.color = "#fbbf24"; // Amarillo
+            contenedorExtra.innerHTML = `
+                <input type="text" id="nombreJugadorInput" placeholder="Tu Nombre de Free Fire (Ej: 『NEXUS』Gamer)" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
+            `;
+        }
+    } catch (e) {
+        console.error("Error al buscar ID en Firebase:", e);
+        contenedorNombre.textContent = "";
+    }
 }
 
 window.manejarMetodoPago = function() {
