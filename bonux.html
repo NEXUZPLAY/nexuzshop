@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonus de Recarga - Nexus Gaming</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 2px solid #334155;
+            box-sizing: border-box;
+        }
+        h1, h2 {
+            color: #38bdf8;
+            text-align: center;
+        }
+        .btn {
+            background: #38bdf8;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #0ea5e9; }
+        .btn-google {
+            background: #ffffff;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px auto;
+            max-width: 300px;
+            width: 100%;
+        }
+        .pack-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        @media (min-width: 500px) {
+            .pack-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        .pack-card {
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .pack-card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-3px);
+        }
+        .pack-card.selected {
+            border-color: #f59e0b;
+            background: #172554;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        .info-box {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>💎 Recargas con Bonus</h1>
+        
+        <!-- PANTALLA DE ACCESO -->
+        <div id="authScreen" style="text-align: center;">
+            <p style="color: #94a3b8;">Inicia sesión con tu cuenta para aprovechar los bonus acumulativos.</p>
+            <button class="btn btn-google" onclick="iniciarSesion()">
+                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.71v2.26h2.94c1.72-1.58 2.78-3.9 2.78-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.95v2.33C2.43 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.21c-.19-.54-.3-1.12-.3-1.71s.11-1.17.3-1.71V4.46H.95C.34 5.68 0 7.07 0 8.5s.34 2.82.95 4.04l3.02-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.43 2.02.95 4.46l3.02 2.33c.71-2.13 2.69-3.71 5.03-3.71z"/></svg>
+                Iniciar Sesión con Google
+            </button>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL DE RECARGAS -->
+        <div id="mainContent" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span id="userEmailText" style="color: #38bdf8; font-size: 0.85rem;"></span>
+                <button onclick="cerrarSesion()" style="background: #ef4444; color: #fff; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Salir</button>
+            </div>
+
+            <div class="info-box">
+                <p style="margin: 0 0 5px 0; color: #94a3b8; font-size: 0.9rem;">Tus Puntos Actuales:</p>
+                <span id="puntosDisponibles" style="font-size: 1.5rem; color: #fbbf24; font-weight: bold;">0 pts</span>
+            </div>
+
+            <label style="color: #cbd5e1; font-size: 0.9rem;">1. Ingresa tu ID de Free Fire:</label>
+            <input type="text" id="idFreeFire" placeholder="Ej: 123456789">
+
+            <label style="color: #cbd5e1; font-size: 0.9rem;">2. Selecciona tu paquete con Bonus:</label>
+            <div class="pack-grid">
+                <div class="pack-card" onclick="seleccionarPaquete(300, 110, this)">
+                    <h3 style="margin: 5px 0; color: #38bdf8;">300 💎</h3>
+                    <p style="margin: 0; color: #fbbf24; font-size: 0.85rem;">+110 Bonus</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Total: 410 💎</p>
+                </div>
+                <div class="pack-card" onclick="seleccionarPaquete(600, 210, this)">
+                    <h3 style="margin: 5px 0; color: #38bdf8;">600 💎</h3>
+                    <p style="margin: 0; color: #fbbf24; font-size: 0.85rem;">+210 Bonus</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Total: 810 💎</p>
+                </div>
+                <div class="pack-card" onclick="seleccionarPaquete(1000, 340, this)">
+                    <h3 style="margin: 5px 0; color: #38bdf8;">1,000 💎</h3>
+                    <p style="margin: 0; color: #fbbf24; font-size: 0.85rem;">+340 Bonus</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Total: 1,340 💎</p>
+                </div>
+            </div>
+
+            <button class="btn" onclick="procesarRecargaBonus()">Completar Recarga y Sumar Puntos</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const miFirebaseConfig = {
+            apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
+            authDomain: "pc-recarga-77d05.firebaseapp.com",
+            projectId: "pc-recarga-77d05",
+            storageBucket: "pc-recarga-77d05.firebasestorage.app",
+            messagingSenderId: "381158278092",
+            appId: "1:381158278092:web:a4abad0bae8ad046e11369",
+            measurementId: "G-3G3GLFY81L"
+        };
+
+        const app = initializeApp(miFirebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        let usuarioActualEmail = "";
+        let puntosActuales = 0;
+        let paqueteSeleccionado = null; // Guardará { base: 300, bonus: 110 }
+
+        window.iniciarSesion = async function() {
+            try { await signInWithPopup(auth, provider); } catch (e) { alert("Error al iniciar sesión."); }
+        }
+
+        window.cerrarSesion = async function() { await signOut(auth); }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                usuarioActualEmail = user.email;
+                document.getElementById('userEmailText').textContent = user.email;
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                await sincronizarPuntos();
+            } else {
+                usuarioActualEmail = "";
+                document.getElementById('authScreen').style.display = 'block';
+                document.getElementById('mainContent').style.display = 'none';
+            }
+        });
+
+        async function sincronizarPuntos() {
+            try {
+                const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
+                const userSnap = await getDoc(userRef);
+                puntosActuales = userSnap.exists() ? (userSnap.data().puntos || 0) : 0;
+                document.getElementById('puntosDisponibles').textContent = `${puntosActuales} pts`;
+            } catch (e) { console.error(e); }
+        }
+
+        window.seleccionarPaquete = function(base, bonus, elementoCard) {
+            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+            elementoCard.classList.add('selected');
+            paqueteSeleccionado = { base, bonus, total: base + bonus };
+        }
+
+        window.procesarRecargaBonus = async function() {
+            const idFreeFire = document.getElementById('idFreeFire').value.trim();
+            if (!idFreeFire) {
+                alert("Por favor, ingresa tu ID de Free Fire.");
+                return;
+            }
+            if (!paqueteSeleccionado) {
+                alert("Por favor, selecciona un paquete de recarga con bonus.");
+                return;
+            }
+
+            if (confirm(`¿Confirmas la recarga de ${paqueteSeleccionado.base} 💎 + ${paqueteSeleccionado.bonus} 💎 de Bonus para el ID: ${idFreeFire}?`)) {
+                try {
+                    // Sumamos puntos de recompensa en la tienda (por ejemplo, 1 punto por cada diamante total o según tu regla)
+                    let puntosGanados = paqueteSeleccionado.total; 
+                    puntosActuales += puntosGanados;
+
+                    const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
+                    await setDoc(userRef, { puntos: puntosActuales }, { merge: true });
+                    document.getElementById('puntosDisponibles').textContent = `${puntosActuales} pts`;
+
+                    // Registrar en transacciones para que aparezca en el panel de administración
+                    await addDoc(collection(db, "transacciones"), {
+                        userEmail: usuarioActualEmail,
+                        title: `Recarga Bonus: ${paqueteSeleccionado.base} + ${paqueteSeleccionado.bonus} Diamantes`,
+                        amount: paqueteSeleccionado.base, // o el valor monetario correspondiente
+                        puntosGenerados: puntosGanados,
+                        idFreeFire: idFreeFire,
+                        date: new Date().toLocaleString(),
+                        timestamp: serverTimestamp()
+                    });
+
+                    alert(`¡Recarga exitosa! Se han acreditado ${paqueteSeleccionado.total} Diamantes a tu ID de Free Fire y se sumaron ${puntosGanados} puntos a tu cuenta.`);
+                    
+                    // Limpiar selección
+                    document.getElementById('idFreeFire').value = '';
+                    document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+                    paqueteSeleccionado = null;
+
+                } catch (e) {
+                    console.error(e);
+                    alert("Ocurrió un error al procesar la recarga.");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
