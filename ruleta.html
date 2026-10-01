@@ -7,7 +7,9 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
+            /* Fondo de pantalla con imagen y capa oscura semitransparente */
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920') no-repeat center center fixed;
+            background-size: cover;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -160,6 +162,16 @@
 </head>
 <body>
 
+    <!-- REPRODUCTOR DE MÚSICA DE FONDO Y BOTÓN FLOTANTE -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-epic.mp3" type="audio/mpeg">
+        Tu navegador no soporta audio.
+    </audio>
+
+    <button onclick="toggleMusica()" id="btnMusica" title="Activar/Silenciar música" style="position: fixed; bottom: 20px; right: 20px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        🔇
+    </button>
+
     <div class="main-wrapper">
         <!-- ZONA DE USUARIO -->
         <div class="container">
@@ -200,6 +212,36 @@
             <div id="listaCanjesDisponibles">Cargando premios...</div>
         </div>
     </div>
+
+    <script>
+        // Control de Música de Fondo
+        const music = document.getElementById('bgMusic');
+        music.volume = 0.3; // Volumen al 30%
+
+        function toggleMusica() {
+            const btn = document.getElementById('btnMusica');
+            if (music.paused) {
+                music.play().then(() => {
+                    btn.textContent = "🔊";
+                    btn.style.background = "#22c55e";
+                }).catch(e => console.log("Bloqueado por navegador", e));
+            } else {
+                music.pause();
+                btn.textContent = "🔇";
+                btn.style.background = "#ef4444";
+            }
+        }
+
+        // Intento de reproducción automática al primer clic del usuario en la página
+        document.body.addEventListener('click', function() {
+            if (music.paused && music.currentTime === 0) {
+                music.play().then(() => {
+                    document.getElementById('btnMusica').textContent = "🔊";
+                    document.getElementById('btnMusica').style.background = "#22c55e";
+                }).catch(() => {});
+            }
+        }, { once: true });
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -377,7 +419,6 @@
 
             if (confirm(`¿Canjear "${nombrePremio}" por ${costo} puntos?`)) {
                 try {
-                    // VALIDAR Y ACTUALIZAR LÍMITE GLOBAL
                     const premioRef = doc(db, "catalogo_canjes", docIdPremio);
                     const premioSnap = await getDoc(premioRef);
                     
