@@ -62,7 +62,6 @@
             max-width: 300px;
             width: 100%;
         }
-        /* Estilo tipo barra de progreso de Free Fire */
         .progress-container {
             background: #0f172a;
             border: 2px solid #334155;
@@ -83,7 +82,6 @@
             border-radius: 8px;
             padding: 10px;
             text-align: center;
-            position: relative;
         }
         .milestone-card.unlocked {
             border-color: #22c55e;
@@ -124,7 +122,7 @@
         
         <!-- PANTALLA DE ACCESO -->
         <div id="authScreen" style="text-align: center;">
-            <p style="color: #94a3b8;">Inicia sesión para ver tu progreso de recarga acumulada.</p>
+            <p style="color: #94a3b8;">Inicia sesión con tu cuenta para ver tu progreso de recarga acumulada.</p>
             <button class="btn btn-google" onclick="iniciarSesion()">
                 <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.71v2.26h2.94c1.72-1.58 2.78-3.9 2.78-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.95v2.33C2.43 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.21c-.19-.54-.3-1.12-.3-1.71s.11-1.17.3-1.71V4.46H.95C.34 5.68 0 7.07 0 8.5s.34 2.82.95 4.04l3.02-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.43 2.02.95 4.46l3.02 2.33c.71-2.13 2.69-3.71 5.03-3.71z"/></svg>
                 Iniciar Sesión con Google
@@ -140,29 +138,28 @@
 
             <div class="info-box">
                 <div>
-                    <p style="margin: 0 0 3px 0; color: #94a3b8; font-size: 0.85rem;">Diamantes Acumulados:</p>
+                    <p style="margin: 0 0 3px 0; color: #94a3b8; font-size: 0.85rem;">Tus Diamantes Acumulados:</p>
                     <span id="puntosDisponibles" style="font-size: 1.4rem; color: #fbbf24; font-weight: bold;">0 💎</span>
                 </div>
-                <button class="btn" style="width: auto; margin: 0; padding: 8px 15px; font-size: 0.85rem;" onclick="simularRecargaAcumular()">+ Simular Recarga</button>
             </div>
 
             <!-- BARRA DE PROGRESO / METAS ACUMULADAS ESTILO FREE FIRE -->
             <div class="progress-container">
                 <p style="margin: 0 0 10px 0; color: #38bdf8; font-weight: bold; font-size: 0.95rem;">Metas de Bonus Acumulado</p>
                 <div class="milestones-grid">
-                    <!-- Meta 1: 100 Diamantes -->
+                    <!-- Meta 100 -->
                     <div class="milestone-card" id="meta100">
                         <span style="font-size: 0.8rem; color: #94a3b8;">Meta 100 💎</span>
                         <h4 style="margin: 5px 0; color: #fff;">+100 Bonus</h4>
                         <span id="estadoMeta100" style="font-size: 0.75rem; color: #cbd5e1;">Bloqueado 🔒</span>
                     </div>
-                    <!-- Meta 2: 300 Diamantes -->
+                    <!-- Meta 300 -->
                     <div class="milestone-card" id="meta300">
                         <span style="font-size: 0.8rem; color: #94a3b8;">Meta 300 💎</span>
                         <h4 style="margin: 5px 0; color: #fff;">+100 Bonus</h4>
                         <span id="estadoMeta300" style="font-size: 0.75rem; color: #cbd5e1;">Bloqueado 🔒</span>
                     </div>
-                    <!-- Meta 3: 500 Diamantes -->
+                    <!-- Meta 500 -->
                     <div class="milestone-card" id="meta500">
                         <span style="font-size: 0.8rem; color: #94a3b8;">Meta 500 💎</span>
                         <h4 style="margin: 5px 0; color: #fff;">+100 Bonus</h4>
@@ -287,18 +284,6 @@
             }
 
             document.getElementById('btnReclamar').disabled = !puedeReclamarAlgo;
-        }
-
-        // Función de prueba para simular que vas acumulando recargas en la tienda
-        window.simularRecargaAcumular = async function() {
-            let cuantoSumar = prompt("¿Cuántos diamantes de recarga deseas simular acumular? (Ej: 100)", "100");
-            if (cuantoSumar && !isNaN(cuantoSumar)) {
-                datosUsuario.puntos += parseInt(cuantoSumar);
-                const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
-                await setDoc(userRef, { puntos: datosUsuario.puntos, reclamados: datosUsuario.reclamados }, { merge: true });
-                actualizarInterfazVisual();
-                alert(`¡Se han acumulado ${cuantoSumar} diamantes a tu progreso!`);
-            }
         }
 
         window.reclamarBonusAcumulado = async function() {
