@@ -3,407 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC Recarga - Tienda de Videojuegos y Streaming</title>
-    <!-- Google Fonts y FontAwesome -->
+    <title>PC Recarga</title>
+    <!-- Tus estilos y librerías habituales -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
+        /* Estilos base limpios y adaptados a tu estructura original */
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
+            --primary: #2563eb;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
             --text-muted: #94a3b8;
-            --accent-color: #38bdf8;
-            --accent-hover: #0ea5e9;
-            --border-color: #334155;
+            --border: #334155;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: var(--card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+        .admin-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .admin-link:hover { color: var(--text); }
+        
+        .filters { display: flex; justify-content: center; gap: 10px; padding: 1.5rem; flex-wrap: wrap; }
+        .filter-btn { background: var(--card); color: var(--text-muted); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1rem 2rem 1rem; flex: 1; width: 100%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
+        
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; }
+        .card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .card p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .btn-comprar { background: var(--primary); color: #fff; border: none; padding: 8px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn-comprar:hover { opacity: 0.9; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        /* Modal Original */
+        #modalCompra { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+        .modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 450px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: var(--text-muted); }
+        .form-group select, .form-group input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: #0f172a; color: var(--text); font-size: 0.85rem; }
 
-        /* HEADER Y NAVEGACIÓN */
-        header {
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .resumen-pago { background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-bottom: 1rem; font-size: 0.8rem; }
+        .resumen-pago div { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .resumen-pago .total { font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 4px; margin-top: 4px; }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* FILTROS DE CATEGORÍAS */
-        .filters-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 2rem 1rem 1rem 1rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: var(--card-bg);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--accent-color);
-            color: #0f172a;
-            border-color: var(--accent-color);
-        }
-
-        /* GRILLA DE PRODUCTOS */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem 3rem 2rem;
-            flex: 1;
-            width: 100%;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.15);
-        }
-
-        .card-img {
-            height: 140px;
-            background: #334155;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--accent-color);
-        }
-
-        .card-body {
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            justify-content: space-between;
-        }
-
-        .card-body h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-body p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 1.25rem;
-        }
-
-        .btn-comprar {
-            background: var(--accent-color);
-            color: #0f172a;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        .btn-comprar:hover {
-            background: var(--accent-hover);
-        }
-
-        /* MODAL DE COMPRA / RECARGA */
-        #modalCompra {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 480px;
-            padding: 2rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-header h2 {
-            font-size: 1.3rem;
-            color: var(--accent-color);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.25rem;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-muted);
-        }
-
-        .form-group select, .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: #0f172a;
-            color: var(--text-color);
-            font-size: 0.9rem;
-        }
-
-        .resumen-pago {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 1.25rem;
-            font-size: 0.85rem;
-        }
-
-        .resumen-pago div {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .resumen-pago .total {
-            font-weight: 700;
-            color: var(--accent-color);
-            font-size: 0.95rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 5px;
-            margin-top: 5px;
-        }
-
-        footer {
-            background: var(--card-bg);
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
+        footer { background: var(--card); border-top: 1px solid var(--border); text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-    <!-- CABECERA -->
     <header>
-        <div class="logo">
-            <i class="fa-solid fa-gamepad"></i> PC Recarga
-        </div>
-        <div>
-            <a href="admin.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;"><i class="fa-solid fa-lock"></i> Admin</a>
-        </div>
+        <div class="logo">PC Recarga</div>
+        <a href="admin.html" class="admin-link"><i class="fa-solid fa-lock"></i> Admin</a>
     </header>
 
-    <!-- FILTROS -->
-    <div class="filters-container">
+    <div class="filters">
         <button class="filter-btn active" data-filter="all">Todos</button>
         <button class="filter-btn" data-filter="juegos">Videojuegos</button>
         <button class="filter-btn" data-filter="streaming">Streaming</button>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL / PRODUCTOS -->
     <div class="container">
         <div class="grid">
             
             <!-- Free Fire -->
             <div class="card" data-category="juegos">
-                <div class="card-img"><i class="fa-solid fa-fire"></i></div>
-                <div class="card-body">
-                    <div>
-                        <h3>Free Fire</h3>
-                        <p>Recarga diamantes directos a tu ID de jugador de forma segura.</p>
-                    </div>
-                    <button class="btn-comprar" onclick="abrirModal('Free Fire', [{nombre: '100 Diamantes', precio: 1.00}, {nombre: '310 Diamantes', precio: 3.10}, {nombre: '520 Diamantes', precio: 5.00}, {nombre: '1060 Diamantes', precio: 10.00}])">Recargar</button>
+                <div>
+                    <h3>Free Fire</h3>
+                    <p>Recarga diamantes directos a tu ID.</p>
                 </div>
+                <button class="btn-comprar" onclick="abrirModal('Free Fire', [{nombre: '100 Diamantes', precio: 1.00}, {nombre: '310 Diamantes', precio: 3.10}, {nombre: '520 Diamantes', precio: 5.00}])">Recargar</button>
             </div>
 
             <!-- Roblox -->
             <div class="card" data-category="juegos">
-                <div class="card-img"><i class="fa-solid fa-cube"></i></div>
-                <div class="card-body">
-                    <div>
-                        <h3>Roblox</h3>
-                        <p>Obtén Robux y tarjetas de regalo digitales al instante.</p>
-                    </div>
-                    <button class="btn-comprar" onclick="abrirModal('Roblox', [{nombre: '400 Robux', precio: 5.00}, {nombre: '800 Robux', precio: 10.00}, {nombre: '1700 Robux', precio: 20.00}])">Recargar</button>
+                <div>
+                    <h3>Roblox</h3>
+                    <p>Obtén Robux de forma segura.</p>
                 </div>
+                <button class="btn-comprar" onclick="abrirModal('Roblox', [{nombre: '400 Robux', precio: 5.00}, {nombre: '800 Robux', precio: 10.00}])">Recargar</button>
             </div>
 
             <!-- Mobile Legends -->
             <div class="card" data-category="juegos">
-                <div class="card-img"><i class="fa-solid fa-shield-halved"></i></div>
-                <div class="card-body">
-                    <div>
-                        <h3>Mobile Legends</h3>
-                        <p>Diamantes con ID y Zona de forma rápida y segura.</p>
-                    </div>
-                    <button class="btn-comprar" onclick="abrirModal('Mobile Legends', [{nombre: '112 Diamantes', precio: 2.00}, {nombre: '224 Diamantes', precio: 4.00}, {nombre: '565 Diamantes', precio: 10.00}])">Recargar</button>
+                <div>
+                    <h3>Mobile Legends</h3>
+                    <p>Diamantes con ID y Zona.</p>
                 </div>
-            </div>
-
-            <!-- Call of Duty -->
-            <div class="card" data-category="juegos">
-                <div class="card-img"><i class="fa-solid fa-crosshairs"></i></div>
-                <div class="card-body">
-                    <div>
-                        <h3>Call of Duty Mobile</h3>
-                        <p>Compra CP para desbloquear pases de batalla y skins exclusivas.</p>
-                    </div>
-                    <button class="btn-comprar" onclick="abrirModal('Call of Duty', [{nombre: '80 CP', precio: 1.00}, {nombre: '420 CP', precio: 5.00}, {nombre: '880 CP', precio: 10.00}])">Recargar</button>
-                </div>
+                <button class="btn-comprar" onclick="abrirModal('Mobile Legends', [{nombre: '112 Diamantes', precio: 2.00}, {nombre: '224 Diamantes', precio: 4.00}])">Recargar</button>
             </div>
 
             <!-- Netflix -->
             <div class="card" data-category="streaming">
-                <div class="card-img"><i class="fa-solid fa-tv"></i></div>
-                <div class="card-body">
-                    <div>
-                        <h3>Netflix</h3>
-                        <p>Cuentas de streaming de alta calidad para tus dispositivos.</p>
-                    </div>
-                    <button class="btn-comprar" onclick="abrirModal('Netflix', [{nombre: '1 Pantalla (1 Mes)', precio: 4.00}, {nombre: 'Cuenta Completa (1 Mes)', precio: 12.00}])">Comprar</button>
+                <div>
+                    <h3>Netflix</h3>
+                    <p>Cuentas de streaming digitales.</p>
                 </div>
-            </div>
-
-            <!-- Spotify -->
-            <div class="card" data-category="streaming">
-                <div class="card-img"><i class="fa-solid fa-music"></i></div>
-                <div class="card-body">
-                    <div>
-                        <h3>Spotify Premium</h3>
-                        <p>Disfruta de música sin interrupciones ni anuncios.</p>
-                    </div>
-                    <button class="btn-comprar" onclick="abrirModal('Spotify', [{nombre: 'Individual (1 Mes)', precio: 3.50}, {nombre: 'Familiar (1 Mes)', precio: 6.00}])">Comprar</button>
-                </div>
+                <button class="btn-comprar" onclick="abrirModal('Netflix', [{nombre: '1 Pantalla (1 Mes)', precio: 4.00}])">Comprar</button>
             </div>
 
         </div>
     </div>
 
-    <!-- MODAL DE COMPRA / FORMULARIO -->
+    <!-- Modal -->
     <div id="modalCompra">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitulo">Recargar Servicio</h2>
+                <h3 id="modalTitulo" style="font-size: 1rem; color: var(--primary);">Recargar</h3>
                 <button class="close-btn" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form id="formRecarga">
                 <div class="form-group">
-                    <label for="opcionSelect">Seleccione Paquete:</label>
+                    <label for="opcionSelect">Paquete:</label>
                     <select id="opcionSelect" onchange="actualizarResumen()"></select>
                 </div>
 
-                <!-- CONTENEDOR DINÁMICO PARA IDS / CORREOS -->
+                <!-- Contenedor dinámico donde se inyectan los inputs de ID / Correo y Verificación -->
                 <div id="camposIdContainer" class="form-group"></div>
 
                 <div class="form-group">
                     <label for="metodoPagoSelect">Método de Pago:</label>
                     <select id="metodoPagoSelect" onchange="manejarMetodoPago()" required>
-                        <option value="">Seleccione método de pago...</option>
+                        <option value="">Seleccione...</option>
                         <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
                         <option value="Transferencia Bancaria" disabled>Transferencia Bancaria (Deshabilitado)</option>
                         <option value="Persona Física" disabled>Persona Física (Deshabilitado)</option>
                     </select>
                 </div>
 
-                <!-- CONTENEDOR DE CAMPOS DE TARJETA -->
                 <div id="camposTarjetaContainer"></div>
 
-                <!-- RESUMEN DE COMPRA -->
                 <div class="resumen-pago">
                     <div><span>Subtotal:</span> <span id="lblPrecio">$0.00</span></div>
-                    <div><span>Comisión de Servicio:</span> <span id="lblComision">$0.00</span></div>
-                    <div class="total"><span>Total a Pagar:</span> <span id="lblTotal">$0.00</span></div>
+                    <div><span>Comisión:</span> <span id="lblComision">$0.00</span></div>
+                    <div class="total"><span>Total:</span> <span id="lblTotal">$0.00</span></div>
                 </div>
 
-                <button type="submit" id="btnSubmitForm" class="btn-comprar" style="width: 100%; padding: 12px; font-size: 1rem;">Proceder al Pago</button>
+                <button type="submit" id="btnSubmitForm" class="btn-comprar">Proceder al Pago</button>
             </form>
         </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
     <footer>
-        <p>&copy; 2026 PC Recarga - Todos los derechos reservados. Conectado con Banco Pedro Carbo.</p>
+        <p>&copy; 2026 PC Recarga</p>
     </footer>
 
-    <!-- SCRIPT PRINCIPAL QUE CONTIENE LA LÓGICA Y FIREBASE -->
+    <!-- Script conectado -->
     <script type="module" src="script_6.js"></script>
+    <script>
+        // Script simple local para los filtros de las tarjetas
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.getAttribute('data-filter');
+                document.querySelectorAll('.card').forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
