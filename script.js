@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userId = document.getElementById('userIdInput').value;
                 const zoneId = document.getElementById('zoneIdInput').value;
                 detalleDestino = `ID: ${userId} (Zona: ${zoneId})`;
-            } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+'].includes(producto)) {
+            } else if (['Netflix', 'Spotify', 'Disney+'].includes(producto)) {
                 const phone = document.getElementById('phoneInput').value;
                 detalleDestino = `Correo: ${correoCliente} | Teléfono: ${phone}`;
             } else {
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let puntosGanados = 0;
                     const matches = paqueteNombre.match(/[\d,]+/g);
                     
-                    if (matches && (paqueteNombre.toLowerCase().includes('diamante') || paqueteNombre.toLowerCase().includes('uc') || paqueteNombre.toLowerCase().includes('token'))) {
+                    if (matches && (paqueteNombre.toLowerCase().includes('diamante') || paqueteNombre.toLowerCase().includes('uc') || paqueteNombre.toLowerCase().includes('token') || paqueteNombre.toLowerCase().includes('robux'))) {
                         puntosGanados = parseInt(matches[0].replace(/,/g, ''), 10) || 0;
                     } else {
                         puntosGanados = Math.round(precio * 10);
@@ -238,6 +238,23 @@ document.addEventListener('DOMContentLoaded', () => {
                                     await setDoc(doc(dbTienda, "jugadores_verificados", idVal), {
                                         idFreeFire: idVal,
                                         nombreJugador: nombreVal,
+                                        actualizadoEn: new Date().toLocaleString()
+                                    }, { merge: true });
+                                }
+                            }
+                        }
+
+                        // 9. SI ES ROBLOX, GUARDAR O ACTUALIZAR AUTOMÁTICAMENTE EL USUARIO VERIFICADO
+                        if (producto === 'Roblox') {
+                            const userInputRoblox = document.getElementById('userInput');
+                            const hiddenNombreRoblox = document.getElementById('nombreJugadorInput');
+                            if (userInputRoblox) {
+                                const idRobloxVal = userInputRoblox.value.trim();
+                                const nombreRobloxVal = hiddenNombreRoblox ? hiddenNombreRoblox.value : "Usuario Roblox Nuevo";
+                                if (idRobloxVal) {
+                                    await setDoc(doc(dbTienda, "jugadores_roblox_verificados", idRobloxVal), {
+                                        idRoblox: idRobloxVal,
+                                        nombreUsuario: nombreRobloxVal,
                                         actualizadoEn: new Date().toLocaleString()
                                     }, { merge: true });
                                 }
@@ -301,7 +318,7 @@ window.abrirModal = function(nombreProducto, opciones) {
     camposTarjetaContainer.innerHTML = "";
     camposIdContainer.innerHTML = '';
     
-    // FORMULARIO DINÁMICO CON BOTÓN DE VERIFICACIÓN EXCLUSIVO PARA FREE FIRE
+    // FORMULARIO DINÁMICO CON BOTÓN DE VERIFICACIÓN PARA FREE FIRE Y ROBLOX
     if (nombreProducto === 'Free Fire') {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
@@ -311,6 +328,20 @@ window.abrirModal = function(nombreProducto, opciones) {
             <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                 <input type="text" id="userInput" placeholder="Ej: 123456789" required style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #f8fafc; color: #000;">
                 <button type="button" onclick="verificarIdFreeFire()" style="background: #38bdf8; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Verificar</button>
+            </div>
+            
+            <!-- Visor de estado o apodo -->
+            <div id="resultadoNombreFF" style="margin-bottom: 12px; font-size: 0.9rem; font-weight: bold; min-height: 20px;"></div>
+        `;
+    } else if (nombreProducto === 'Roblox') {
+        camposIdContainer.innerHTML = `
+            <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
+            <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
+
+            <label for="userInput">ID de Usuario de Roblox:</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <input type="text" id="userInput" placeholder="Ej: 987654321" required style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; background: #f8fafc; color: #000;">
+                <button type="button" onclick="verificarIdRoblox()" style="background: #38bdf8; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Verificar</button>
             </div>
             
             <!-- Visor de estado o apodo -->
@@ -327,7 +358,7 @@ window.abrirModal = function(nombreProducto, opciones) {
             <label for="zoneIdInput">ID de Zona (4 dígitos):</label>
             <input type="text" id="zoneIdInput" placeholder="Ej: 1234" maxlength="4" pattern="\\d{4}" title="Debe ser exactamente de 4 dígitos" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
         `;
-    } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+'].includes(nombreProducto)) {
+    } else if (['Netflix', 'Spotify', 'Disney+'].includes(nombreProducto)) {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos y envío):</label>
             <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
@@ -388,6 +419,49 @@ window.verificarIdFreeFire = async function() {
     } catch (e) {
         console.error("Error al verificar ID:", e);
         contenedorNombre.textContent = "ℹ️ Después de la compra se verificará el ID.";
+        contenedorNombre.style.color = "#fbbf24";
+    }
+}
+
+// FUNCIÓN DE VERIFICACIÓN DE ID PARA ROBLOX
+window.verificarIdRoblox = async function() {
+    const idInput = document.getElementById('userInput').value.trim();
+    const contenedorNombre = document.getElementById('resultadoNombreFF');
+
+    if (!idInput) {
+        contenedorNombre.textContent = "⚠ Por favor ingresa un ID de Roblox primero.";
+        contenedorNombre.style.color = "#fbbf24";
+        return;
+    }
+
+    contenedorNombre.textContent = "🔍 Buscando ID en Roblox...";
+    contenedorNombre.style.color = "#94a3b8";
+
+    try {
+        const docRef = doc(dbTienda, "jugadores_roblox_verificados", idInput);
+        const docSnap = await getDoc(docRef);
+
+        let hiddenNombre = document.getElementById('nombreJugadorInput');
+        if (!hiddenNombre) {
+            hiddenNombre = document.createElement('input');
+            hiddenNombre.type = 'hidden';
+            hiddenNombre.id = 'nombreJugadorInput';
+            document.getElementById('formRecarga').appendChild(hiddenNombre);
+        }
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            contenedorNombre.innerHTML = `✅ Usuario: <span style="color: #38bdf8;">${data.nombreUsuario}</span>`;
+            contenedorNombre.style.color = "#22c55e";
+            hiddenNombre.value = data.nombreUsuario;
+        } else {
+            contenedorNombre.textContent = "ℹ️ El usuario se registrará tras la primera compra.";
+            contenedorNombre.style.color = "#fbbf24";
+            hiddenNombre.value = "Usuario Roblox Nuevo";
+        }
+    } catch (e) {
+        console.error("Error al verificar ID de Roblox:", e);
+        contenedorNombre.textContent = "ℹ️️ Verificación disponible tras la compra.";
         contenedorNombre.style.color = "#fbbf24";
     }
 }
