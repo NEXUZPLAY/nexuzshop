@@ -3,216 +3,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Nexus Gaming</title>
+    <title>Panel de Administración - PC Recarga</title>
+    <!-- Estilos de Google Fonts y FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: #ffffff;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-color: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --danger-color: #ef4444;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --border-color: #334155;
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            border: 2px solid #334155;
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
         }
-        h1, h2 {
-            color: #38bdf8;
-            text-align: center;
-        }
-        .btn {
-            background: #38bdf8;
-            color: #000;
-            font-weight: bold;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
+
+        /* LOGIN SCREEN */
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
-        .btn:hover {
-            background: #0ea5e9;
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
+
+        .login-card h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .login-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+        }
+
         .btn-google {
             background: #ffffff;
             color: #1e293b;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin: 20px auto;
-            max-width: 300px;
+            font-size: 0.95rem;
+            transition: background 0.2s;
         }
-        .nav-tabs {
+
+        .btn-google:hover {
+            background: #f1f5f9;
+        }
+
+        /* SIDEBAR */
+        sidebar {
+            width: 260px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
             display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            border-bottom: 2px solid #334155;
-            padding-bottom: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
         }
-        .tab-btn {
-            background: #334155;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .sidebar-menu li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
             cursor: pointer;
         }
-        .tab-btn.active {
-            background: #38bdf8;
-            color: #000;
-            font-weight: bold;
+
+        .sidebar-menu li.active a, .sidebar-menu li a:hover {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-color);
         }
-        .section-panel {
-            display: none;
+
+        .admin-user-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            word-break: break-all;
         }
-        .section-panel.active {
-            display: block;
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: none; /* Se muestra tras login */
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: #0f172a;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #334155;
-            font-size: 0.9rem;
-        }
-        th {
-            background: #1e293b;
-            color: #38bdf8;
-        }
-        input, select {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #475569;
-            background: #0f172a;
-            color: #fff;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-        .card-box {
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            margin-bottom: 10px;
+
+        .header-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-section h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* TABLES */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.4);
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.completado {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success-color);
+        }
+
+        .badge.pendiente {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color);
+        }
+
+        .btn-action {
+            background: var(--accent-color);
+            color: #0f172a;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background: var(--accent-hover);
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🛡️ Panel de Control Administrador</h1>
-        
-        <!-- PANTALLA DE ACCESO RESTRINGIDO -->
-        <div id="authScreen" style="text-align: center; padding: 40px 0;">
-            <p style="color: #94a3b8;">Debes iniciar sesión con la cuenta de administrador autorizada.</p>
-            <button class="btn btn-google" onclick="iniciarSesionAdmin()">
-                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.71v2.26h2.94c1.72-1.58 2.78-3.9 2.78-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.95v2.33C2.43 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.21c-.19-.54-.3-1.12-.3-1.71s.11-1.17.3-1.71V4.46H.95C.34 5.68 0 7.07 0 8.5s.34 2.82.95 4.04l3.02-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.43 2.02.95 4.46l3.02 2.33c.71-2.13 2.69-3.71 5.03-3.71z"/></svg>
-                Acceder como Administrador
+    <!-- PANTALLA DE ACCESO EXCLUSIVO -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2>PC RECARGA</h2>
+            <p>Acceso restringido para administradores autorizados.</p>
+            <button class="btn-google" onclick="iniciarSesionAdmin()">
+                <i class="fa-brands fa-google"></i> Iniciar Sesión con Google
             </button>
         </div>
+    </div>
 
-        <!-- CONTENIDO DE ADMIN (OCULTO HASTA VALIDAR) -->
-        <div id="adminContent" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span id="adminEmailText" style="color: #38bdf8; font-size: 0.9rem;"></span>
-                <button onclick="cerrarSesionAdmin()" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Cerrar Sesión</button>
+    <!-- PANEL LATERAL -->
+    <sidebar id="sidebarNav" class="hidden">
+        <div>
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-gamepad"></i> PC Recarga
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" onclick="cambiarSeccion('pedidos', this)"><a><i class="fa-solid fa-cart-shopping"></i> Pedidos</a></li>
+                <li onclick="cambiarSeccion('jugadoresFF', this)"><a><i class="fa-solid fa-user-shield"></i> Verificados Free Fire</a></li>
+                <li onclick="cambiarSeccion('jugadoresRoblox', this)"><a><i class="fa-solid fa-cube"></i> Verificados Roblox</a></li>
+            </ul>
+        </div>
+        <div class="admin-user-info">
+            Admin: <span id="adminEmailText">Cargando...</span>
+            <br><a href="#" onclick="cerrarSesion()" style="color: var(--danger-color); text-decoration: none; font-size: 0.75rem; margin-top: 5px; display: inline-block;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</a>
+        </div>
+    </sidebar>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="mainPanel" class="main-content">
+        
+        <!-- SECCIÓN: PEDIDOS -->
+        <section id="seccion-pedidos">
+            <div class="header-section">
+                <h1>Panel General de Pedidos</h1>
             </div>
 
-            <!-- PESTAÑAS DE NAVEGACIÓN -->
-            <div class="nav-tabs">
-                <button class="tab-btn active" onclick="cambiarTab('transacciones')">📦 Transacciones</button>
-                <button class="tab-btn" onclick="cambiarTab('catalogo')">🎁 Crear Premios</button>
-                <button class="tab-btn" onclick="cambiarTab('solicitudes')">📋 Solicitudes</button>
-                <button class="tab-btn" onclick="cambiarTab('jugadores')">🎮 Jugadores FF</button>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Ventas Totales Registradas</h3>
+                    <div class="value" id="statVentas">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total de Transacciones</h3>
+                    <div class="value" id="statPedidos">0</div>
+                </div>
             </div>
 
-            <!-- SECCIÓN 1: TRANSACCIONES -->
-            <div id="tab-transacciones" class="section-panel active">
-                <h2>Historial de Compras y Recargas</h2>
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Historial de Transacciones y Recargas</h2>
+                </div>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
                             <tr>
                                 <th>Fecha</th>
-                                <th>Cliente (Correo)</th>
-                                <th>Producto</th>
+                                <th>Cliente / Correo</th>
+                                <th>Producto / Paquete</th>
+                                <th>Destino (ID / Datos)</th>
                                 <th>Monto</th>
-                                <th>Puntos Gen.</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="tablaTransaccionesBody">
-                            <tr><td colspan="5" style="text-align: center;">Cargando transacciones...</td></tr>
+                        <tbody id="tablaPedidosBody">
+                            <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Cargando pedidos...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+        </section>
 
-            <!-- SECCIÓN 2: CREAR PREMIOS PARA CANJE -->
-            <div id="tab-catalogo" class="section-panel">
-                <h2>Gestionar Catálogo de Canjes</h2>
-                <div style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
-                    <h3>Agregar Nuevo Premio</h3>
-                    <input type="text" id="nombrePremio" placeholder="Nombre del Premio (Ej: 110 Diamantes Free Fire)">
-                    <input type="number" id="costoPuntos" placeholder="Costo exacto en Puntos (Ej: 500)">
-                    <input type="number" id="limiteCanjesGlobal" placeholder="Límite global de canjes (Dejar en blanco para ilimitado)">
-                    <button class="btn" onclick="agregarPremioCatalogo()">Guardar en el Catálogo</button>
+        <!-- SECCIÓN: JUGADORES FREE FIRE -->
+        <section id="seccion-jugadoresFF" class="hidden">
+            <div class="header-section">
+                <h1>Jugadores Verificados de Free Fire</h1>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Directorio de IDs Guardados</h2>
                 </div>
-
-                <h3>Premios Activos Actualmente:</h3>
-                <div id="listaPremiosAdmin">Cargando premios...</div>
-            </div>
-
-            <!-- SECCIÓN 3: SOLICITUDES DE CANJE DE LOS USUARIOS -->
-            <div id="tab-solicitudes" class="section-panel">
-                <h2>Solicitudes de Canje Pendientes</h2>
-                <p style="color: #94a3b8; font-size: 0.85rem;">Aquí aparecen los premios que los usuarios han solicitado usando sus puntos.</p>
-                <div id="listaSolicitudesCanje">Cargando solicitudes...</div>
-            </div>
-
-            <!-- SECCIÓN 4: JUGADORES VERIFICADOS (FREE FIRE) -->
-            <div id="tab-jugadores" class="section-panel">
-                <h2>Directorio de IDs de Free Fire Verificados</h2>
-                <p style="color: #94a3b8; font-size: 0.85rem;">Estos son los nombres vinculados automáticamente o añadidos manualmente que aparecerán cuando un usuario ponga su ID estilo Pagostore[cite: 9].</p>
-                
-                <div style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
-                    <h3>Vincular / Agregar Nuevo Jugador</h3>
-                    <input type="text" id="adminIdFF" placeholder="ID de Free Fire (Ej: 123456789)">
-                    <input type="text" id="adminNombreFF" placeholder="Nombre del Jugador en Free Fire (Ej: 『NEXUS』Gamer)">
-                    <button class="btn" onclick="guardarJugadorAdmin()">Guardar / Actualizar Jugador</button>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Free Fire</th>
+                                <th>Nombre / Apodo</th>
+                                <th>Última Actualización</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaFFBody">
+                            <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Cargando directorio...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <h3>Lista de Jugadores Registrados:</h3>
-                <div id="listaJugadoresAdmin">Cargando jugadores...</div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- SCRIPT DE FIREBASE Y FUNCIONES ADMIN -->
+        <!-- SECCIÓN: JUGADORES ROBLOX -->
+        <section id="seccion-jugadoresRoblox" class="hidden">
+            <div class="header-section">
+                <h1>Usuarios Verificados de Roblox</h1>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Directorio de IDs de Roblox</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Roblox</th>
+                                <th>Nombre de Usuario</th>
+                                <th>Última Actualización</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaRobloxBody">
+                            <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Cargando directorio...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SCRIPT DE FIREBASE Y LÓGICA DEL PANEL -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const miFirebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
             authDomain: "pc-recarga-77d05.firebaseapp.com",
             projectId: "pc-recarga-77d05",
@@ -222,242 +430,175 @@
             measurementId: "G-3G3GLFY81L"
         };
 
-        const app = initializeApp(miFirebaseConfig);
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
-        const EMAIL_ADMIN = "jeremymatiasdelrosario@gmail.com";
+
+        const CORREO_ADMIN_AUTORIZADO = "jeremymatiasdelrosario@gmail.com";
 
         window.iniciarSesionAdmin = async function() {
             try {
                 const result = await signInWithPopup(auth, provider);
-                if (result.user.email !== EMAIL_ADMIN) {
-                    alert("Acceso denegado. Esta cuenta no tiene permisos de administrador.");
+                const user = result.user;
+                if (user.email !== CORREO_ADMIN_AUTORIZADO) {
+                    alert("Acceso denegado. Esta cuenta no tiene permisos de administración.");
                     await signOut(auth);
                 }
             } catch (error) {
-                console.error(error);
-                alert("Error al iniciar sesión.");
+                console.error("Error en autenticación:", error);
+                alert("Error al iniciar sesión con Google.");
             }
         }
 
-        window.cerrarSesionAdmin = async function() {
+        window.cerrarSesion = async function() {
             await signOut(auth);
+            location.reload();
         }
 
         onAuthStateChanged(auth, (user) => {
-            if (user && user.email === EMAIL_ADMIN) {
-                document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
-                document.getElementById('adminEmailText').textContent = `Admin conectado: ${user.email}`;
+            if (user && user.email === CORREO_ADMIN_AUTORIZADO) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('sidebarNav').classList.remove('hidden');
+                document.getElementById('mainPanel').style.display = 'block';
+                document.getElementById('adminEmailText').textContent = user.email;
                 
-                cargarTransacciones();
-                cargarPremiosAdmin();
-                cargarSolicitudesCanje();
-                cargarJugadoresAdmin();
+                // Cargar datos del panel
+                cargarPedidos();
+                cargarJugadoresFF();
+                cargarJugadoresRoblox();
             } else {
-                document.getElementById('authScreen').style.display = 'block';
-                document.getElementById('adminContent').style.display = 'none';
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('sidebarNav').classList.add('hidden');
+                document.getElementById('mainPanel').style.display = 'none';
             }
         });
 
-        // Cambiar entre pestañas
-        window.cambiarTab = function(tabName) {
-            document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // 1. CARGAR TRANSACCIONES
-        async function cargarTransacciones() {
-            const tbody = document.getElementById('tablaTransaccionesBody');
+        // CARGAR TRANSACCIONES Y PEDIDOS
+        async function cargarPedidos() {
+            const tbody = document.getElementById('tablaPedidosBody');
             try {
-                const snapshot = await getDocs(collection(db, "transacciones"));
-                tbody.innerHTML = "";
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay transacciones registradas.</td></tr>`;
+                const querySnapshot = await getDocs(collection(db, "transacciones"));
+                tbody.innerHTML = '';
+                
+                let totalVentas = 0;
+                let totalCount = 0;
+
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No hay transacciones registradas.</td></tr>`;
                     return;
                 }
-                snapshot.forEach((docSnap) => {
-                    const t = docSnap.data();
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${t.date || 'N/A'}</td>
-                            <td>${t.userEmail || 'N/A'}</td>
-                            <td><b>${t.title || 'Servicio'}</b></td>
-                            <td>$${(t.amount || 0).toFixed(2)}</td>
-                            <td style="color: #fbbf24; font-weight: bold;">+${t.puntosGenerados || 0} pts</td>
-                        </tr>
-                    `;
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
 
-        // 2. GESTIÓN DE CATÁLOGO DE CANJES CON LÍMITE GLOBAL
-        window.agregarPremioCatalogo = async function() {
-            const nombre = document.getElementById('nombrePremio').value.trim();
-            const costo = parseInt(document.getElementById('costoPuntos').value);
-            const limiteInput = document.getElementById('limiteCanjesGlobal').value.trim();
-
-            if (!nombre || isNaN(costo) || costo <= 0) {
-                alert("Por favor ingresa un nombre y un costo en puntos válido.");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "catalogo_canjes"), { 
-                    nombre, 
-                    costo,
-                    limiteGlobal: limiteInput !== "" ? parseInt(limiteInput) : null,
-                    canjesRealizados: 0 
-                });
-                alert("¡Premio agregado al catálogo correctamente!");
-                document.getElementById('nombrePremio').value = '';
-                document.getElementById('costoPuntos').value = '';
-                document.getElementById('limiteCanjesGlobal').value = '';
-                cargarPremiosAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Error al guardar el premio.");
-            }
-        }
-
-        async function cargarPremiosAdmin() {
-            const contenedor = document.getElementById('listaPremiosAdmin');
-            try {
-                const snapshot = await getDocs(collection(db, "catalogo_canjes"));
-                contenedor.innerHTML = "";
-                if (snapshot.empty) {
-                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay premios creados en el catálogo.</p>";
-                    return;
-                }
-                snapshot.forEach((docSnap) => {
+                querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    let textoLimite = data.limiteGlobal !== null && data.limiteGlobal !== undefined 
-                        ? `Límite: ${data.canjesRealizados || 0}/${data.limiteGlobal}` 
-                        : `Límite: Ilimitado`;
+                    const idDoc = docSnap.id;
+                    totalCount++;
+                    totalVentas += (data.amount || 0);
 
-                    contenedor.innerHTML += `
-                        <div class="card-box">
-                            <div>
-                                🎁 <b>${data.nombre}</b> — Costo: <span style="color: #fbbf24;">${data.costo} Puntos</span><br>
-                                <span style="font-size: 0.8rem; color: #38bdf8;">${textoLimite}</span>
-                            </div>
-                            <button onclick="eliminarPremio('${docSnap.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Eliminar</button>
-                        </div>
+                    const estado = data.estado || "Completado";
+                    const badgeClass = estado.toLowerCase() === 'completado' ? 'completado' : 'pendiente';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.date || 'N/A'}</td>
+                        <td>${data.userEmail || 'Sin correo'}</td>
+                        <td><strong>${data.title || 'Servicio'}</strong></td>
+                        <td>${data.detalleDestino || 'N/A'}</td>
+                        <td>$${(data.amount || 0).toFixed(2)}</td>
+                        <td><span class="badge ${badgeClass}">${estado}</span></td>
+                        <td>
+                            ${estado !== 'Completado' ? `<button class="btn-action" onclick="marcarCompletado('${idDoc}')">Completar</button>` : 'N/A'}
+                        </td>
                     `;
+                    tbody.appendChild(tr);
                 });
+
+                document.getElementById('statVentas').textContent = `$${totalVentas.toFixed(2)}`;
+                document.getElementById('statPedidos').textContent = totalCount;
+
             } catch (e) {
-                console.error(e);
+                console.error("Error cargando pedidos:", e);
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--danger-color);">Error al cargar los pedidos desde Firebase.</td></tr>`;
             }
         }
 
-        window.eliminarPremio = async function(id) {
-            if (confirm("¿Estás seguro de eliminar este premio?")) {
-                await deleteDoc(doc(db, "catalogo_canjes", id));
-                cargarPremiosAdmin();
-            }
-        }
-
-        // 3. SOLICITUDES DE CANJE HECHAS POR LOS USUARIOS
-        async function cargarSolicitudesCanje() {
-            const contenedor = document.getElementById('listaSolicitudesCanje');
+        window.marcarCompletado = async function(idDoc) {
             try {
-                const snapshot = await getDocs(collection(db, "solicitudes_canje"));
-                contenedor.innerHTML = "";
-                if (snapshot.empty) {
-                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay solicitudes de canje pendientes.</p>";
+                await updateDoc(doc(db, "transacciones", idDoc), { estado: "Completado" });
+                alert("Pedido actualizado a Completado exitosamente.");
+                cargarPedidos();
+            } catch (e) {
+                console.error("Error al actualizar estado:", e);
+                alert("No se pudo actualizar el estado.");
+            }
+        }
+
+        // CARGAR JUGADORES DE FREE FIRE
+        async function cargarJugadoresFF() {
+            const tbody = document.getElementById('tablaFFBody');
+            try {
+                const querySnapshot = await getDocs(collection(db, "jugadores_verificados"));
+                tbody.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No hay jugadores de Free Fire verificados todavía.</td></tr>`;
                     return;
                 }
-                snapshot.forEach((docSnap) => {
-                    const s = docSnap.data();
-                    contenedor.innerHTML += `
-                        <div class="card-box">
-                            <div>
-                                👤 <b>Cliente:</b> ${s.email}<br>
-                                🎁 <b>Premio Canjeado:</b> ${s.premio} (${s.costoPuntos} pts)<br>
-                                🎮 <b>ID Free Fire:</b> ${s.idFreeFire || 'N/A'}<br>
-                                📅 <b>Fecha:</b> ${s.fecha || 'N/A'}
-                            </div>
-                            <button onclick="completarCanje('${docSnap.id}')" style="background: #22c55e; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;">Marcar Entregado</button>
-                        </div>
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${data.idFreeFire || docSnap.id}</strong></td>
+                        <td>${data.nombreJugador || 'Sin nombre'}</td>
+                        <td>${data.actualizadoEn || 'N/A'}</td>
                     `;
+                    tbody.appendChild(tr);
                 });
             } catch (e) {
-                console.error(e);
+                console.error("Error cargando Free Fire:", e);
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger-color);">Error al cargar los datos.</td></tr>`;
             }
         }
 
-        window.completarCanje = async function(id) {
-            if (confirm("¿Marcar este canje como entregado y eliminarlo de la lista?")) {
-                await deleteDoc(doc(db, "solicitudes_canje", id));
-                cargarSolicitudesCanje();
-            }
-        }
-
-        // 4. GESTIÓN MANUAL DE JUGADORES DE FREE FIRE (ESTILO PAGOSTORE)
-        window.guardarJugadorAdmin = async function() {
-            const idFreeFire = document.getElementById('adminIdFF').value.trim();
-            const nombreJugador = document.getElementById('adminNombreFF').value.trim();
-
-            if (!idFreeFire || !nombreJugador) {
-                alert("Por favor ingresa tanto el ID de Free Fire como el Nombre del jugador.");
-                return;
-            }
-
+        // CARGAR USUARIOS DE ROBLOX
+        async function cargarJugadoresRoblox() {
+            const tbody = document.getElementById('tablaRobloxBody');
             try {
-                await setDoc(doc(db, "jugadores_verificados", idFreeFire), {
-                    idFreeFire: idFreeFire,
-                    nombreJugador: nombreJugador,
-                    actualizadoEn: new Date().toLocaleString()
-                });
+                const querySnapshot = await getDocs(collection(db, "jugadores_roblox_verificados"));
+                tbody.innerHTML = '';
 
-                alert("¡Jugador registrado/actualizado con éxito!");
-                document.getElementById('adminIdFF').value = '';
-                document.getElementById('adminNombreFF').value = '';
-                cargarJugadoresAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Error al guardar el jugador.");
-            }
-        }
-
-        async function cargarJugadoresAdmin() {
-            const contenedor = document.getElementById('listaJugadoresAdmin');
-            try {
-                const snapshot = await getDocs(collection(db, "jugadores_verificados"));
-                contenedor.innerHTML = "";
-                if (snapshot.empty) {
-                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay jugadores verificados en la base de datos.</p>";
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No hay usuarios de Roblox registrados todavía.</td></tr>`;
                     return;
                 }
-                snapshot.forEach((docSnap) => {
-                    const j = docSnap.data();
-                    contenedor.innerHTML += `
-                        <div class="card-box">
-                            <div>
-                                🎮 <b>ID:</b> ${j.idFreeFire}<br>
-                                👤 <b>Nombre de Jugador:</b> <span style="color: #38bdf8;">${j.nombreJugador}</span><br>
-                                <span style="font-size: 0.75rem; color: #94a3b8;">Última actualización: ${j.actualizadoEn || 'N/A'}</span>
-                            </div>
-                            <button onclick="eliminarJugador('${docSnap.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Eliminar</button>
-                        </div>
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${data.idRoblox || docSnap.id}</strong></td>
+                        <td>${data.nombreUsuario || 'Sin nombre'}</td>
+                        <td>${data.actualizadoEn || 'N/A'}</td>
                     `;
+                    tbody.appendChild(tr);
                 });
             } catch (e) {
-                console.error(e);
+                console.error("Error cargando Roblox:", e);
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger-color);">Error al cargar los datos.</td></tr>`;
             }
         }
 
-        window.eliminarJugador = async function(id) {
-            if (confirm("¿Estás seguro de eliminar este ID del registro de verificados?")) {
-                await deleteDoc(doc(db, "jugadores_verificados", id));
-                cargarJugadoresAdmin();
-            }
+        // NAVEGACIÓN ENTRE PESTAÑAS DEL PANEL
+        window.cambiarSeccion = function(seccionId, elementoLi) {
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            elementoLi.classList.add('active');
+
+            document.getElementById('seccion-pedidos').classList.add('hidden');
+            document.getElementById('seccion-jugadoresFF').classList.add('hidden');
+            document.getElementById('seccion-jugadoresRoblox').classList.add('hidden');
+
+            document.getElementById(`seccion-${seccionId}`).classList.remove('hidden');
         }
     </script>
 </body>
