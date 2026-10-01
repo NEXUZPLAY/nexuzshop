@@ -190,8 +190,11 @@
             <!-- SI NO TIENE ID GUARDADO, SE MUESTRA EL CAMPO PARA ESCRIBIRLO -->
             <div id="inputSection" style="display: none;">
                 <label style="color: #cbd5e1; font-size: 0.9rem;">Ingresa tu ID de Free Fire:</label>
-                <input type="text" id="idFreeFire" placeholder="Ej: 123456789">
-                <div id="dynamicPlayerBox" style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 10px;"></div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <input type="text" id="idFreeFire" placeholder="Ej: 7408649082" style="margin-bottom: 0;">
+                    <button type="button" onclick="buscarIdEnTienda()" style="background: #38bdf8; color: #000; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Verificar</button>
+                </div>
+                <div id="dynamicPlayerBox" style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;"></div>
             </div>
 
             <button class="btn" id="btnReclamar" onclick="reclamarBonusAcumulado()" disabled>Reclamar Bonus Disponibles</button>
@@ -221,6 +224,7 @@
         let usuarioActualEmail = "";
         let datosUsuario = { puntos: 0, idFreeFire: "", apodoFreeFire: "", reclamados: { meta100: false, meta300: false, meta500: false } };
         let apodoVerificadoDinamico = "";
+        let idVerificadoDinamico = "";
 
         window.iniciarSesion = async function() {
             try { await signInWithPopup(auth, provider); } catch (e) { alert("Error al iniciar sesión."); }
@@ -326,42 +330,44 @@
             }
         }
 
-        // Verificación en vivo si el usuario no tenía ID previo
-        document.getElementById('idFreeFire').addEventListener('blur', async function() {
-            const idFreeFire = this.value.trim();
+        // Función para buscar el ID exactamente en la misma colección "jugadores_verificados" de tu tienda
+        window.buscarIdEnTienda = async function() {
+            const idInput = document.getElementById('idFreeFire').value.trim();
             const dynamicBox = document.getElementById('dynamicPlayerBox');
 
-            if (idFreeFire.length >= 6) {
-                dynamicBox.textContent = "Verificando apodo...";
-                try {
-                    const response = await fetch(`https://api.freefireapi.com/id/${idFreeFire}`);
-                    const data = await response.json();
+            if (!idInput) {
+                dynamicBox.textContent = "Por favor ingresa un ID.";
+                return;
+            }
 
-                    if (data && data.nickname) {
-                        apodoVerificadoDinamico = data.nickname;
-                        dynamicBox.innerHTML = `Apodo encontrado: <strong style="color:#22c55e;">${apodoVerificadoDinamico}</strong>`;
-                    } else {
-                        apodoVerificadoDinamico = "Jugador (" + idFreeFire + ")";
-                        dynamicBox.innerHTML = `Apodo encontrado: <strong style="color:#22c55e;">${apodoVerificadoDinamico}</strong>`;
-                    }
-                } catch (e) {
-                    apodoVerificadoDinamico = "ID: " + idFreeFire;
-                    dynamicBox.innerHTML = `Apodo encontrado: <strong style="color:#22c55e;">${apodoVerificadoDinamico}</strong>`;
+            dynamicBox.textContent = "🔍 Buscando ID...";
+            try {
+                const docRef = doc(db, "jugadores_verificados", idInput);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    apodoVerificadoDinamico = data.nombreJugador;
+                    idVerificadoDinamico = idInput;
+                    dynamicBox.innerHTML = `✅ Apodo encontrado: <span style="color:#22c55e;">${apodoVerificadoDinamico}</span>`;
+                } else {
+                    apodoVerificadoDinamico = "";
+                    idVerificadoDinamico = "";
+                    dynamicBox.innerHTML = `❌ Este ID no ha realizado compras previas o no está verificado en la tienda. Realiza una compra primero.`;
                 }
                 actualizarInterfazVisual();
-            } else {
-                apodoVerificadoDinamico = "";
-                dynamicBox.textContent = "";
-                actualizarInterfazVisual();
+            } catch (e) {
+                console.error(e);
+                dynamicBox.textContent = "Error al buscar el ID en la base de datos.";
             }
-        });
+        }
 
         window.reclamarBonusAcumulado = async function() {
-            let idFinal = datosUsuario.idFreeFire || document.getElementById('idFreeFire').value.trim();
+            let idFinal = datosUsuario.idFreeFire || idVerificadoDinamico;
             let apodoFinal = datosUsuario.apodoFreeFire || apodoVerificadoDinamico;
 
             if (!idFinal || !apodoFinal) {
-                alert("Por favor, verifica tu ID de Free Fire antes de reclamar.");
+                alert("Por favor, verifica tu ID de Free Fire primero.");
                 return;
             }
 
@@ -390,7 +396,6 @@
                 try {
                     datosUsuario.reclamados = metasNuevas;
                     
-                    // Si el usuario ingresó el ID manualmente por primera vez, lo guardamos de una vez en su perfil
                     let datosAguardar = { reclamados: datosUsuario.reclamados };
                     if (!datosUsuario.idFreeFire) {
                         datosAguardar.idFreeFire = idFinal;
