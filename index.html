@@ -3,174 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC Recarga</title>
-    <!-- Tus estilos y librerías habituales -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Nexus Gaming & Stream - Centro de Recargas</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ESTILOS DE ADAPTACIÓN AUTOMÁTICA (PC Y ANDROID) -->
     <style>
-        /* Estilos base limpios y adaptados a tu estructura original */
-        :root {
-            --primary: #2563eb;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-        header { background: var(--card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.25rem; font-weight: 700; color: var(--text); }
-        .admin-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
-        .admin-link:hover { color: var(--text); }
-        
-        .filters { display: flex; justify-content: center; gap: 10px; padding: 1.5rem; flex-wrap: wrap; }
-        .filter-btn { background: var(--card); color: var(--text-muted); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 1rem 2rem 1rem; flex: 1; width: 100%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
-        
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; }
-        .card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-        .card p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
-        .btn-comprar { background: var(--primary); color: #fff; border: none; padding: 8px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; }
-        .btn-comprar:hover { opacity: 0.9; }
-
-        /* Modal Original */
-        #modalCompra { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
-        .modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 450px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
-        
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: var(--text-muted); }
-        .form-group select, .form-group input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: #0f172a; color: var(--text); font-size: 0.85rem; }
-
-        .resumen-pago { background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-bottom: 1rem; font-size: 0.8rem; }
-        .resumen-pago div { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .resumen-pago .total { font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 4px; margin-top: 4px; }
-
-        footer { background: var(--card); border-top: 1px solid var(--border); text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--text-muted); }
+        .catalog-section {
+            padding: 20px 15px;
+            box-sizing: border-box;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        @media (min-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">PC Recarga</div>
-        <a href="admin.html" class="admin-link"><i class="fa-solid fa-lock"></i> Admin</a>
+    <!-- Header / Barra de Navegación -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-gamepad"></i> <span>Nexus</span> Gaming & Stream
+        </div>
+        <nav>
+            <a href="#inicio" class="active">Inicio</a>
+            <a href="https://nexuzplay.github.io/nexuzshop/ruleta">RULETA</a>
+            <a href="#soporte">Soporte</a>
+        </nav>
     </header>
 
-    <div class="filters">
-        <button class="filter-btn active" data-filter="all">Todos</button>
-        <button class="filter-btn" data-filter="juegos">Videojuegos</button>
-        <button class="filter-btn" data-filter="streaming">Streaming</button>
-    </div>
+    <!-- Sección Hero / Banner Principal -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1>Tu Centro de Recargas y Streaming de Confianza</h1>
+            <p>Recarga tus juegos favoritos y obtén tus suscripciones de streaming al instante y de forma segura.</p>
+            <a href="#catalogo" class="btn-primary">Ver Catálogo</a>
+        </div>
+    </section>
 
-    <div class="container">
-        <div class="grid">
-            
+    <!-- Sección Catálogo -->
+    <section id="catalogo" class="catalog-section">
+        <h2>Nuestros Servicios</h2>
+        <p class="subtitle">Selecciona tu categoría favorita</p>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="games">Videojuegos</button>
+            <button class="filter-btn" data-filter="streaming">Streaming</button>
+        </div>
+
+        <!-- Cuadrícula de Productos -->
+        <div class="grid-container">
             <!-- Free Fire -->
-            <div class="card" data-category="juegos">
-                <div>
-                    <h3>Free Fire</h3>
-                    <p>Recarga diamantes directos a tu ID.</p>
+            <div class="card" data-category="games">
+                <div class="card-img" style="background: linear-gradient(135deg, #ff512f, #dd2476);">
+                    <i class="fa-solid fa-fire"></i>
                 </div>
-                <button class="btn-comprar" onclick="abrirModal('Free Fire', [{nombre: '100 Diamantes', precio: 1.00}, {nombre: '310 Diamantes', precio: 3.10}, {nombre: '520 Diamantes', precio: 5.00}])">Recargar</button>
+                <div class="card-body">
+                    <h3>Free Fire</h3>
+                    <p>Diamantes, Pases y Tarjetas al instante con tu ID.</p>
+                    <button class="btn-card" onclick="abrirModal('Free Fire', [
+                        {nombre: '110 Diamantes', precio: 1.00},
+                        {nombre: '341 Diamantes', precio: 2.88},
+                        {nombre: 'Tarjeta Pase Booyah', precio: 4.50},
+                        {nombre: '572 Diamantes (Recomendado)', precio: 4.80},
+                        {nombre: '1166 Diamantes', precio: 9.03},
+                        {nombre: 'Tarjeta Mensual', precio: 14.00},
+                        {nombre: '2398 Diamantes', precio: 17.70},
+                        {nombre: '6160 Diamantes', precio: 45.03}
+                    ])">Recargar</button>
+                </div>
             </div>
 
             <!-- Roblox -->
-            <div class="card" data-category="juegos">
-                <div>
-                    <h3>Roblox</h3>
-                    <p>Obtén Robux de forma segura.</p>
+            <div class="card" data-category="games">
+                <div class="card-img" style="background: linear-gradient(135deg, #e52d27, #b31217);">
+                    <i class="fa-solid fa-cube"></i>
                 </div>
-                <button class="btn-comprar" onclick="abrirModal('Roblox', [{nombre: '400 Robux', precio: 5.00}, {nombre: '800 Robux', precio: 10.00}])">Recargar</button>
+                <div class="card-body">
+                    <h3>Roblox</h3>
+                    <p>Robux oficiales y tarjetas de regalo.</p>
+                    <button class="btn-card" onclick="abrirModal('Roblox', [
+                        {nombre: '50 Robux', precio: 0.55},
+                        {nombre: '100 Robux', precio: 1.05},
+                        {nombre: '150 Robux', precio: 1.61},
+                        {nombre: '200 Robux', precio: 2.10},
+                        {nombre: '300 Robux', precio: 3.10},
+                        {nombre: '400 Robux', precio: 4.15},
+                        {nombre: '500 Robux', precio: 5.00},
+                        {nombre: '600 Robux', precio: 6.05},
+                        {nombre: '800 Robux', precio: 8.10},
+                        {nombre: '1000 Robux', precio: 10.00},
+                        {nombre: '1200 Robux', precio: 12.10},
+                        {nombre: '1300 Robux', precio: 13.10},
+                        {nombre: '1500 Robux', precio: 15.00},
+                        {nombre: '1700 Robux', precio: 17.10},
+                        {nombre: '2000 Robux', precio: 20.00},
+                        {nombre: '2500 Robux', precio: 25.00},
+                        {nombre: '2800 Robux', precio: 28.10},
+                        {nombre: '3000 Robux', precio: 30.00},
+                        {nombre: '3500 Robux', precio: 35.00},
+                        {nombre: '4000 Robux', precio: 40.00},
+                        {nombre: '4500 Robux', precio: 45.00},
+                        {nombre: '5000 Robux', precio: 50.00},
+                        {nombre: '7500 Robux', precio: 75.00}
+                    ])">Recargar</button>
+                </div>
             </div>
 
             <!-- Mobile Legends -->
-            <div class="card" data-category="juegos">
-                <div>
-                    <h3>Mobile Legends</h3>
-                    <p>Diamantes con ID y Zona.</p>
+            <div class="card" data-category="games">
+                <div class="card-img" style="background: linear-gradient(135deg, #2b5876, #4e4376);">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <button class="btn-comprar" onclick="abrirModal('Mobile Legends', [{nombre: '112 Diamantes', precio: 2.00}, {nombre: '224 Diamantes', precio: 4.00}])">Recargar</button>
+                <div class="card-body">
+                    <h3>Mobile Legends</h3>
+                    <p>Diamantes rápidos con ID y Zona ID.</p>
+                    <button class="btn-card" onclick="abrirModal('Mobile Legends', [
+                        {nombre: '78 + 8 Bonus', precio: 1.31},
+                        {nombre: '156 + 16 Bonus', precio: 2.63},
+                        {nombre: '234 + 23 Bonus', precio: 3.93},
+                        {nombre: '312 + 31 Bonus', precio: 5.24},
+                        {nombre: '625 + 81 Bonus (Recomendado)', precio: 10.52},
+                        {nombre: '1498 Diamantes', precio: 22.35},
+                        {nombre: '1860 + 335 Bonus', precio: 31.55},
+                        {nombre: '3099 + 589 Bonus', precio: 52.59},
+                        {nombre: '4649 + 883 Bonus', precio: 78.88},
+                        {nombre: '7740 + 1548 Bonus', precio: 131.47}
+                    ])">Recargar</button>
+                </div>
             </div>
 
             <!-- Netflix -->
             <div class="card" data-category="streaming">
-                <div>
+                <div class="card-img" style="background: linear-gradient(135deg, #141414, #e50914);">
+                    <i class="fa-solid fa-tv"></i>
+                </div>
+                <div class="card-body">
                     <h3>Netflix</h3>
-                    <p>Cuentas de streaming digitales.</p>
+                    <p>Planes Básico, Estándar y Premium oficiales.</p>
+                    <button class="btn-card" onclick="abrirModal('Netflix', [
+                        {nombre: 'Básico (720p)', precio: 5.99},
+                        {nombre: 'Estándar (1080p)', precio: 8.99},
+                        {nombre: 'Premium (4K + HDR)', precio: 11.99}
+                    ])">Comprar</button>
                 </div>
-                <button class="btn-comprar" onclick="abrirModal('Netflix', [{nombre: '1 Pantalla (1 Mes)', precio: 4.00}])">Comprar</button>
             </div>
 
+            <!-- Spotify -->
+            <div class="card" data-category="streaming">
+                <div class="card-img" style="background: linear-gradient(135deg, #1db954, #191414);">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div class="card-body">
+                    <h3>Spotify Premium</h3>
+                    <p>Planes Individual, Duo y Familiar oficiales.</p>
+                    <button class="btn-card" onclick="abrirModal('Spotify', [
+                        {nombre: 'Individual', precio: 6.99},
+                        {nombre: 'Duo', precio: 8.99},
+                        {nombre: 'Familiar', precio: 10.99}
+                    ])">Comprar</button>
+                </div>
+            </div>
+
+            <!-- Disney+ -->
+            <div class="card" data-category="streaming">
+                <div class="card-img" style="background: linear-gradient(135deg, #097969, #002b49);">
+                    <i class="fa-solid fa-film"></i>
+                </div>
+                <div class="card-body">
+                    <h3>Disney+</h3>
+                    <p>Planes Estándar y Premium oficiales con ESPN.</p>
+                    <button class="btn-card" onclick="abrirModal('Disney+', [
+                        {nombre: 'Estándar (HD)', precio: 9.99},
+                        {nombre: 'Premium (4K + ESPN)', precio: 14.49}
+                    ])">Comprar</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Modal -->
-    <div id="modalCompra">
+    <!-- Modal de Compra / Recarga -->
+    <div id="modalCompra" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitulo" style="font-size: 1rem; color: var(--primary);">Recargar</h3>
-                <button class="close-btn" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
+            <span class="close-btn" onclick="cerrarModal()">&times;</span>
+            <h2 id="modalTitulo">Título del Producto</h2>
             <form id="formRecarga">
-                <div class="form-group">
-                    <label for="opcionSelect">Paquete:</label>
-                    <select id="opcionSelect" onchange="actualizarResumen()"></select>
-                </div>
+                <label for="opcionSelect">Selecciona el paquete:</label>
+                <select id="opcionSelect" required onchange="actualizarResumen()"></select>
 
-                <!-- Contenedor dinámico donde se inyectan los inputs de ID / Correo y Verificación -->
-                <div id="camposIdContainer" class="form-group"></div>
+                <div id="camposIdContainer"></div>
 
-                <div class="form-group">
-                    <label for="metodoPagoSelect">Método de Pago:</label>
-                    <select id="metodoPagoSelect" onchange="manejarMetodoPago()" required>
-                        <option value="">Seleccione...</option>
-                        <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
-                        <option value="Transferencia Bancaria" disabled>Transferencia Bancaria (Deshabilitado)</option>
-                        <option value="Persona Física" disabled>Persona Física (Deshabilitado)</option>
-                    </select>
-                </div>
+                <label for="metodoPagoSelect">Método de pago:</label>
+                <select id="metodoPagoSelect" onchange="manejarMetodoPago()" required>
+                    <option value="" disabled selected>Seleccione un método de pago</option>
+                    <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
+                    <option value="Transferencia Bancaria" disabled style="color: #9ca3af;">Transferencia Bancaria (No disponible)</option>
+                    <option value="Persona Física" disabled style="color: #9ca3af;">Persona Física / Efectivo (No disponible)</option>
+                </select>
 
                 <div id="camposTarjetaContainer"></div>
 
                 <div class="resumen-pago">
-                    <div><span>Subtotal:</span> <span id="lblPrecio">$0.00</span></div>
-                    <div><span>Comisión:</span> <span id="lblComision">$0.00</span></div>
-                    <div class="total"><span>Total:</span> <span id="lblTotal">$0.00</span></div>
+                    <div class="linea-resumen"><span>Precio del producto:</span> <span id="lblPrecio">$0.00</span></div>
+                    <div class="linea-resumen"><span>Comisión por servicio:</span> <span id="lblComision">$0.00</span></div>
+                    <div class="linea-resumen total"><span>Total a pagar:</span> <span id="lblTotal">$0.00</span></div>
                 </div>
 
-                <button type="submit" id="btnSubmitForm" class="btn-comprar">Proceder al Pago</button>
+                <button type="submit" id="btnSubmitForm" class="btn-primary" style="width: 100%; margin-top: 15px;">Proceder al Pago</button>
             </form>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 PC Recarga</p>
+        <p>&copy; 2026 Nexus Gaming & Stream. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Script conectado -->
-    <script type="module" src="script_6.js"></script>
-    <script>
-        // Script simple local para los filtros de las tarjetas
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.getAttribute('data-filter');
-                document.querySelectorAll('.card').forEach(card => {
-                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        });
-    </script>
+    <!-- Script Principal y Lógica de Firebase -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
