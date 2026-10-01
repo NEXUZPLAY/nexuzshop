@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bonus de Recarga - Nexus Gaming</title>
+    <title>Bonus de Recarga Acumulada - Nexus Gaming</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,8 +43,14 @@
             font-size: 1rem;
             width: 100%;
             margin-top: 10px;
+            transition: 0.2s;
         }
         .btn:hover { background: #0ea5e9; }
+        .btn:disabled {
+            background: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
         .btn-google {
             background: #ffffff;
             color: #1e293b;
@@ -56,31 +62,37 @@
             max-width: 300px;
             width: 100%;
         }
-        .pack-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        @media (min-width: 500px) {
-            .pack-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        .pack-card {
+        /* Estilo tipo barra de progreso de Free Fire */
+        .progress-container {
             background: #0f172a;
             border: 2px solid #334155;
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
+            margin: 20px 0;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
         }
-        .pack-card:hover {
-            border-color: #38bdf8;
-            transform: translateY(-3px);
+        .milestones-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
         }
-        .pack-card.selected {
-            border-color: #f59e0b;
-            background: #172554;
+        .milestone-card {
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+        .milestone-card.unlocked {
+            border-color: #22c55e;
+            background: #064e3b;
+        }
+        .milestone-card.claimed {
+            border-color: #64748b;
+            background: #0f172a;
+            opacity: 0.6;
         }
         input[type="text"] {
             width: 100%;
@@ -99,24 +111,27 @@
             border-radius: 8px;
             border: 1px solid #334155;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>💎 Recargas con Bonus</h1>
+        <h1>🔥 Bonus Acumulado Free Fire</h1>
         
         <!-- PANTALLA DE ACCESO -->
         <div id="authScreen" style="text-align: center;">
-            <p style="color: #94a3b8;">Inicia sesión con tu cuenta para aprovechar los bonus acumulativos.</p>
+            <p style="color: #94a3b8;">Inicia sesión para ver tu progreso de recarga acumulada.</p>
             <button class="btn btn-google" onclick="iniciarSesion()">
                 <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.71v2.26h2.94c1.72-1.58 2.78-3.9 2.78-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.95v2.33C2.43 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.21c-.19-.54-.3-1.12-.3-1.71s.11-1.17.3-1.71V4.46H.95C.34 5.68 0 7.07 0 8.5s.34 2.82.95 4.04l3.02-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.43 2.02.95 4.46l3.02 2.33c.71-2.13 2.69-3.71 5.03-3.71z"/></svg>
                 Iniciar Sesión con Google
             </button>
         </div>
 
-        <!-- CONTENIDO PRINCIPAL DE RECARGAS -->
+        <!-- CONTENIDO PRINCIPAL -->
         <div id="mainContent" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <span id="userEmailText" style="color: #38bdf8; font-size: 0.85rem;"></span>
@@ -124,40 +139,49 @@
             </div>
 
             <div class="info-box">
-                <p style="margin: 0 0 5px 0; color: #94a3b8; font-size: 0.9rem;">Tus Puntos Actuales:</p>
-                <span id="puntosDisponibles" style="font-size: 1.5rem; color: #fbbf24; font-weight: bold;">0 pts</span>
+                <div>
+                    <p style="margin: 0 0 3px 0; color: #94a3b8; font-size: 0.85rem;">Diamantes Acumulados:</p>
+                    <span id="puntosDisponibles" style="font-size: 1.4rem; color: #fbbf24; font-weight: bold;">0 💎</span>
+                </div>
+                <button class="btn" style="width: auto; margin: 0; padding: 8px 15px; font-size: 0.85rem;" onclick="simularRecargaAcumular()">+ Simular Recarga</button>
             </div>
 
-            <label style="color: #cbd5e1; font-size: 0.9rem;">1. Ingresa tu ID de Free Fire:</label>
+            <!-- BARRA DE PROGRESO / METAS ACUMULADAS ESTILO FREE FIRE -->
+            <div class="progress-container">
+                <p style="margin: 0 0 10px 0; color: #38bdf8; font-weight: bold; font-size: 0.95rem;">Metas de Bonus Acumulado</p>
+                <div class="milestones-grid">
+                    <!-- Meta 1: 100 Diamantes -->
+                    <div class="milestone-card" id="meta100">
+                        <span style="font-size: 0.8rem; color: #94a3b8;">Meta 100 💎</span>
+                        <h4 style="margin: 5px 0; color: #fff;">+100 Bonus</h4>
+                        <span id="estadoMeta100" style="font-size: 0.75rem; color: #cbd5e1;">Bloqueado 🔒</span>
+                    </div>
+                    <!-- Meta 2: 300 Diamantes -->
+                    <div class="milestone-card" id="meta300">
+                        <span style="font-size: 0.8rem; color: #94a3b8;">Meta 300 💎</span>
+                        <h4 style="margin: 5px 0; color: #fff;">+100 Bonus</h4>
+                        <span id="estadoMeta300" style="font-size: 0.75rem; color: #cbd5e1;">Bloqueado 🔒</span>
+                    </div>
+                    <!-- Meta 3: 500 Diamantes -->
+                    <div class="milestone-card" id="meta500">
+                        <span style="font-size: 0.8rem; color: #94a3b8;">Meta 500 💎</span>
+                        <h4 style="margin: 5px 0; color: #fff;">+100 Bonus</h4>
+                        <span id="estadoMeta500" style="font-size: 0.75rem; color: #cbd5e1;">Bloqueado 🔒</span>
+                    </div>
+                </div>
+            </div>
+
+            <label style="color: #cbd5e1; font-size: 0.9rem;">Ingresa tu ID de Free Fire para reclamar:</label>
             <input type="text" id="idFreeFire" placeholder="Ej: 123456789">
 
-            <label style="color: #cbd5e1; font-size: 0.9rem;">2. Selecciona tu paquete con Bonus:</label>
-            <div class="pack-grid">
-                <div class="pack-card" onclick="seleccionarPaquete(300, 110, this)">
-                    <h3 style="margin: 5px 0; color: #38bdf8;">300 💎</h3>
-                    <p style="margin: 0; color: #fbbf24; font-size: 0.85rem;">+110 Bonus</p>
-                    <p style="margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Total: 410 💎</p>
-                </div>
-                <div class="pack-card" onclick="seleccionarPaquete(600, 210, this)">
-                    <h3 style="margin: 5px 0; color: #38bdf8;">600 💎</h3>
-                    <p style="margin: 0; color: #fbbf24; font-size: 0.85rem;">+210 Bonus</p>
-                    <p style="margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Total: 810 💎</p>
-                </div>
-                <div class="pack-card" onclick="seleccionarPaquete(1000, 340, this)">
-                    <h3 style="margin: 5px 0; color: #38bdf8;">1,000 💎</h3>
-                    <p style="margin: 0; color: #fbbf24; font-size: 0.85rem;">+340 Bonus</p>
-                    <p style="margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8;">Total: 1,340 💎</p>
-                </div>
-            </div>
-
-            <button class="btn" onclick="procesarRecargaBonus()">Completar Recarga y Sumar Puntos</button>
+            <button class="btn" id="btnReclamar" onclick="reclamarBonusAcumulado()" disabled>Reclamar Bonus Disponibles</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const miFirebaseConfig = {
             apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
@@ -175,8 +199,7 @@
         const provider = new GoogleAuthProvider();
 
         let usuarioActualEmail = "";
-        let puntosActuales = 0;
-        let paqueteSeleccionado = null; 
+        let datosUsuario = { puntos: 0, reclamados: { meta100: false, meta300: false, meta500: false } };
 
         window.iniciarSesion = async function() {
             try { await signInWithPopup(auth, provider); } catch (e) { alert("Error al iniciar sesión."); }
@@ -190,7 +213,7 @@
                 document.getElementById('userEmailText').textContent = user.email;
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
-                await sincronizarPuntos();
+                await sincronizarDatos();
             } else {
                 usuarioActualEmail = "";
                 document.getElementById('authScreen').style.display = 'block';
@@ -198,63 +221,137 @@
             }
         });
 
-        async function sincronizarPuntos() {
+        async function sincronizarDatos() {
             try {
                 const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
                 const userSnap = await getDoc(userRef);
-                puntosActuales = userSnap.exists() ? (userSnap.data().puntos || 0) : 0;
-                document.getElementById('puntosDisponibles').textContent = `${puntosActuales} pts`;
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    datosUsuario.puntos = data.puntos || 0;
+                    datosUsuario.reclamados = data.reclamados || { meta100: false, meta300: false, meta500: false };
+                } else {
+                    datosUsuario = { puntos: 0, reclamados: { meta100: false, meta300: false, meta500: false } };
+                }
+                actualizarInterfazVisual();
             } catch (e) { console.error(e); }
         }
 
-        window.seleccionarPaquete = function(base, bonus, elementoCard) {
-            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
-            elementoCard.classList.add('selected');
-            paqueteSeleccionado = { base, bonus, total: base + bonus };
+        function actualizarInterfazVisual() {
+            document.getElementById('puntosDisponibles').textContent = `${datosUsuario.puntos} 💎`;
+
+            let puedeReclamarAlgo = false;
+
+            // Meta 100
+            const card100 = document.getElementById('meta100');
+            const txt100 = document.getElementById('estadoMeta100');
+            if (datosUsuario.reclamados.meta100) {
+                card100.className = "milestone-card claimed";
+                txt100.textContent = "Reclamado ✔️";
+            } else if (datosUsuario.puntos >= 100) {
+                card100.className = "milestone-card unlocked";
+                txt100.textContent = "¡Disponible! ✅";
+                puedeReclamarAlgo = true;
+            } else {
+                card100.className = "milestone-card";
+                txt100.textContent = `Faltan ${100 - datosUsuario.puntos} 💎`;
+            }
+
+            // Meta 300
+            const card300 = document.getElementById('meta300');
+            const txt300 = document.getElementById('estadoMeta300');
+            if (datosUsuario.reclamados.meta300) {
+                card300.className = "milestone-card claimed";
+                txt300.textContent = "Reclamado ✔️";
+            } else if (datosUsuario.puntos >= 300) {
+                card300.className = "milestone-card unlocked";
+                txt300.textContent = "¡Disponible! ✅";
+                puedeReclamarAlgo = true;
+            } else {
+                card300.className = "milestone-card";
+                txt300.textContent = `Faltan ${Math.max(0, 300 - datosUsuario.puntos)} 💎`;
+            }
+
+            // Meta 500
+            const card500 = document.getElementById('meta500');
+            const txt500 = document.getElementById('estadoMeta500');
+            if (datosUsuario.reclamados.meta500) {
+                card500.className = "milestone-card claimed";
+                txt500.textContent = "Reclamado ✔️";
+            } else if (datosUsuario.puntos >= 500) {
+                card500.className = "milestone-card unlocked";
+                txt500.textContent = "¡Disponible! ✅";
+                puedeReclamarAlgo = true;
+            } else {
+                card500.className = "milestone-card";
+                txt500.textContent = `Faltan ${Math.max(0, 500 - datosUsuario.puntos)} 💎`;
+            }
+
+            document.getElementById('btnReclamar').disabled = !puedeReclamarAlgo;
         }
 
-        window.procesarRecargaBonus = async function() {
+        // Función de prueba para simular que vas acumulando recargas en la tienda
+        window.simularRecargaAcumular = async function() {
+            let cuantoSumar = prompt("¿Cuántos diamantes de recarga deseas simular acumular? (Ej: 100)", "100");
+            if (cuantoSumar && !isNaN(cuantoSumar)) {
+                datosUsuario.puntos += parseInt(cuantoSumar);
+                const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
+                await setDoc(userRef, { puntos: datosUsuario.puntos, reclamados: datosUsuario.reclamados }, { merge: true });
+                actualizarInterfazVisual();
+                alert(`¡Se han acumulado ${cuantoSumar} diamantes a tu progreso!`);
+            }
+        }
+
+        window.reclamarBonusAcumulado = async function() {
             const idFreeFire = document.getElementById('idFreeFire').value.trim();
             if (!idFreeFire) {
-                alert("Por favor, ingresa tu ID de Free Fire.");
-                return;
-            }
-            if (!paqueteSeleccionado) {
-                alert("Por favor, selecciona un paquete de recarga con bonus.");
+                alert("Por favor, ingresa tu ID de Free Fire para recibir el bonus.");
                 return;
             }
 
-            if (confirm(`¿Confirmas la recarga de ${paqueteSeleccionado.base} 💎 + ${paqueteSeleccionado.bonus} 💎 de Bonus para el ID: ${idFreeFire}?`)) {
+            let bonusTotalAReclamar = 0;
+            let metasNuevas = { ...datosUsuario.reclamados };
+
+            if (datosUsuario.puntos >= 100 && !datosUsuario.reclamados.meta100) {
+                bonusTotalAReclamar += 100;
+                metasNuevas.meta100 = true;
+            }
+            if (datosUsuario.puntos >= 300 && !datosUsuario.reclamados.meta300) {
+                bonusTotalAReclamar += 100;
+                metasNuevas.meta300 = true;
+            }
+            if (datosUsuario.puntos >= 500 && !datosUsuario.reclamados.meta500) {
+                bonusTotalAReclamar += 100;
+                metasNuevas.meta500 = true;
+            }
+
+            if (bonusTotalAReclamar === 0) {
+                alert("No tienes bonus disponibles para reclamar en este momento.");
+                return;
+            }
+
+            if (confirm(`¿Deseas reclamar un total de ${bonusTotalAReclamar} diamantes de bonus acumulado para tu ID: ${idFreeFire}?`)) {
                 try {
-                    // CÁLCULO CORRECTO DE PUNTOS DE TIENDA (Basado en el paquete base, ej: 10% del valor base o una proporción justa, en lugar de regalar los diamantes como puntos)
-                    let puntosGanados = Math.round(paqueteSeleccionado.base * 0.1); 
-                    puntosActuales += puntosGanados;
-
+                    datosUsuario.reclamados = metasNuevas;
                     const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
-                    await setDoc(userRef, { puntos: puntosActuales }, { merge: true });
-                    document.getElementById('puntosDisponibles').textContent = `${puntosActuales} pts`;
+                    await setDoc(userRef, { reclamados: datosUsuario.reclamados }, { merge: true });
 
-                    // Registrar en transacciones con los diamantes correctos para el juego y los puntos justos para la tienda
+                    // Registrar la transacción de reclamo de bonus
                     await addDoc(collection(db, "transacciones"), {
                         userEmail: usuarioActualEmail,
-                        title: `Recarga Bonus: ${paqueteSeleccionado.base} + ${paqueteSeleccionado.bonus} Diamantes`,
-                        amount: paqueteSeleccionado.base, 
-                        puntosGenerados: puntosGanados,
+                        title: `Reclamo Bonus Acumulado: +${bonusTotalAReclamar} Diamantes`,
+                        amount: bonusTotalAReclamar,
                         idFreeFire: idFreeFire,
                         date: new Date().toLocaleString(),
                         timestamp: serverTimestamp()
                     });
 
-                    alert(`¡Recarga exitosa! Se han acreditado ${paqueteSeleccionado.total} Diamantes (con bonus incluido) a tu ID de Free Fire y se sumaron ${puntosGanados} puntos a tu cuenta.`);
-                    
-                    // Limpiar selección
+                    actualizarInterfazVisual();
+                    alert(`¡Éxito! Se han enviado ${bonusTotalAReclamar} diamantes de bonus a tu ID de Free Fire.`);
                     document.getElementById('idFreeFire').value = '';
-                    document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
-                    paqueteSeleccionado = null;
 
                 } catch (e) {
                     console.error(e);
-                    alert("Ocurrió un error al procesar la recarga.");
+                    alert("Ocurrió un error al procesar el reclamo.");
                 }
             }
         }
