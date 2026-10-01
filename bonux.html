@@ -176,7 +176,7 @@
 
         let usuarioActualEmail = "";
         let puntosActuales = 0;
-        let paqueteSeleccionado = null; // Guardará { base: 300, bonus: 110 }
+        let paqueteSeleccionado = null; 
 
         window.iniciarSesion = async function() {
             try { await signInWithPopup(auth, provider); } catch (e) { alert("Error al iniciar sesión."); }
@@ -226,26 +226,26 @@
 
             if (confirm(`¿Confirmas la recarga de ${paqueteSeleccionado.base} 💎 + ${paqueteSeleccionado.bonus} 💎 de Bonus para el ID: ${idFreeFire}?`)) {
                 try {
-                    // Sumamos puntos de recompensa en la tienda (por ejemplo, 1 punto por cada diamante total o según tu regla)
-                    let puntosGanados = paqueteSeleccionado.total; 
+                    // CÁLCULO CORRECTO DE PUNTOS DE TIENDA (Basado en el paquete base, ej: 10% del valor base o una proporción justa, en lugar de regalar los diamantes como puntos)
+                    let puntosGanados = Math.round(paqueteSeleccionado.base * 0.1); 
                     puntosActuales += puntosGanados;
 
                     const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
                     await setDoc(userRef, { puntos: puntosActuales }, { merge: true });
                     document.getElementById('puntosDisponibles').textContent = `${puntosActuales} pts`;
 
-                    // Registrar en transacciones para que aparezca en el panel de administración
+                    // Registrar en transacciones con los diamantes correctos para el juego y los puntos justos para la tienda
                     await addDoc(collection(db, "transacciones"), {
                         userEmail: usuarioActualEmail,
                         title: `Recarga Bonus: ${paqueteSeleccionado.base} + ${paqueteSeleccionado.bonus} Diamantes`,
-                        amount: paqueteSeleccionado.base, // o el valor monetario correspondiente
+                        amount: paqueteSeleccionado.base, 
                         puntosGenerados: puntosGanados,
                         idFreeFire: idFreeFire,
                         date: new Date().toLocaleString(),
                         timestamp: serverTimestamp()
                     });
 
-                    alert(`¡Recarga exitosa! Se han acreditado ${paqueteSeleccionado.total} Diamantes a tu ID de Free Fire y se sumaron ${puntosGanados} puntos a tu cuenta.`);
+                    alert(`¡Recarga exitosa! Se han acreditado ${paqueteSeleccionado.total} Diamantes (con bonus incluido) a tu ID de Free Fire y se sumaron ${puntosGanados} puntos a tu cuenta.`);
                     
                     // Limpiar selección
                     document.getElementById('idFreeFire').value = '';
