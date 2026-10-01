@@ -92,17 +92,6 @@
             background: #0f172a;
             opacity: 0.6;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #475569;
-            background: #0f172a;
-            color: #fff;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            font-size: 1rem;
-        }
         .info-box {
             background: #0f172a;
             padding: 15px;
@@ -115,13 +104,25 @@
         }
         .player-info {
             background: #0f172a;
-            border: 1px solid #334155;
+            border: 1px solid #22c55e;
             border-radius: 8px;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
             color: #38bdf8;
-            display: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .warning-box {
+            background: #451a03;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #fde68a;
+            text-align: center;
         }
     </style>
 </head>
@@ -175,12 +176,19 @@
                 </div>
             </div>
 
-            <label style="color: #cbd5e1; font-size: 0.9rem;">1. Ingresa tu ID de Free Fire:</label>
-            <input type="text" id="idFreeFire" placeholder="Ej: 123456789">
+            <!-- SI YA TIENE ID VERIFICADO SE MUESTRA ESTO -->
+            <div id="playerInfoBox" class="player-info" style="display: none;">
+                <div>
+                    <span>Cuenta vinculada:</span><br>
+                    <strong id="playerNameText" style="color: #fff; font-size: 1.1rem;"></strong> 
+                    <span id="playerIdText" style="color: #94a3b8; font-size: 0.85rem; margin-left: 5px;"></span>
+                </div>
+                <span style="color: #22c55e; font-weight: bold;">Verificado ✔️</span>
+            </div>
 
-            <!-- Contenedor del apodo ya existente en tu sistema -->
-            <div id="playerInfoBox" class="player-info">
-                Apodo verificado: <strong id="playerNameText" style="color: #fff;"></strong>
+            <!-- SI NO TIENE ID VERIFICADO SE MUESTRA ESTO -->
+            <div id="warningBox" class="warning-box" style="display: none;">
+                ⚠️ No tienes ningún ID verificado. Realiza una compra en la tienda para verificar tu ID.
             </div>
 
             <button class="btn" id="btnReclamar" onclick="reclamarBonusAcumulado()" disabled>Reclamar Bonus Disponibles</button>
@@ -208,8 +216,7 @@
         const provider = new GoogleAuthProvider();
 
         let usuarioActualEmail = "";
-        let datosUsuario = { puntos: 0, reclamados: { meta100: false, meta300: false, meta500: false } };
-        let apodoVerificado = "";
+        let datosUsuario = { puntos: 0, idFreeFire: "", apodoFreeFire: "", reclamados: { meta100: false, meta300: false, meta500: false } };
 
         window.iniciarSesion = async function() {
             try { await signInWithPopup(auth, provider); } catch (e) { alert("Error al iniciar sesión."); }
@@ -238,9 +245,11 @@
                 if (userSnap.exists()) {
                     const data = userSnap.data();
                     datosUsuario.puntos = data.puntos || 0;
+                    datosUsuario.idFreeFire = data.idFreeFire || "";
+                    datosUsuario.apodoFreeFire = data.apodoFreeFire || "";
                     datosUsuario.reclamados = data.reclamados || { meta100: false, meta300: false, meta500: false };
                 } else {
-                    datosUsuario = { puntos: 0, reclamados: { meta100: false, meta300: false, meta500: false } };
+                    datosUsuario = { puntos: 0, idFreeFire: "", apodoFreeFire: "", reclamados: { meta100: false, meta300: false, meta500: false } };
                 }
                 actualizarInterfazVisual();
             } catch (e) { console.error(e); }
@@ -286,7 +295,7 @@
             const txt500 = document.getElementById('estadoMeta500');
             if (datosUsuario.reclamados.meta500) {
                 card500.className = "milestone-card claimed";
-                txt500.textContent = "Reclamado ✔️";
+                txt500.textContent = "Reclamado ✔️️";
             } else if (datosUsuario.puntos >= 500) {
                 card500.className = "milestone-card unlocked";
                 txt500.textContent = "¡Disponible! ✅";
@@ -296,48 +305,27 @@
                 txt500.textContent = `Faltan ${Math.max(0, 500 - datosUsuario.puntos)} 💎`;
             }
 
-            // El botón se habilita si hay metas que reclamar Y ya se verificó el apodo
-            document.getElementById('btnReclamar').disabled = !puedeReclamarAlgo || !apodoVerificado;
+            // Validar si el usuario tiene ID y apodo guardado en su perfil de Firestore
+            const playerInfoBox = document.getElementById('playerInfoBox');
+            const warningBox = document.getElementById('warningBox');
+
+            if (datosUsuario.idFreeFire && datosUsuario.apodoFreeFire) {
+                document.getElementById('playerNameText').textContent = datosUsuario.apodoFreeFire;
+                document.getElementById('playerIdText').textContent = `(ID: ${datosUsuario.idFreeFire})`;
+                playerInfoBox.style.display = "flex";
+                warningBox.style.display = "none";
+                // Se activa solo si hay metas disponibles Y tiene cuenta verificada
+                document.getElementById('btnReclamar').disabled = !puedeReclamarAlgo;
+            } else {
+                playerInfoBox.style.display = "none";
+                warningBox.style.display = "block";
+                document.getElementById('btnReclamar').disabled = true;
+            }
         }
 
-        // Integración de tu función de verificación de ID y Apodo existente
-        document.getElementById('idFreeFire').addEventListener('blur', async function() {
-            const idFreeFire = this.value.trim();
-            const playerInfoBox = document.getElementById('playerInfoBox');
-            const playerNameText = document.getElementById('playerNameText');
-
-            if (idFreeFire.length >= 6) {
-                playerInfoBox.style.display = 'block';
-                playerNameText.textContent = "Verificando...";
-                
-                try {
-                    // Usando tu misma lógica de consulta de apodo de la tienda
-                    const response = await fetch(`https://api.freefireapi.com/id/${idFreeFire}`);
-                    const data = await response.json();
-
-                    if (data && data.nickname) {
-                        apodoVerificado = data.nickname;
-                        playerNameText.textContent = apodoVerificado;
-                    } else {
-                        apodoVerificado = "Jugador (" + idFreeFire + ")";
-                        playerNameText.textContent = apodoVerificado;
-                    }
-                } catch (e) {
-                    apodoVerificado = "Cuenta ID: " + idFreeFire;
-                    playerNameText.textContent = apodoVerificado;
-                }
-                actualizarInterfazVisual();
-            } else {
-                playerInfoBox.style.display = 'none';
-                apodoVerificado = "";
-                actualizarInterfazVisual();
-            }
-        });
-
         window.reclamarBonusAcumulado = async function() {
-            const idFreeFire = document.getElementById('idFreeFire').value.trim();
-            if (!idFreeFire || !apodoVerificado) {
-                alert("Por favor, ingresa un ID válido y verifica tu apodo.");
+            if (!datosUsuario.idFreeFire || !datosUsuario.apodoFreeFire) {
+                alert("Debes realizar una compra previa en la tienda para verificar tu ID.");
                 return;
             }
 
@@ -362,31 +350,25 @@
                 return;
             }
 
-            if (confirm(`¿Deseas reclamar ${bonusTotalAReclamar} diamantes de bonus para "${apodoVerificado}" (ID: ${idFreeFire})?`)) {
+            if (confirm(`¿Deseas reclamar ${bonusTotalAReclamar} diamantes de bonus para "${datosUsuario.apodoFreeFire}" (ID: ${datosUsuario.idFreeFire})?`)) {
                 try {
                     datosUsuario.reclamados = metasNuevas;
                     const userRef = doc(db, "usuarios_tienda", usuarioActualEmail);
                     await setDoc(userRef, { reclamados: datosUsuario.reclamados }, { merge: true });
 
-                    // Registrar transacción guardando el ID y el apodo verificado
+                    // Registrar transacción de reclamo de bonus
                     await addDoc(collection(db, "transacciones"), {
                         userEmail: usuarioActualEmail,
                         title: `Reclamo Bonus Acumulado: +${bonusTotalAReclamar} Diamantes`,
                         amount: bonusTotalAReclamar,
-                        idFreeFire: idFreeFire,
-                        apodoFreeFire: apodoVerificado,
+                        idFreeFire: datosUsuario.idFreeFire,
+                        apodoFreeFire: datosUsuario.apodoFreeFire,
                         date: new Date().toLocaleString(),
                         timestamp: serverTimestamp()
                     });
 
                     actualizarInterfazVisual();
-                    alert(`¡Éxito! Se han enviado ${bonusTotalAReclamar} diamantes de bonus a ${apodoVerificado}.`);
-                    
-                    // Limpiar campos
-                    document.getElementById('idFreeFire').value = '';
-                    document.getElementById('playerInfoBox').style.display = 'none';
-                    apodoVerificado = "";
-                    actualizarInterfazVisual();
+                    alert(`¡Éxito! Se han enviado ${bonusTotalAReclamar} diamantes de bonus a ${datosUsuario.apodoFreeFire}.`);
 
                 } catch (e) {
                     console.error(e);
