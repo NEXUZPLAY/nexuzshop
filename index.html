@@ -3,52 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC RECARGA - Tienda de Recargas y Servicios Digitales</title>
+    <title>PC RECARGA - Tienda Digital</title>
     <link rel="stylesheet" href="style.css">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- CABECERA Y NAVEGACIÓN -->
-    <header class="header">
-        <div class="logo-container">
-            <i class="fa-solid fa-gamepad logo-icon"></i>
-            <h1>PC RECARGA</h1>
+    <!-- BARRA DE NAVEGACIÓN -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-gamepad"></i>
+            PC <span>RECARGA</span>
         </div>
-        <nav class="nav-links">
-            <a href="index.html" class="active"><i class="fa-solid fa-store"></i> Tienda</a>
-            <a href="ruleta.html"><i class="fa-solid fa-dharmachakra"></i> Ruleta de Premios</a>
-            <a href="soportedeayuda.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+        <nav>
+            <a href="index.html" class="active">Tienda</a>
+            <a href="ruleta.html">Ruleta de Premios</a>
+            <a href="soportedeayuda.html">Soporte</a>
         </nav>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="main-content">
-        <section class="hero-section">
-            <h2>Recargas Seguras y Rápidas</h2>
+    <!-- SECCIÓN HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Recargas Seguras y Rápidas</h1>
             <p>Selecciona tu juego o servicio favorito, paga con tu tarjeta del Banco Pedro Carbo y recibe tus diamantes o saldo al instante.</p>
-        </section>
+            <a href="#catalogo" class="btn-primary">Ver Catálogo</a>
+        </div>
+    </section>
 
-        <!-- FILTROS DE CATEGORÍAS -->
-        <div class="filter-container">
+    <!-- SECCIÓN DE CATÁLOGO Y FILTROS -->
+    <section id="catalogo" class="catalog-section">
+        <h2>Nuestros Productos</h2>
+        <p class="subtitle">Elige una categoría para filtrar el contenido</p>
+
+        <!-- Filtros -->
+        <div class="filters">
             <button class="filter-btn active" data-filter="all">Todos</button>
             <button class="filter-btn" data-filter="juegos">Juegos</button>
             <button class="filter-btn" data-filter="streaming">Streaming</button>
         </div>
 
-        <!-- GRILLA DE PRODUCTOS / TARJETAS -->
-        <div class="products-grid">
+        <!-- GRILLA DE PRODUCTOS -->
+        <div class="grid-container">
             
             <!-- Free Fire -->
             <div class="card" data-category="juegos">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <i class="fa-solid fa-fire fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fa-solid fa-fire"></i>
                 </div>
                 <div class="card-body">
                     <h3>Free Fire</h3>
                     <p>Diamantes, Pases y Paquetes EVO Vault.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Free Fire', [
+                    <button class="btn-card" onclick="abrirModal('Free Fire', [
                         {nombre: '100 Diamantes', precio: 1.00},
                         {nombre: '310 Diamantes', precio: 3.10},
                         {nombre: '520 Diamantes', precio: 5.20},
@@ -60,13 +67,13 @@
 
             <!-- Mobile Legends -->
             <div class="card" data-category="juegos">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                    <i class="fa-solid fa-shield-halved fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <div class="card-body">
                     <h3>Mobile Legends</h3>
                     <p>Diamantes y Starlight Pass con ID y Zona.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Mobile Legends', [
+                    <button class="btn-card" onclick="abrirModal('Mobile Legends', [
                         {nombre: '88 Diamantes', precio: 1.80},
                         {nombre: '220 Diamantes', precio: 4.50},
                         {nombre: '565 Diamantes', precio: 11.00},
@@ -77,13 +84,13 @@
 
             <!-- Roblox -->
             <div class="card" data-category="juegos">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #ef4444, #991b1b);">
-                    <i class="fa-solid fa-cube fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #ef4444, #991b1b);">
+                    <i class="fa-solid fa-cube"></i>
                 </div>
                 <div class="card-body">
                     <h3>Roblox</h3>
                     <p>Tarjetas de Robux y Suscripciones.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Roblox', [
+                    <button class="btn-card" onclick="abrirModal('Roblox', [
                         {nombre: '400 Robux', precio: 5.00},
                         {nombre: '800 Robux', precio: 10.00},
                         {nombre: '1700 Robux', precio: 20.00}
@@ -93,13 +100,13 @@
 
             <!-- Call of Duty -->
             <div class="card" data-category="juegos">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #10b981, #047857);">
-                    <i class="fa-solid fa-crosshairs fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #10b981, #047857);">
+                    <i class="fa-solid fa-crosshairs"></i>
                 </div>
                 <div class="card-body">
                     <h3>Call of Duty: Mobile</h3>
                     <p>PUNTOS CP al instante para tu cuenta.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Call of Duty', [
+                    <button class="btn-card" onclick="abrirModal('Call of Duty', [
                         {nombre: '80 CP', precio: 1.00},
                         {nombre: '420 CP', precio: 5.00},
                         {nombre: '880 CP', precio: 10.00},
@@ -110,13 +117,13 @@
 
             <!-- PUBG Mobile -->
             <div class="card" data-category="juegos">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #f97316, #c2410c);">
-                    <i class="fa-solid fa-plane fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #f97316, #c2410c);">
+                    <i class="fa-solid fa-plane"></i>
                 </div>
                 <div class="card-body">
                     <h3>PUBG Mobile</h3>
                     <p>Unknown Cash (UC) directo a tu ID.</p>
-                    <button class="btn-comprar" onclick="abrirModal('PUBG Mobile', [
+                    <button class="btn-card" onclick="abrirModal('PUBG Mobile', [
                         {nombre: '60 UC', precio: 1.00},
                         {nombre: '325 UC', precio: 5.00},
                         {nombre: '660 UC', precio: 10.00}
@@ -126,13 +133,13 @@
 
             <!-- Netflix -->
             <div class="card" data-category="streaming">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #dc2626, #7f1d1d);">
-                    <i class="fa-solid fa-tv fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #dc2626, #7f1d1d);">
+                    <i class="fa-solid fa-tv"></i>
                 </div>
                 <div class="card-body">
                     <h3>Netflix</h3>
                     <p>Cuentas completas y perfiles mensuales.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Netflix', [
+                    <button class="btn-card" onclick="abrirModal('Netflix', [
                         {nombre: '1 Pantalla (1 Mes)', precio: 4.50},
                         {nombre: 'Cuenta Completa (1 Mes)', precio: 14.00}
                     ])">Comprar</button>
@@ -141,13 +148,13 @@
 
             <!-- Spotify -->
             <div class="card" data-category="streaming">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #22c55e, #15803d);">
-                    <i class="fa-solid fa-music fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #22c55e, #15803d);">
+                    <i class="fa-solid fa-music"></i>
                 </div>
                 <div class="card-body">
                     <h3>Spotify</h3>
                     <p>Individual o plan familiar por 1 mes.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Spotify', [
+                    <button class="btn-card" onclick="abrirModal('Spotify', [
                         {nombre: 'Individual (1 Mes)', precio: 3.50},
                         {nombre: 'Familiar (1 Mes)', precio: 6.00}
                     ])">Comprar</button>
@@ -156,13 +163,13 @@
 
             <!-- Disney+ -->
             <div class="card" data-category="streaming">
-                <div class="card-img-container" style="background: linear-gradient(135deg, #2563eb, #1e40af);">
-                    <i class="fa-solid fa-film fa-3x" style="color: white;"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, #2563eb, #1e40af);">
+                    <i class="fa-solid fa-film"></i>
                 </div>
                 <div class="card-body">
                     <h3>Disney+</h3>
                     <p>Suscripción mensual oficial garantizada.</p>
-                    <button class="btn-comprar" onclick="abrirModal('Disney+', [
+                    <button class="btn-card" onclick="abrirModal('Disney+', [
                         {nombre: 'Mensual Estándar', precio: 5.00},
                         {nombre: 'Mensual Premium', precio: 7.50}
                     ])">Comprar</button>
@@ -170,74 +177,62 @@
             </div>
 
         </div>
-    </main>
+    </section>
 
-    <!-- VENTANA MODAL DE COMPRA / RECARGA -->
-    <div id="modalCompra" class="modal-overlay" style="display: none;">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2 id="modalTitulo">Recargar Servicio</h2>
-                <button class="modal-close" onclick="cerrarModal()">&times;</button>
-            </div>
+    <!-- VENTANA MODAL DE COMPRA -->
+    <div id="modalCompra" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarModal()">&times;</span>
+            <h2 id="modalTitulo">Recargar Servicio</h2>
             
             <form id="formRecarga">
-                <div class="modal-body">
-                    
-                    <!-- Selección de Paquete -->
-                    <div class="form-group">
-                        <label for="opcionSelect">Selecciona el paquete:</label>
-                        <select id="opcionSelect" onchange="actualizarResumen()" required>
-                            <!-- Se llena dinámicamente desde JS -->
-                        </select>
-                    </div>
+                
+                <!-- Selección de Paquete -->
+                <label for="opcionSelect">Selecciona el paquete:</label>
+                <select id="opcionSelect" onchange="actualizarResumen()" required>
+                    <!-- Dinámico por JS -->
+                </select>
 
-                    <!-- Contenedor dinámico para ID de jugador / Datos de destino -->
-                    <div id="camposIdContainer" class="form-group">
-                        <!-- Inyectado por JS según el juego -->
-                    </div>
-
-                    <!-- Método de Pago -->
-                    <div class="form-group">
-                        <label for="metodoPagoSelect">Método de Pago:</label>
-                        <select id="metodoPagoSelect" onchange="manejarMetodoPago()" required>
-                            <option value="">-- Seleccione un método --</option>
-                            <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
-                            <option value="Transferencia Bancaria" disabled>Transferencia Bancaria (No disponible)</option>
-                            <option value="Persona Física" disabled>Persona Física (No disponible)</option>
-                        </select>
-                    </div>
-
-                    <!-- Contenedor para los campos de la Tarjeta del Banco Pedro Carbo -->
-                    <div id="camposTarjetaContainer"></div>
-
-                    <!-- Resumen de Costos -->
-                    <div class="resumen-pago">
-                        <div class="resumen-row">
-                            <span>Precio del producto:</span>
-                            <span id="lblPrecio">$0.00</span>
-                        </div>
-                        <div class="resumen-row">
-                            <span>Comisión de servicio:</span>
-                            <span id="lblComision">$0.00</span>
-                        </div>
-                        <div class="resumen-row total">
-                            <span>Total a Pagar:</span>
-                            <span id="lblTotal">$0.00</span>
-                        </div>
-                    </div>
-
+                <!-- Contenedor para ID de Jugador / Correo -->
+                <div id="camposIdContainer">
+                    <!-- Dinámico por JS -->
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn-secundario" onclick="cerrarModal()">Cancelar</button>
-                    <button type="submit" id="btnSubmitForm" class="btn-principal">Proceder al Pago</button>
+                <!-- Método de Pago -->
+                <label for="metodoPagoSelect">Método de Pago:</label>
+                <select id="metodoPagoSelect" onchange="manejarMetodoPago()" required>
+                    <option value="">-- Seleccione un método --</option>
+                    <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
+                    <option value="Transferencia Bancaria" disabled>Transferencia Bancaria (No disponible)</option>
+                    <option value="Persona Física" disabled>Persona Física (No disponible)</option>
+                </select>
+
+                <!-- Contenedor para los campos de la tarjeta del Banco Pedro Carbo -->
+                <div id="camposTarjetaContainer"></div>
+
+                <!-- Caja de Resumen de Pago -->
+                <div class="resumen-pago">
+                    <div class="linea-resumen">
+                        <span>Precio del producto:</span>
+                        <span id="lblPrecio">$0.00</span>
+                    </div>
+                    <div class="linea-resumen">
+                        <span>Comisión de servicio:</span>
+                        <span id="lblComision">$0.00</span>
+                    </div>
+                    <div class="linea-resumen total">
+                        <span>Total a Pagar:</span>
+                        <span id="lblTotal">$0.00</span>
+                    </div>
                 </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%;">Proceder al Pago</button>
             </form>
         </div>
     </div>
 
     <!-- PIE DE PÁGINA -->
-    <footer class="footer">
+    <footer>
         <p>&copy; 2026 PC RECARGA. Todos los derechos reservados. Conectado con Banco Pedro Carbo.</p>
     </footer>
 
