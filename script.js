@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 boton.disabled = true;
-                boton.textContent = "Verificando fondos en Banco Pedro Carbo...";
+                boton.textContent = "Procesando pago en Banco Pedro Carbo...";
 
                 try {
                     // 1. Buscar la tarjeta en la colección 'tarjetas_virtuales' del Banco
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         userId: userIdBanco,
                         userEmail: correoCliente,
                         userName: userSnap.data().nombre || "Cliente Externo",
-                        title: `Nexus Gaming: ${producto} (${paqueteNombre})`,
+                        title: `PC Recarga: ${producto} (${paqueteNombre})`,
                         category: "Pagos con Tarjeta",
                         amount: -montoTotal,
                         date: new Date().toLocaleString(),
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         puntosGanados = Math.round(precio * 10);
                     }
 
-                    // 7. Registrar el pedido en TU propio Firebase y sumar puntos
+                    // 7. Registrar el pedido en TU propio Firebase y sumar puntos basados en el correo electrónico
                     try {
                         await addDoc(collection(dbTienda, "transacciones"), {
                             userName: userSnap.data().nombre || "Cliente Web",
@@ -248,8 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error("Error al guardar en tu tienda o sumar puntos:", errTienda);
                     }
 
-                    // MENSAJE DE ÉXITO EXACTO SOLICITADO
-                    alert(`✅ Pedido exitoso, en breve se verificará tu pedido\n\nServicio: ${producto} - ${paqueteNombre}\nMonto descontado: $${montoTotal.toFixed(2)}\n✨ Has ganado ${puntosGanados} puntos.\nSaldo restante en tu cuenta: $${nuevoSaldo.toFixed(2)}`);
+                    alert(`¡Pago Exitoso!\n\nServicio: ${producto} - ${paqueteNombre}\nDestino: ${detalleDestino}\nMonto descontado: $${montoTotal.toFixed(2)}\n✨ ¡Has ganado ${puntosGanados} puntos para la ruleta!\nNuevo saldo en banco: $${nuevoSaldo.toFixed(2)}`);
                     window.cerrarModal();
                     formRecarga.reset();
                     location.reload();
@@ -302,7 +301,7 @@ window.abrirModal = function(nombreProducto, opciones) {
     camposTarjetaContainer.innerHTML = "";
     camposIdContainer.innerHTML = '';
     
-    // FORMULARIO DINÁMICO SEGÚN EL PRODUCTO
+    // FORMULARIO DINÁMICO CON BOTÓN DE VERIFICACIÓN EXCLUSIVO PARA FREE FIRE
     if (nombreProducto === 'Free Fire') {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
@@ -314,6 +313,7 @@ window.abrirModal = function(nombreProducto, opciones) {
                 <button type="button" onclick="verificarIdFreeFire()" style="background: #38bdf8; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Verificar</button>
             </div>
             
+            <!-- Visor de estado o apodo -->
             <div id="resultadoNombreFF" style="margin-bottom: 12px; font-size: 0.9rem; font-weight: bold; min-height: 20px;"></div>
         `;
     } else if (nombreProducto === 'Mobile Legends') {
@@ -349,6 +349,7 @@ window.abrirModal = function(nombreProducto, opciones) {
     window.actualizarResumen();
 }
 
+// FUNCIÓN DE VERIFICACIÓN DE ID PARA FREE FIRE
 window.verificarIdFreeFire = async function() {
     const idInput = document.getElementById('userInput').value.trim();
     const contenedorNombre = document.getElementById('resultadoNombreFF');
@@ -408,7 +409,7 @@ window.manejarMetodoPago = function() {
                 <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; color: #1e3a8a;">
                     💳 Pago con Tarjeta Banco Pedro Carbo
                 </h3>
-                <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 1rem;">Ingrese los datos de su tarjeta virtual para validar sus fondos y procesar el pago.</p>
+                <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 1rem;">Ingrese los datos de su tarjeta virtual para procesar el pago de forma segura.</p>
                 
                 <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 5px; color: #334155;">Número de Tarjeta</label>
                 <input type="text" id="fb_tarjeta" placeholder="Ej. 4532XXXXXXXX1234" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;" required>
