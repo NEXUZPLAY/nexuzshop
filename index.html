@@ -7,41 +7,45 @@
     <link rel="stylesheet" href="style.css">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts para tipografía moderna tipo Gaming -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACIÓN -->
+    <!-- BARRA DE NAVEGACIÓN ESTILO HYDRA -->
     <header class="navbar">
         <div class="logo">
-            <i class="fa-solid fa-gamepad"></i>
+            <i class="fa-solid fa-bolt-lightning"></i>
             PC <span>RECARGA</span>
         </div>
         <nav>
-            <a href="index.html" class="active">Tienda</a>
-            <a href="ruleta.html">Ruleta de Premios</a>
-            <a href="soportedeayuda.html">Soporte</a>
+            <a href="index.html" class="active"><i class="fa-solid fa-store"></i> Tienda</a>
+            <a href="ruleta.html"><i class="fa-solid fa-dharmachakra"></i> Ruleta</a>
+            <a href="soportedeayuda.html"><i class="fa-solid fa-headset"></i> Soporte</a>
         </nav>
     </header>
 
     <!-- SECCIÓN HERO -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Recargas Seguras y Rápidas</h1>
-            <p>Selecciona tu juego o servicio favorito, paga con tu tarjeta del Banco Pedro Carbo y recibe tus diamantes o saldo al instante.</p>
-            <a href="#catalogo" class="btn-primary">Ver Catálogo</a>
+            <h1>RECARGAS DIGITALES AL INSTANTE</h1>
+            <p>La plataforma definitiva de recargas para tus videojuegos favoritos y servicios de streaming. Seguro, rápido y conectado con el Banco Pedro Carbo.</p>
+            <a href="#catalogo" class="btn-primary"><i class="fa-solid fa-gamepad"></i> Explorar Catálogo</a>
         </div>
     </section>
 
-    <!-- SECCIÓN DE CATÁLOGO Y FILTROS -->
+    <!-- SECCIÓN DE CATÁLOGO -->
     <section id="catalogo" class="catalog-section">
-        <h2>Nuestros Productos</h2>
-        <p class="subtitle">Elige una categoría para filtrar el contenido</p>
+        <div class="section-header">
+            <h2><i class="fa-solid fa-layer-group"></i> Catálogo Disponible</h2>
+            <p class="subtitle">Selecciona una categoría para filtrar los servicios</p>
+        </div>
 
-        <!-- Filtros -->
+        <!-- Filtros Estilo Píldora -->
         <div class="filters">
-            <button class="filter-btn active" data-filter="all">Todos</button>
-            <button class="filter-btn" data-filter="juegos">Juegos</button>
-            <button class="filter-btn" data-filter="streaming">Streaming</button>
+            <button class="filter-btn active" data-filter="all"><i class="fa-solid fa-border-all"></i> Todos</button>
+            <button class="filter-btn" data-filter="juegos"><i class="fa-solid fa-gamepad"></i> Juegos</button>
+            <button class="filter-btn" data-filter="streaming"><i class="fa-solid fa-tv"></i> Streaming</button>
         </div>
 
         <!-- GRILLA DE PRODUCTOS -->
@@ -49,26 +53,26 @@
             
             <!-- Free Fire -->
             <div class="card" data-category="juegos">
-                <div class="card-img" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <i class="fa-solid fa-fire"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.4)); border-bottom: 2px solid #f59e0b;">
+                    <i class="fa-solid fa-fire" style="color: #f59e0b;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Free Fire</h3>
-                    <p>Diamantes, Pases y Paquetes EVO Vault.</p>
+                    <p>Diamantes, Pases y Paquetes EVO Vault oficiales.</p>
                     <button class="btn-card" onclick="abrirModal('Free Fire', [
                         {nombre: '100 Diamantes', precio: 1.00},
                         {nombre: '310 Diamantes', precio: 3.10},
                         {nombre: '520 Diamantes', precio: 5.20},
                         {nombre: '1060 Diamantes', precio: 10.50},
                         {nombre: '2180 Diamantes', precio: 21.00}
-                    ])">Recargar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Recargar</button>
                 </div>
             </div>
 
             <!-- Mobile Legends -->
             <div class="card" data-category="juegos">
-                <div class="card-img" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
-                    <i class="fa-solid fa-shield-halved"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(29, 78, 216, 0.4)); border-bottom: 2px solid #3b82f6;">
+                    <i class="fa-solid fa-shield-halved" style="color: #3b82f6;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Mobile Legends</h3>
@@ -78,30 +82,30 @@
                         {nombre: '220 Diamantes', precio: 4.50},
                         {nombre: '565 Diamantes', precio: 11.00},
                         {nombre: '1160 Diamantes', precio: 22.50}
-                    ])">Recargar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Recargar</button>
                 </div>
             </div>
 
             <!-- Roblox -->
             <div class="card" data-category="juegos">
-                <div class="card-img" style="background: linear-gradient(135deg, #ef4444, #991b1b);">
-                    <i class="fa-solid fa-cube"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(153, 27, 27, 0.4)); border-bottom: 2px solid #ef4444;">
+                    <i class="fa-solid fa-cube" style="color: #ef4444;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Roblox</h3>
-                    <p>Tarjetas de Robux y Suscripciones.</p>
+                    <p>Tarjetas de Robux y Suscripciones directas.</p>
                     <button class="btn-card" onclick="abrirModal('Roblox', [
                         {nombre: '400 Robux', precio: 5.00},
                         {nombre: '800 Robux', precio: 10.00},
                         {nombre: '1700 Robux', precio: 20.00}
-                    ])">Comprar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Comprar</button>
                 </div>
             </div>
 
             <!-- Call of Duty -->
             <div class="card" data-category="juegos">
-                <div class="card-img" style="background: linear-gradient(135deg, #10b981, #047857);">
-                    <i class="fa-solid fa-crosshairs"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(4, 120, 87, 0.4)); border-bottom: 2px solid #10b981;">
+                    <i class="fa-solid fa-crosshairs" style="color: #10b981;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Call of Duty: Mobile</h3>
@@ -111,14 +115,14 @@
                         {nombre: '420 CP', precio: 5.00},
                         {nombre: '880 CP', precio: 10.00},
                         {nombre: '2400 CP', precio: 25.00}
-                    ])">Recargar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Recargar</button>
                 </div>
             </div>
 
             <!-- PUBG Mobile -->
             <div class="card" data-category="juegos">
-                <div class="card-img" style="background: linear-gradient(135deg, #f97316, #c2410c);">
-                    <i class="fa-solid fa-plane"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(194, 65, 12, 0.4)); border-bottom: 2px solid #f97316;">
+                    <i class="fa-solid fa-plane" style="color: #f97316;"></i>
                 </div>
                 <div class="card-body">
                     <h3>PUBG Mobile</h3>
@@ -127,14 +131,14 @@
                         {nombre: '60 UC', precio: 1.00},
                         {nombre: '325 UC', precio: 5.00},
                         {nombre: '660 UC', precio: 10.00}
-                    ])">Recargar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Recargar</button>
                 </div>
             </div>
 
             <!-- Netflix -->
             <div class="card" data-category="streaming">
-                <div class="card-img" style="background: linear-gradient(135deg, #dc2626, #7f1d1d);">
-                    <i class="fa-solid fa-tv"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(127, 29, 29, 0.4)); border-bottom: 2px solid #dc2626;">
+                    <i class="fa-solid fa-tv" style="color: #dc2626;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Netflix</h3>
@@ -142,14 +146,14 @@
                     <button class="btn-card" onclick="abrirModal('Netflix', [
                         {nombre: '1 Pantalla (1 Mes)', precio: 4.50},
                         {nombre: 'Cuenta Completa (1 Mes)', precio: 14.00}
-                    ])">Comprar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Comprar</button>
                 </div>
             </div>
 
             <!-- Spotify -->
             <div class="card" data-category="streaming">
-                <div class="card-img" style="background: linear-gradient(135deg, #22c55e, #15803d);">
-                    <i class="fa-solid fa-music"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(21, 128, 61, 0.4)); border-bottom: 2px solid #22c55e;">
+                    <i class="fa-solid fa-music" style="color: #22c55e;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Spotify</h3>
@@ -157,14 +161,14 @@
                     <button class="btn-card" onclick="abrirModal('Spotify', [
                         {nombre: 'Individual (1 Mes)', precio: 3.50},
                         {nombre: 'Familiar (1 Mes)', precio: 6.00}
-                    ])">Comprar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Comprar</button>
                 </div>
             </div>
 
             <!-- Disney+ -->
             <div class="card" data-category="streaming">
-                <div class="card-img" style="background: linear-gradient(135deg, #2563eb, #1e40af);">
-                    <i class="fa-solid fa-film"></i>
+                <div class="card-img" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(30, 64, 175, 0.4)); border-bottom: 2px solid #2563eb;">
+                    <i class="fa-solid fa-film" style="color: #2563eb;"></i>
                 </div>
                 <div class="card-body">
                     <h3>Disney+</h3>
@@ -172,7 +176,7 @@
                     <button class="btn-card" onclick="abrirModal('Disney+', [
                         {nombre: 'Mensual Estándar', precio: 5.00},
                         {nombre: 'Mensual Premium', precio: 7.50}
-                    ])">Comprar</button>
+                    ])"><i class="fa-solid fa-cart-shopping"></i> Comprar</button>
                 </div>
             </div>
 
@@ -226,14 +230,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary" style="width: 100%;">Proceder al Pago</button>
+                <button type="submit" class="btn-primary" style="width: 100%; border-radius: 8px; margin-top: 10px;">Proceder al Pago</button>
             </form>
         </div>
     </div>
 
     <!-- PIE DE PÁGINA -->
     <footer>
-        <p>&copy; 2026 PC RECARGA. Todos los derechos reservados. Conectado con Banco Pedro Carbo.</p>
+        <p>&copy; 2026 PC RECARGA. Todos los derechos reservados. Inspirado en la interfaz moderna de distribución digital.</p>
     </footer>
 
     <!-- Script principal de la tienda -->
