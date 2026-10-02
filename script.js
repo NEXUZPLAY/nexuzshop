@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         userId: userIdBanco,
                         userEmail: correoCliente,
                         userName: userSnap.data().nombre || "Cliente Externo",
-                        title: `PC Recarga: ${producto} (${paqueteNombre})`,
+                        title: `Nexus Gaming: ${producto} (${paqueteNombre})`,
                         category: "Pagos con Tarjeta",
                         amount: -montoTotal,
                         date: new Date().toLocaleString(),
