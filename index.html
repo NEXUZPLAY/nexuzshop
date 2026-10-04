@@ -199,37 +199,67 @@
         </div>
     </section>
 
-    <!-- Modal de Compra / Recarga -->
-    <div id="modalCompra" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="cerrarModal()">&times;</span>
-            <h2 id="modalTitulo">Título del Producto</h2>
-            <form id="formRecarga">
+<!-- Modal de Compra / Recarga por Pasos -->
+<div id="modalCompra" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <span class="close-btn" onclick="cerrarModal()">&times;</span>
+        <h2 id="modalTitulo">Título del Producto</h2>
+        
+        <!-- Indicador de Pasos -->
+        <div class="pasos-indicator" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.8rem; color: #9ca3af; border-bottom: 1px solid #1f2937; padding-bottom: 10px;">
+            <span id="stepInd1" style="color: #10b981; font-weight: bold;">1. Paquete</span>
+            <span id="stepInd2">2. Datos</span>
+            <span id="stepInd3">3. Método</span>
+            <span id="stepInd4">4. Pagar</span>
+        </div>
+
+        <form id="formRecarga">
+            <!-- PASO 1: Selección de Paquete -->
+            <div id="step1" class="modal-step">
                 <label for="opcionSelect">Selecciona el paquete:</label>
-                <select id="opcionSelect" required onchange="actualizarResumen()"></select>
+                <select id="opcionSelect" onchange="actualizarResumen()"></select>
+                <button type="button" class="btn-primary" style="width: 100%; margin-top: 15px;" onclick="irPaso(2)">Continuar al siguiente paso</button>
+            </div>
 
+            <!-- PASO 2: Datos del Cliente (ID / Teléfono / Correo) -->
+            <div id="step2" class="modal-step" style="display: none;">
                 <div id="camposIdContainer"></div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(1)">Volver</button>
+                    <button type="button" class="btn-primary" style="flex: 1;" onclick="validarYPasarPaso3()">Continuar al pago</button>
+                </div>
+            </div>
 
-                <label for="metodoPagoSelect">Método de pago:</label>
-                <select id="metodoPagoSelect" onchange="manejarMetodoPago()" required>
+            <!-- PASO 3: Selección de Método de Pago -->
+            <div id="step3" class="modal-step" style="display: none;">
+                <label for="metodoPagoSelect">Elige el método de pago:</label>
+                <select id="metodoPagoSelect" onchange="manejarMetodoPago()">
                     <option value="" disabled selected>Seleccione un método de pago</option>
                     <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
                     <option value="Transferencia Bancaria" disabled style="color: #9ca3af;">Transferencia Bancaria (No disponible)</option>
-                    <option value="Persona Física" disabled style="color: #9ca3af;">Persona Física / Efectivo (No disponible)</option>
                 </select>
-
                 <div id="camposTarjetaContainer"></div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(2)">Volver</button>
+                    <button type="button" class="btn-primary" style="flex: 1;" onclick="irPaso(4)">Ir a pagar</button>
+                </div>
+            </div>
 
+            <!-- PASO 4: Resumen final y Confirmación -->
+            <div id="step4" class="modal-step" style="display: none;">
                 <div class="resumen-pago">
                     <div class="linea-resumen"><span>Precio del producto:</span> <span id="lblPrecio">$0.00</span></div>
                     <div class="linea-resumen"><span>Comisión por servicio:</span> <span id="lblComision">$0.00</span></div>
                     <div class="linea-resumen total"><span>Total a pagar:</span> <span id="lblTotal">$0.00</span></div>
                 </div>
-
-                <button type="submit" id="btnSubmitForm" class="btn-primary" style="width: 100%; margin-top: 15px;">Proceder al Pago</button>
-            </form>
-        </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(3)">Volver</button>
+                    <button type="submit" id="btnSubmitForm" class="btn-primary" style="flex: 1;">Confirmar Pago</button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- Footer -->
     <footer>
