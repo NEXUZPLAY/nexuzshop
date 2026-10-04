@@ -468,3 +468,61 @@ window.onclick = function(event) {
         window.cerrarModal();
     }
 }
+// Control de pasos del modal estilo HydraUp
+window.irPaso = function(paso) {
+    // Ocultar todos los pasos
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('step4').style.display = 'none';
+
+    // Resetear indicadores
+    for (let i = 1; i <= 4; i++) {
+        const ind = document.getElementById(`stepInd${i}`);
+        if (ind) {
+            ind.style.color = '#9ca3af';
+            ind.style.fontWeight = 'normal';
+        }
+    }
+
+    // Mostrar el paso actual y resaltar indicador
+    document.getElementById(`step${paso}`).style.display = 'block';
+    const activeInd = document.getElementById(`stepInd${paso}`);
+    if (activeInd) {
+        activeInd.style.color = '#10b981';
+        activeInd.style.fontWeight = 'bold';
+    }
+}
+
+window.validarYPasarPaso3 = function() {
+    const emailInput = document.getElementById('emailInput');
+    if (emailInput && !emailInput.value.trim()) {
+        alert("Por favor ingresa tu correo electrónico.");
+        emailInput.focus();
+        return;
+    }
+
+    // Validar ID de juego según el servicio
+    const userInput = document.getElementById('userInput');
+    const userIdInput = document.getElementById('userIdInput');
+    const phoneInput = document.getElementById('phoneInput');
+
+    if (userInput && !userInput.value.trim()) {
+        alert("Por favor ingresa tu ID de jugador.");
+        userInput.focus();
+        return;
+    }
+    if (userIdInput && !userIdInput.value.trim()) {
+        alert("Por favor ingresa tu ID de usuario.");
+        userIdInput.focus();
+        return;
+    }
+    if (phoneInput && !phoneInput.value.trim()) {
+        alert("Por favor ingresa tu número de teléfono.");
+        phoneInput.focus();
+        return;
+    }
+
+    // Si todo está correcto, avanza al paso 3 (Método de pago)
+    window.irPaso(3);
+}
