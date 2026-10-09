@@ -13,7 +13,7 @@ import {
     serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 1. Configuración de Firebase del Banco Pedro Carbo (Para validar y descontar saldo)
+// 1. Configuración de Firebase del Banco Pedro Carbo (Para validar y descontar saldo)[cite: 7]
 const bancoConfig = {
     apiKey: "AIzaSyAAQ4f1wD8W3WOoZANRO5KvOJW2gfP_wwE",
     authDomain: "bancomovil-421ff.firebaseapp.com",
@@ -27,7 +27,7 @@ const bancoConfig = {
 const appBanco = initializeApp(bancoConfig, "bancoApp");
 const dbBanco = getFirestore(appBanco);
 
-// 2. Tu propia configuración de Firebase (Para registrar pedidos y puntos de tu tienda)
+// 2. Tu propia configuración de Firebase (Para registrar pedidos y puntos de tu tienda)[cite: 7]
 const miFirebaseConfig = {
     apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
     authDomain: "pc-recarga-77d05.firebaseapp.com",
@@ -42,7 +42,7 @@ const appMiTienda = initializeApp(miFirebaseConfig, "tiendaApp");
 const dbTienda = getFirestore(appMiTienda);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Filtrado de productos en la tienda
+    // Filtrado de productos en la tienda[cite: 7]
     const filterButtons = document.querySelectorAll('.filter-btn');
     const cards = document.querySelectorAll('.card');
 
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Manejo del formulario de recarga / compra
+    // Manejo del formulario de recarga / compra[cite: 7]
     const formRecarga = document.getElementById('formRecarga');
     if (formRecarga) {
         formRecarga.addEventListener('submit', async (e) => {
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const metodoPago = document.getElementById('metodoPagoSelect').value;
 
-            // BLOQUEAR MÉTODOS DE PAGO DESACTIVADOS
+            // BLOQUEAR MÉTODOS DE PAGO DESACTIVADOS[cite: 7]
             if (metodoPago === 'Transferencia Bancaria' || metodoPago === 'Persona Física') {
                 alert("Este método de pago se encuentra temporalmente deshabilitado.");
                 return;
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const select = document.getElementById('opcionSelect');
             const paqueteNombre = select.options[select.selectedIndex].text;
             
-            // Obtener el correo electrónico ingresado obligatoriamente en el formulario
+            // Obtener el correo electrónico ingresado obligatoriamente en el formulario[cite: 7]
             const emailInputElem = document.getElementById('emailInput');
             const correoCliente = emailInputElem ? emailInputElem.value.trim() : "cliente@pc-recarga.com";
 
@@ -90,9 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userId = document.getElementById('userIdInput').value;
                 const zoneId = document.getElementById('zoneIdInput').value;
                 detalleDestino = `ID: ${userId} (Zona: ${zoneId})`;
-            } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+'].includes(producto)) {
+            } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+', 'Discord'].includes(producto)) {
                 const phone = document.getElementById('phoneInput').value;
-                detalleDestino = `Correo: ${correoCliente} | Teléfono: ${phone}`;
+                detalleDestino = `Correo: ${correoCliente} | Teléfono/Usuario: ${phone}`;
             } else {
                 const userInputElem = document.getElementById('userInput');
                 detalleDestino = `ID de Cuenta: ${userInputElem ? userInputElem.value : 'N/A'}`;
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 boton.textContent = "Procesando pago en Banco Pedro Carbo...";
 
                 try {
-                    // 1. Buscar la tarjeta en la colección 'tarjetas_virtuales' del Banco
+                    // 1. Buscar la tarjeta en la colección 'tarjetas_virtuales' del Banco[cite: 7]
                     const tarjetasRef = collection(dbBanco, "tarjetas_virtuales");
                     const q = query(tarjetasRef, where("numero", "==", numTarjetaInput));
                     const querySnapshot = await getDocs(q);
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         docIdEncontrado = docSnap.id; 
                     });
 
-                    // 2. Validar CVV y Expiración
+                    // 2. Validar CVV y Expiración[cite: 7]
                     if (tarjetaData.cvv !== cvvInput || tarjetaData.expiracion !== expInput) {
                         alert("Credenciales incorrectas (CVV o Fecha de Expiración erróneos).");
                         boton.disabled = false;
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
 
-                    // 3. Obtener el saldo del usuario en el Banco
+                    // 3. Obtener el saldo del usuario en el Banco[cite: 7]
                     const userRef = doc(dbBanco, "usuarios", userIdBanco);
                     const userSnap = await getDoc(userRef);
 
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     let saldoActual = userSnap.data().saldo ?? 0.00;
 
-                    // 4. Verificar fondos suficientes
+                    // 4. Verificar fondos suficientes[cite: 7]
                     if (saldoActual < montoTotal) {
                         alert(`Fondos insuficientes. Su saldo actual es $${saldoActual.toFixed(2)} y el total a pagar es $${montoTotal.toFixed(2)}.`);
                         boton.disabled = false;
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     let nuevoSaldo = saldoActual - montoTotal;
 
-                    // 5. Descontar saldo y registrar transacción en el Banco
+                    // 5. Descontar saldo y registrar transacción en el Banco[cite: 7]
                     await updateDoc(userRef, { saldo: nuevoSaldo });
 
                     await addDoc(collection(dbBanco, "transacciones"), {
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         estado: "Completado"
                     });
 
-                    // 6. CÁLCULO INTELIGENTE DE PUNTOS
+                    // 6. CÁLCULO INTELIGENTE DE PUNTOS[cite: 7]
                     let puntosGanados = 0;
                     const matches = paqueteNombre.match(/[\d,]+/g);
                     
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         puntosGanados = Math.round(precio * 10);
                     }
 
-                    // 7. Registrar el pedido en TU propio Firebase y sumar puntos basados en el correo electrónico
+                    // 7. Registrar el pedido en TU propio Firebase y sumar puntos basados en el correo electrónico[cite: 7]
                     try {
                         await addDoc(collection(dbTienda, "transacciones"), {
                             userName: userSnap.data().nombre || "Cliente Web",
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             await setDoc(userPuntosRef, { email: correoCliente, puntos: puntosGanados });
                         }
 
-                        // 8. SI ES FREE FIRE, GUARDAR O ACTUALIZAR AUTOMÁTICAMENTE EL JUGADOR VERIFICADO
+                        // 8. SI ES FREE FIRE, GUARDAR O ACTUALIZAR AUTOMÁTICAMENTE EL JUGADOR VERIFICADO[cite: 7]
                         if (producto === 'Free Fire') {
                             const userInputFF = document.getElementById('userInput');
                             const hiddenNombreFF = document.getElementById('nombreJugadorInput');
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// FUNCIONES GLOBALES EXPUESTAS AL OBJETO WINDOW
+// FUNCIONES GLOBALES EXPUESTAS AL OBJETO WINDOW[cite: 7]
 // ==========================================
 
 window.abrirModal = function(nombreProducto, opciones) {
@@ -286,7 +286,7 @@ window.abrirModal = function(nombreProducto, opciones) {
         boton.textContent = "Proceder al Pago";
     }
 
-    const accion = ['Netflix', 'Spotify', 'Disney+'].includes(nombreProducto) ? 'Comprar' : 'Recargar';
+    const accion = ['Netflix', 'Spotify', 'Disney+', 'Discord'].includes(nombreProducto) ? 'Comprar' : 'Recargar';
     modalTitulo.textContent = `${accion} ${nombreProducto}`;
     
     opcionSelect.innerHTML = '';
@@ -301,7 +301,7 @@ window.abrirModal = function(nombreProducto, opciones) {
     camposTarjetaContainer.innerHTML = "";
     camposIdContainer.innerHTML = '';
     
-    // FORMULARIO DINÁMICO CON BOTÓN DE VERIFICACIÓN EXCLUSIVO PARA FREE FIRE
+    // FORMULARIO DINÁMICO CON VALIDACIÓN SEGÚN EL SERVICIO[cite: 7]
     if (nombreProducto === 'Free Fire') {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos):</label>
@@ -313,7 +313,6 @@ window.abrirModal = function(nombreProducto, opciones) {
                 <button type="button" onclick="verificarIdFreeFire()" style="background: #38bdf8; color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Verificar</button>
             </div>
             
-            <!-- Visor de estado o apodo -->
             <div id="resultadoNombreFF" style="margin-bottom: 12px; font-size: 0.9rem; font-weight: bold; min-height: 20px;"></div>
         `;
     } else if (nombreProducto === 'Mobile Legends') {
@@ -327,23 +326,13 @@ window.abrirModal = function(nombreProducto, opciones) {
             <label for="zoneIdInput">ID de Zona (4 dígitos):</label>
             <input type="text" id="zoneIdInput" placeholder="Ej: 1234" maxlength="4" pattern="\\d{4}" title="Debe ser exactamente de 4 dígitos" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
         `;
-
-} else if (['Roblox', 'Netflix', 'Spotify', 'Disney+', 'Discord'].includes(nombreProducto)) {
-    camposIdContainer.innerHTML = `
-        <label for="emailInput">Correo Electrónico (Para acumular tus puntos y envío):</label>
-        <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
-
-        <label for="phoneInput">Número de Teléfono o Usuario de Discord:</label>
-        <input type="text" id="phoneInput" placeholder="Ej: usuario#0000 o +593..." required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
-    `;
-}
-    } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+'].includes(nombreProducto)) {
+    } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+', 'Discord'].includes(nombreProducto)) {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos y envío):</label>
             <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
 
-            <label for="phoneInput">Número de Teléfono:</label>
-            <input type="tel" id="phoneInput" placeholder="Ej: +593999999999" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
+            <label for="phoneInput">Número de Teléfono o Usuario de Discord:</label>
+            <input type="text" id="phoneInput" placeholder="Ej: usuario#0000 o +593..." required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
         `;
     } else {
         camposIdContainer.innerHTML = `
@@ -359,7 +348,7 @@ window.abrirModal = function(nombreProducto, opciones) {
     window.actualizarResumen();
 }
 
-// FUNCIÓN DE VERIFICACIÓN DE ID PARA FREE FIRE
+// FUNCIÓN DE VERIFICACIÓN DE ID PARA FREE FIRE[cite: 7]
 window.verificarIdFreeFire = async function() {
     const idInput = document.getElementById('userInput').value.trim();
     const contenedorNombre = document.getElementById('resultadoNombreFF');
@@ -478,15 +467,14 @@ window.onclick = function(event) {
         window.cerrarModal();
     }
 }
-// Control de pasos del modal estilo HydraUp
+
+// Control de pasos del modal estilo HydraUp[cite: 7]
 window.irPaso = function(paso) {
-    // Ocultar todos los pasos
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'none';
     document.getElementById('step3').style.display = 'none';
     document.getElementById('step4').style.display = 'none';
 
-    // Resetear indicadores
     for (let i = 1; i <= 4; i++) {
         const ind = document.getElementById(`stepInd${i}`);
         if (ind) {
@@ -495,7 +483,6 @@ window.irPaso = function(paso) {
         }
     }
 
-    // Mostrar el paso actual y resaltar indicador
     document.getElementById(`step${paso}`).style.display = 'block';
     const activeInd = document.getElementById(`stepInd${paso}`);
     if (activeInd) {
@@ -512,7 +499,6 @@ window.validarYPasarPaso3 = function() {
         return;
     }
 
-    // Validar ID de juego según el servicio
     const userInput = document.getElementById('userInput');
     const userIdInput = document.getElementById('userIdInput');
     const phoneInput = document.getElementById('phoneInput');
@@ -528,11 +514,10 @@ window.validarYPasarPaso3 = function() {
         return;
     }
     if (phoneInput && !phoneInput.value.trim()) {
-        alert("Por favor ingresa tu número de teléfono.");
+        alert("Por favor ingresa tu número de teléfono o usuario de Discord.");
         phoneInput.focus();
         return;
     }
 
-    // Si todo está correcto, avanza al paso 3 (Método de pago)
     window.irPaso(3);
 }
