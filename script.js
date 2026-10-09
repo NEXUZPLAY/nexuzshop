@@ -327,6 +327,16 @@ window.abrirModal = function(nombreProducto, opciones) {
             <label for="zoneIdInput">ID de Zona (4 dígitos):</label>
             <input type="text" id="zoneIdInput" placeholder="Ej: 1234" maxlength="4" pattern="\\d{4}" title="Debe ser exactamente de 4 dígitos" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
         `;
+
+} else if (['Roblox', 'Netflix', 'Spotify', 'Disney+', 'Discord'].includes(nombreProducto)) {
+    camposIdContainer.innerHTML = `
+        <label for="emailInput">Correo Electrónico (Para acumular tus puntos y envío):</label>
+        <input type="email" id="emailInput" placeholder="tucorreo@email.com" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; margin-bottom: 12px; background: #f8fafc; color: #000;">
+
+        <label for="phoneInput">Número de Teléfono o Usuario de Discord:</label>
+        <input type="text" id="phoneInput" placeholder="Ej: usuario#0000 o +593..." required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.9rem; background: #f8fafc; color: #000;">
+    `;
+}
     } else if (['Roblox', 'Netflix', 'Spotify', 'Disney+'].includes(nombreProducto)) {
         camposIdContainer.innerHTML = `
             <label for="emailInput">Correo Electrónico (Para acumular tus puntos y envío):</label>
