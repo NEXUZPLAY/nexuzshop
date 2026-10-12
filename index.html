@@ -43,7 +43,14 @@
         <nav>
             <a href="#inicio" class="active">Inicio</a>
             <a href="https://nexuzplay.github.io/nexuzshop/ruleta">RULETA</a>
+            <a href="#beneficios">Beneficios</a>
             <a href="#soporte">Soporte</a>
+            <!-- Contenedor dinámico de Autenticación / Usuario -->
+            <div id="userNavContainer" style="display: inline-block; margin-left: 10px;">
+                <button class="btn-primary" onclick="abrirModalAuth()" style="padding: 8px 18px; font-size: 0.9rem;">
+                    <i class="fa-solid fa-user"></i> Mi Cuenta / Acceso
+                </button>
+            </div>
         </nav>
     </header>
 
@@ -53,6 +60,42 @@
             <h1>Tu Centro de Recargas y Streaming de Confianza</h1>
             <p>Recarga tus juegos favoritos y obtén tus suscripciones de streaming al instante y de forma segura.</p>
             <a href="#catalogo" class="btn-primary">Ver Catálogo</a>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE BENEFICIOS POR REGISTRARSE -->
+    <section id="beneficios" class="benefits-section" style="padding: 50px 8%; background: #0f172a; border-radius: 16px; margin: 40px auto; max-width: 1100px; border: 1px solid #1e293b;">
+        <h2 style="text-align: center; color: #38bdf8; font-size: 2rem; margin-bottom: 10px;">🚀 ¡Únete y Obtén Beneficios Exclusivos!</h2>
+        <p style="text-align: center; color: #94a3b8; margin-bottom: 30px;">Crea tu cuenta o inicia sesión para disfrutar de ventajas únicas en cada recarga:</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+            <!-- BENEFICIO 1 -->
+            <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; text-align: center;">
+                <div style="font-size: 2.5rem; color: #38bdf8; margin-bottom: 10px;"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 8px;">1. Estado de Recarga</h3>
+                <p style="color: #94a3b8; font-size: 0.88rem;">Revisa en tiempo real si tu recarga fue <b>Aceptada</b> o <b>Rechazada</b>.</p>
+            </div>
+
+            <!-- BENEFICIO 2 -->
+            <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; text-align: center;">
+                <div style="font-size: 2.5rem; color: #22c55e; margin-bottom: 10px;"><i class="fa-solid fa-tags"></i></div>
+                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 8px;">2. Descuento 1ª Compra</h3>
+                <p style="color: #94a3b8; font-size: 0.88rem;">Obtén un descuento especial automático en la primera compra de tu cuenta.</p>
+            </div>
+
+            <!-- BENEFICIO 3 -->
+            <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; text-align: center;">
+                <div style="font-size: 2.5rem; color: #fbbf24; margin-bottom: 10px;"><i class="fa-solid fa-comments"></i></div>
+                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 8px;">3. Anuncios y Comentarios</h3>
+                <p style="color: #94a3b8; font-size: 0.88rem;">Publica tus opiniones en los avisos oficiales y participa en la comunidad.</p>
+            </div>
+
+            <!-- BENEFICIO 4 -->
+            <div style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; text-align: center;">
+                <div style="font-size: 2.5rem; color: #a855f7; margin-bottom: 10px;"><i class="fa-solid fa-bolt"></i></div>
+                <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 8px;">4. Actualizaciones Anticipadas</h3>
+                <p style="color: #94a3b8; font-size: 0.88rem;">Entérate de nuevas promociones y packs antes que los usuarios anónimos.</p>
+            </div>
         </div>
     </section>
 
@@ -182,23 +225,6 @@
                 </div>
             </div>
 
-            <!-- Discord Nitro -->
-<div class="card" data-category="streaming">
-    <div class="card-img" style="background: linear-gradient(135deg, #5865F2, #404EED);">
-        <i class="fa-brands fa-discord"></i>
-    </div>
-    <div class="card-body">
-        <h3>Discord Nitro</h3>
-        <p>Planes Nitro y Nitro Basic oficiales.</p>
-        <button class="btn-card" onclick="abrirModal('Discord', [
-            {nombre: 'Nitro Basic (Mensual)', precio: 2.99},
-            {nombre: 'Nitro Basic (Anual)', precio: 29.99},
-            {nombre: 'Nitro (Mensual)', precio: 9.99},
-            {nombre: 'Nitro (Anual)', precio: 99.99}
-        ])">Comprar</button>
-    </div>
-</div>
-
             <!-- Disney+ -->
             <div class="card" data-category="streaming">
                 <div class="card-img" style="background: linear-gradient(135deg, #097969, #002b49);">
@@ -216,67 +242,102 @@
         </div>
     </section>
 
-<!-- Modal de Compra / Recarga por Pasos -->
-<div id="modalCompra" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <span class="close-btn" onclick="cerrarModal()">&times;</span>
-        <h2 id="modalTitulo">Título del Producto</h2>
-        
-        <!-- Indicador de Pasos -->
-        <div class="pasos-indicator" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.8rem; color: #9ca3af; border-bottom: 1px solid #1f2937; padding-bottom: 10px;">
-            <span id="stepInd1" style="color: #10b981; font-weight: bold;">1. Paquete</span>
-            <span id="stepInd2">2. Datos</span>
-            <span id="stepInd3">3. Método</span>
-            <span id="stepInd4">4. Pagar</span>
+    <!-- MODAL DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
+    <div id="modalAuth" class="modal">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <span class="close-btn" onclick="cerrarModalAuth()">&times;</span>
+            
+            <!-- Pestañas Cambio Login / Registro -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+                <button id="tabLogin" onclick="cambiarTabAuth('login')" style="flex: 1; padding: 10px; background: #38bdf8; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Iniciar Sesión</button>
+                <button id="tabRegister" onclick="cambiarTabAuth('register')" style="flex: 1; padding: 10px; background: #334155; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Crear Cuenta</button>
+            </div>
+
+            <!-- Botón de Inicio con Google -->
+            <button class="btn-google" onclick="loginConGoogle()" style="width: 100%; background: #ffffff; color: #1e293b; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.71v2.26h2.94c1.72-1.58 2.78-3.9 2.78-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.95v2.33C2.43 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.21c-.19-.54-.3-1.12-.3-1.71s.11-1.17.3-1.71V4.46H.95C.34 5.68 0 7.07 0 8.5s.34 2.82.95 4.04l3.02-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.43 2.02.95 4.46l3.02 2.33c.71-2.13 2.69-3.71 5.03-3.71z"/></svg>
+                Continuar con Google
+            </button>
+
+            <div style="color: #64748b; margin-bottom: 15px; font-size: 0.85rem;">— O usa tu correo electrónico —</div>
+
+            <!-- FORMULARIO DE INICIO DE SESIÓN -->
+            <form id="formAuthLogin" onsubmit="loginConEmail(event)">
+                <input type="email" id="loginEmail" placeholder="Correo electrónico" required style="width: 100%; padding: 11px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box;">
+                <input type="password" id="loginPassword" placeholder="Contraseña" required style="width: 100%; padding: 11px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box;">
+                <button type="submit" class="btn-primary" style="width: 100%;">Ingresar</button>
+            </form>
+
+            <!-- FORMULARIO DE CREACIÓN DE CUENTA -->
+            <form id="formAuthRegister" onsubmit="registrarConEmail(event)" style="display: none;">
+                <input type="email" id="regEmail" placeholder="Correo electrónico" required style="width: 100%; padding: 11px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box;">
+                <input type="password" id="regPassword" placeholder="Contraseña (Mín. 6 caracteres)" minlength="6" required style="width: 100%; padding: 11px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box;">
+                <button type="submit" class="btn-primary" style="width: 100%;">Crear Cuenta</button>
+            </form>
         </div>
-
-        <form id="formRecarga">
-            <!-- PASO 1: Selección de Paquete -->
-            <div id="step1" class="modal-step">
-                <label for="opcionSelect">Selecciona el paquete:</label>
-                <select id="opcionSelect" onchange="actualizarResumen()"></select>
-                <button type="button" class="btn-primary" style="width: 100%; margin-top: 15px;" onclick="irPaso(2)">Continuar al siguiente paso</button>
-            </div>
-
-            <!-- PASO 2: Datos del Cliente (ID / Teléfono / Correo) -->
-            <div id="step2" class="modal-step" style="display: none;">
-                <div id="camposIdContainer"></div>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(1)">Volver</button>
-                    <button type="button" class="btn-primary" style="flex: 1;" onclick="validarYPasarPaso3()">Continuar al pago</button>
-                </div>
-            </div>
-
-            <!-- PASO 3: Selección de Método de Pago -->
-            <div id="step3" class="modal-step" style="display: none;">
-                <label for="metodoPagoSelect">Elige el método de pago:</label>
-                <select id="metodoPagoSelect" onchange="manejarMetodoPago()">
-                    <option value="" disabled selected>Seleccione un método de pago</option>
-                    <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
-                    <option value="Transferencia Bancaria" disabled style="color: #9ca3af;">Transferencia Bancaria (No disponible)</option>
-                </select>
-                <div id="camposTarjetaContainer"></div>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(2)">Volver</button>
-                    <button type="button" class="btn-primary" style="flex: 1;" onclick="irPaso(4)">Ir a pagar</button>
-                </div>
-            </div>
-
-            <!-- PASO 4: Resumen final y Confirmación -->
-            <div id="step4" class="modal-step" style="display: none;">
-                <div class="resumen-pago">
-                    <div class="linea-resumen"><span>Precio del producto:</span> <span id="lblPrecio">$0.00</span></div>
-                    <div class="linea-resumen"><span>Comisión por servicio:</span> <span id="lblComision">$0.00</span></div>
-                    <div class="linea-resumen total"><span>Total a pagar:</span> <span id="lblTotal">$0.00</span></div>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(3)">Volver</button>
-                    <button type="submit" id="btnSubmitForm" class="btn-primary" style="flex: 1;">Confirmar Pago</button>
-                </div>
-            </div>
-        </form>
     </div>
-</div>
+
+    <!-- Modal de Compra / Recarga por Pasos -->
+    <div id="modalCompra" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="cerrarModal()">&times;</span>
+            <h2 id="modalTitulo">Título del Producto</h2>
+            
+            <!-- Indicador de Pasos -->
+            <div class="pasos-indicator" style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.8rem; color: #9ca3af; border-bottom: 1px solid #1f2937; padding-bottom: 10px;">
+                <span id="stepInd1" style="color: #10b981; font-weight: bold;">1. Paquete</span>
+                <span id="stepInd2">2. Datos</span>
+                <span id="stepInd3">3. Método</span>
+                <span id="stepInd4">4. Pagar</span>
+            </div>
+
+            <form id="formRecarga">
+                <!-- PASO 1: Selección de Paquete -->
+                <div id="step1" class="modal-step">
+                    <label for="opcionSelect">Selecciona el paquete:</label>
+                    <select id="opcionSelect" onchange="actualizarResumen()"></select>
+                    <button type="button" class="btn-primary" style="width: 100%; margin-top: 15px;" onclick="irPaso(2)">Continuar al siguiente paso</button>
+                </div>
+
+                <!-- PASO 2: Datos del Cliente (ID / Teléfono / Correo) -->
+                <div id="step2" class="modal-step" style="display: none;">
+                    <div id="camposIdContainer"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(1)">Volver</button>
+                        <button type="button" class="btn-primary" style="flex: 1;" onclick="validarYPasarPaso3()">Continuar al pago</button>
+                    </div>
+                </div>
+
+                <!-- PASO 3: Selección de Método de Pago -->
+                <div id="step3" class="modal-step" style="display: none;">
+                    <label for="metodoPagoSelect">Elige el método de pago:</label>
+                    <select id="metodoPagoSelect" onchange="manejarMetodoPago()">
+                        <option value="" disabled selected>Seleccione un método de pago</option>
+                        <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
+                        <option value="Transferencia Bancaria" disabled style="color: #9ca3af;">Transferencia Bancaria (No disponible)</option>
+                    </select>
+                    <div id="camposTarjetaContainer"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(2)">Volver</button>
+                        <button type="button" class="btn-primary" style="flex: 1;" onclick="irPaso(4)">Ir a pagar</button>
+                    </div>
+                </div>
+
+                <!-- PASO 4: Resumen final y Confirmación -->
+                <div id="step4" class="modal-step" style="display: none;">
+                    <div class="resumen-pago">
+                        <div class="linea-resumen"><span>Precio del producto:</span> <span id="lblPrecio">$0.00</span></div>
+                        <div class="linea-resumen"><span>Comisión por servicio:</span> <span id="lblComision">$0.00</span></div>
+                        <div class="linea-resumen total"><span>Total a pagar:</span> <span id="lblTotal">$0.00</span></div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(3)">Volver</button>
+                        <button type="submit" id="btnSubmitForm" class="btn-primary" style="flex: 1;">Confirmar Pago</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
