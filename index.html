@@ -270,6 +270,59 @@
         </div>
     </div>
 
+    <!-- SUBPANTALLA: ESTADO DE COMPRA -->
+    <div id="modalEstadoCompra" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="cerrarSubpantalla('modalEstadoCompra')">&times;</span>
+            <h2 style="color: #38bdf8;"><i class="fa-solid fa-box-archive"></i> Estado de tus Recargas</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Historial y estado actual de tus pedidos:</p>
+            <div id="listaEstadoCompras" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                <p style="color: #94a3b8; text-align: center;">Cargando tus compras...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPANTALLA: BUZÓN DE MENSAJES -->
+    <div id="modalBuzon" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="cerrarSubpantalla('modalBuzon')">&times;</span>
+            <h2 style="color: #22c55e;"><i class="fa-solid fa-envelope"></i> Buzón de Mensajes</h2>
+            <div style="background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-top: 15px;">
+                <p style="color: #fff; font-size: 0.95rem; margin-bottom: 5px;"><b>🎉 ¡Bienvenido a Nexus Gaming!</b></p>
+                <p style="color: #94a3b8; font-size: 0.85rem;">Gracias por registrarte. Tienes un descuento disponible en tu primera compra y acceso anticipado a la ruleta.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPANTALLA: CHAT DE SOPORTE -->
+    <div id="modalSoporteChat" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="cerrarSubpantalla('modalSoporteChat')">&times;</span>
+            <h2 style="color: #fbbf24;"><i class="fa-solid fa-headset"></i> Soporte Técnico Nexus</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px;">¿Tienes algún problema con tu recarga? Escríbenos directamente:</p>
+            <div style="background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; height: 180px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="background: #1e293b; padding: 10px; border-radius: 6px; font-size: 0.85rem; max-width: 80%;">
+                    <b>Soporte Nexus:</b> ¡Hola! ¿En qué podemos ayudarte hoy con tu ID o pago?
+                </div>
+            </div>
+            <input type="text" id="mensajeSoporteInput" placeholder="Escribe tu inconveniente..." style="width: 100%; padding: 10px; background: #07090e; border: 1px solid #334155; color: #fff; border-radius: 6px; margin-bottom: 10px; box-sizing: border-box;">
+            <button type="button" class="btn-primary" onclick="enviarMensajeSoporte()" style="width: 100%;">Enviar Mensaje</button>
+        </div>
+    </div>
+
+    <!-- SUBPANTALLA: CUPÓN DE DESCUENTO -->
+    <div id="modalCupon" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-btn" onclick="cerrarSubpantalla('modalCupon')">&times;</span>
+            <h2 style="color: #a855f7;"><i class="fa-solid fa-ticket"></i> Tu Cupón Exclusivo</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Usa este código en tu próxima recarga para aplicar tu beneficio:</p>
+            <div style="background: #0f172a; border: 2px dashed #a855f7; padding: 15px; border-radius: 10px; font-size: 1.3rem; font-weight: bold; color: #fff; letter-spacing: 2px; margin-bottom: 15px;">
+                NEXUSFIRST
+            </div>
+            <p style="color: #22c55e; font-size: 0.85rem;">10% de descuento aplicado automáticamente en cuentas nuevas.</p>
+        </div>
+    </div>
+
     <!-- Modal de Compra / Recarga por Pasos -->
     <div id="modalCompra" class="modal">
         <div class="modal-content" style="max-width: 500px;">
