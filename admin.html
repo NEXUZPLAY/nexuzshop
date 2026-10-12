@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Nexus Gaming</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,7 +15,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #1e293b;
             padding: 30px;
@@ -130,7 +132,7 @@
             </button>
         </div>
 
-        <!-- CONTENIDO DE ADMIN (OCULTO HASTA VALIDAR) -->
+        <!-- CONTENIDO DE ADMIN -->
         <div id="adminContent" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <span id="adminEmailText" style="color: #38bdf8; font-size: 0.9rem;"></span>
@@ -141,6 +143,7 @@
             <div class="nav-tabs">
                 <button class="tab-btn active" onclick="cambiarTab('transacciones')">📦 Transacciones</button>
                 <button class="tab-btn" onclick="cambiarTab('catalogo')">🎁 Crear Premios</button>
+                <button class="tab-btn" onclick="cambiarTab('cupones')">🎟️ Crear Cupones</button>
                 <button class="tab-btn" onclick="cambiarTab('solicitudes')">📋 Solicitudes</button>
                 <button class="tab-btn" onclick="cambiarTab('jugadores')">🎮 Jugadores FF</button>
             </div>
@@ -176,289 +179,64 @@
                     <input type="number" id="limiteCanjesGlobal" placeholder="Límite global de canjes (Dejar en blanco para ilimitado)">
                     <button class="btn" onclick="agregarPremioCatalogo()">Guardar en el Catálogo</button>
                 </div>
-
                 <h3>Premios Activos Actualmente:</h3>
                 <div id="listaPremiosAdmin">Cargando premios...</div>
             </div>
 
-            <!-- SECCIÓN 3: SOLICITUDES DE CANJE DE LOS USUARIOS -->
+            <!-- SECCIÓN 3: CREAR CUPONES DE DESCUENTO -->
+            <div id="tab-cupones" class="section-panel">
+                <h2>Gestión de Cupones de Descuento</h2>
+                <div style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
+                    <h3>Crear Nuevo Cupón</h3>
+                    <input type="text" id="codigoCupon" placeholder="Código del Cupón (Ej: DESCUENTO20)">
+                    <label style="font-size: 0.85rem; color: #94a3b8;">Tipo de Descuento:</label>
+                    <select id="tipoDescuento">
+                        <option value="porcentaje">Porcentaje (%)</option>
+                        <option value="monto">Monto Fijo ($)</option>
+                    </select>
+                    <input type="number" id="valorDescuento" placeholder="Valor (Ej: 10 para 10% o $10)">
+                    
+                    <label style="font-size: 0.85rem; color: #94a3b8;">Límite de Uso:</label>
+                    <select id="selectTipoLimite" onchange="toggleLimiteCupon()">
+                        <option value="ilimitado">Ilimitado (Usos ilimitados globales)</option>
+                        <option value="limitado">Limitado (Número máximo de usos globales)</option>
+                    </select>
+                    <input type="number" id="maxUsosGlobales" placeholder="Cantidad máxima de usos totales" style="display: none;">
+                    
+                    <div style="margin: 10px 0; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="soloUnaVezPorUsuario" style="width: auto; margin: 0;">
+                        <label for="soloUnaVezPorUsuario" style="font-size: 0.9rem; color: #cbd5e1; cursor: pointer;">Permitir usar solo una vez por usuario</label>
+                    </div>
+
+                    <button class="btn" onclick="crearCuponAdmin()">Generar Cupón</button>
+                </div>
+
+                <h3>Cupones Activos:</h3>
+                <div id="listaCuponesAdmin">Cargando cupones...</div>
+            </div>
+
+            <!-- SECCIÓN 4: SOLICITUDES DE CANJE -->
             <div id="tab-solicitudes" class="section-panel">
                 <h2>Solicitudes de Canje Pendientes</h2>
-                <p style="color: #94a3b8; font-size: 0.85rem;">Aquí aparecen los premios que los usuarios han solicitado usando sus puntos.</p>
                 <div id="listaSolicitudesCanje">Cargando solicitudes...</div>
             </div>
 
-            <!-- SECCIÓN 4: JUGADORES VERIFICADOS (FREE FIRE) -->
+            <!-- SECCIÓN 5: JUGADORES VERIFICADOS -->
             <div id="tab-jugadores" class="section-panel">
                 <h2>Directorio de IDs de Free Fire Verificados</h2>
-                <p style="color: #94a3b8; font-size: 0.85rem;">Estos son los nombres vinculados automáticamente o añadidos manualmente que aparecerán cuando un usuario ponga su ID estilo Pagostore[cite: 9].</p>
-                
                 <div style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
                     <h3>Vincular / Agregar Nuevo Jugador</h3>
                     <input type="text" id="adminIdFF" placeholder="ID de Free Fire (Ej: 123456789)">
-                    <input type="text" id="adminNombreFF" placeholder="Nombre del Jugador en Free Fire (Ej: 『NEXUS』Gamer)">
+                    <input type="text" id="adminNombreFF" placeholder="Nombre del Jugador (Ej: 『NEXUS』Gamer)">
                     <button class="btn" onclick="guardarJugadorAdmin()">Guardar / Actualizar Jugador</button>
                 </div>
-
                 <h3>Lista de Jugadores Registrados:</h3>
                 <div id="listaJugadoresAdmin">Cargando jugadores...</div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DE FIREBASE Y FUNCIONES ADMIN -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        const miFirebaseConfig = {
-            apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
-            authDomain: "pc-recarga-77d05.firebaseapp.com",
-            projectId: "pc-recarga-77d05",
-            storageBucket: "pc-recarga-77d05.firebasestorage.app",
-            messagingSenderId: "381158278092",
-            appId: "1:381158278092:web:a4abad0bae8ad046e11369",
-            measurementId: "G-3G3GLFY81L"
-        };
-
-        const app = initializeApp(miFirebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-        const EMAIL_ADMIN = "jeremymatiasdelrosario@gmail.com";
-
-        window.iniciarSesionAdmin = async function() {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                if (result.user.email !== EMAIL_ADMIN) {
-                    alert("Acceso denegado. Esta cuenta no tiene permisos de administrador.");
-                    await signOut(auth);
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Error al iniciar sesión.");
-            }
-        }
-
-        window.cerrarSesionAdmin = async function() {
-            await signOut(auth);
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user && user.email === EMAIL_ADMIN) {
-                document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
-                document.getElementById('adminEmailText').textContent = `Admin conectado: ${user.email}`;
-                
-                cargarTransacciones();
-                cargarPremiosAdmin();
-                cargarSolicitudesCanje();
-                cargarJugadoresAdmin();
-            } else {
-                document.getElementById('authScreen').style.display = 'block';
-                document.getElementById('adminContent').style.display = 'none';
-            }
-        });
-
-        // Cambiar entre pestañas
-        window.cambiarTab = function(tabName) {
-            document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // 1. CARGAR TRANSACCIONES
-        async function cargarTransacciones() {
-            const tbody = document.getElementById('tablaTransaccionesBody');
-            try {
-                const snapshot = await getDocs(collection(db, "transacciones"));
-                tbody.innerHTML = "";
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay transacciones registradas.</td></tr>`;
-                    return;
-                }
-                snapshot.forEach((docSnap) => {
-                    const t = docSnap.data();
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${t.date || 'N/A'}</td>
-                            <td>${t.userEmail || 'N/A'}</td>
-                            <td><b>${t.title || 'Servicio'}</b></td>
-                            <td>$${(t.amount || 0).toFixed(2)}</td>
-                            <td style="color: #fbbf24; font-weight: bold;">+${t.puntosGenerados || 0} pts</td>
-                        </tr>
-                    `;
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // 2. GESTIÓN DE CATÁLOGO DE CANJES CON LÍMITE GLOBAL
-        window.agregarPremioCatalogo = async function() {
-            const nombre = document.getElementById('nombrePremio').value.trim();
-            const costo = parseInt(document.getElementById('costoPuntos').value);
-            const limiteInput = document.getElementById('limiteCanjesGlobal').value.trim();
-
-            if (!nombre || isNaN(costo) || costo <= 0) {
-                alert("Por favor ingresa un nombre y un costo en puntos válido.");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "catalogo_canjes"), { 
-                    nombre, 
-                    costo,
-                    limiteGlobal: limiteInput !== "" ? parseInt(limiteInput) : null,
-                    canjesRealizados: 0 
-                });
-                alert("¡Premio agregado al catálogo correctamente!");
-                document.getElementById('nombrePremio').value = '';
-                document.getElementById('costoPuntos').value = '';
-                document.getElementById('limiteCanjesGlobal').value = '';
-                cargarPremiosAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Error al guardar el premio.");
-            }
-        }
-
-        async function cargarPremiosAdmin() {
-            const contenedor = document.getElementById('listaPremiosAdmin');
-            try {
-                const snapshot = await getDocs(collection(db, "catalogo_canjes"));
-                contenedor.innerHTML = "";
-                if (snapshot.empty) {
-                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay premios creados en el catálogo.</p>";
-                    return;
-                }
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    let textoLimite = data.limiteGlobal !== null && data.limiteGlobal !== undefined 
-                        ? `Límite: ${data.canjesRealizados || 0}/${data.limiteGlobal}` 
-                        : `Límite: Ilimitado`;
-
-                    contenedor.innerHTML += `
-                        <div class="card-box">
-                            <div>
-                                🎁 <b>${data.nombre}</b> — Costo: <span style="color: #fbbf24;">${data.costo} Puntos</span><br>
-                                <span style="font-size: 0.8rem; color: #38bdf8;">${textoLimite}</span>
-                            </div>
-                            <button onclick="eliminarPremio('${docSnap.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Eliminar</button>
-                        </div>
-                    `;
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        window.eliminarPremio = async function(id) {
-            if (confirm("¿Estás seguro de eliminar este premio?")) {
-                await deleteDoc(doc(db, "catalogo_canjes", id));
-                cargarPremiosAdmin();
-            }
-        }
-
-        // 3. SOLICITUDES DE CANJE HECHAS POR LOS USUARIOS
-        async function cargarSolicitudesCanje() {
-            const contenedor = document.getElementById('listaSolicitudesCanje');
-            try {
-                const snapshot = await getDocs(collection(db, "solicitudes_canje"));
-                contenedor.innerHTML = "";
-                if (snapshot.empty) {
-                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay solicitudes de canje pendientes.</p>";
-                    return;
-                }
-                snapshot.forEach((docSnap) => {
-                    const s = docSnap.data();
-                    contenedor.innerHTML += `
-                        <div class="card-box">
-                            <div>
-                                👤 <b>Cliente:</b> ${s.email}<br>
-                                🎁 <b>Premio Canjeado:</b> ${s.premio} (${s.costoPuntos} pts)<br>
-                                🎮 <b>ID Free Fire:</b> ${s.idFreeFire || 'N/A'}<br>
-                                📅 <b>Fecha:</b> ${s.fecha || 'N/A'}
-                            </div>
-                            <button onclick="completarCanje('${docSnap.id}')" style="background: #22c55e; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;">Marcar Entregado</button>
-                        </div>
-                    `;
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        window.completarCanje = async function(id) {
-            if (confirm("¿Marcar este canje como entregado y eliminarlo de la lista?")) {
-                await deleteDoc(doc(db, "solicitudes_canje", id));
-                cargarSolicitudesCanje();
-            }
-        }
-
-        // 4. GESTIÓN MANUAL DE JUGADORES DE FREE FIRE (ESTILO PAGOSTORE)
-        window.guardarJugadorAdmin = async function() {
-            const idFreeFire = document.getElementById('adminIdFF').value.trim();
-            const nombreJugador = document.getElementById('adminNombreFF').value.trim();
-
-            if (!idFreeFire || !nombreJugador) {
-                alert("Por favor ingresa tanto el ID de Free Fire como el Nombre del jugador.");
-                return;
-            }
-
-            try {
-                await setDoc(doc(db, "jugadores_verificados", idFreeFire), {
-                    idFreeFire: idFreeFire,
-                    nombreJugador: nombreJugador,
-                    actualizadoEn: new Date().toLocaleString()
-                });
-
-                alert("¡Jugador registrado/actualizado con éxito!");
-                document.getElementById('adminIdFF').value = '';
-                document.getElementById('adminNombreFF').value = '';
-                cargarJugadoresAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Error al guardar el jugador.");
-            }
-        }
-
-        async function cargarJugadoresAdmin() {
-            const contenedor = document.getElementById('listaJugadoresAdmin');
-            try {
-                const snapshot = await getDocs(collection(db, "jugadores_verificados"));
-                contenedor.innerHTML = "";
-                if (snapshot.empty) {
-                    contenedor.innerHTML = "<p style='color: #94a3b8;'>No hay jugadores verificados en la base de datos.</p>";
-                    return;
-                }
-                snapshot.forEach((docSnap) => {
-                    const j = docSnap.data();
-                    contenedor.innerHTML += `
-                        <div class="card-box">
-                            <div>
-                                🎮 <b>ID:</b> ${j.idFreeFire}<br>
-                                👤 <b>Nombre de Jugador:</b> <span style="color: #38bdf8;">${j.nombreJugador}</span><br>
-                                <span style="font-size: 0.75rem; color: #94a3b8;">Última actualización: ${j.actualizadoEn || 'N/A'}</span>
-                            </div>
-                            <button onclick="eliminarJugador('${docSnap.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Eliminar</button>
-                        </div>
-                    `;
-                });
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        window.eliminarJugador = async function(id) {
-            if (confirm("¿Estás seguro de eliminar este ID del registro de verificados?")) {
-                await deleteDoc(doc(db, "jugadores_verificados", id));
-                cargarJugadoresAdmin();
-            }
-        }
-    </script>
+    <!-- SCRIPT EXTERNO ADMIN -->
+    <script type="module" src="admin.js"></script>
 </body>
 </html>
