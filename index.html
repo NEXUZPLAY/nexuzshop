@@ -31,6 +31,37 @@
                 grid-template-columns: repeat(3, 1fr) !important;
             }
         }
+        /* Estilos del Chat de Verificación */
+        .chat-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-msg {
+            padding: 10px 14px;
+            border-radius: 10px;
+            max-width: 85%;
+            font-size: 0.88rem;
+            line-height: 1.4;
+        }
+        .chat-msg.system {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            align-self: flex-start;
+        }
+        .chat-msg.user {
+            background: #0284c7;
+            color: #fff;
+            align-self: flex-end;
+        }
     </style>
 </head>
 <body>
@@ -239,7 +270,7 @@
         </div>
     </section>
 
-    <!-- MODAL DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
+    <!-- MODAL DE AUTENTICACIÓN -->
     <div id="modalAuth" class="modal">
         <div class="modal-content" style="max-width: 420px; text-align: center;">
             <span class="close-btn" onclick="cerrarModalAuth()">&times;</span>
@@ -267,59 +298,6 @@
                 <input type="password" id="regPassword" placeholder="Contraseña (Mín. 6 caracteres)" minlength="6" required style="width: 100%; padding: 11px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box;">
                 <button type="submit" class="btn-primary" style="width: 100%;">Crear Cuenta</button>
             </form>
-        </div>
-    </div>
-
-    <!-- SUBPANTALLA: ESTADO DE COMPRA -->
-    <div id="modalEstadoCompra" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <span class="close-btn" onclick="cerrarSubpantalla('modalEstadoCompra')">&times;</span>
-            <h2 style="color: #38bdf8;"><i class="fa-solid fa-box-archive"></i> Estado de tus Recargas</h2>
-            <p style="color: #94a3b8; font-size: 0.9rem;">Historial y estado actual de tus pedidos:</p>
-            <div id="listaEstadoCompras" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
-                <p style="color: #94a3b8; text-align: center;">Cargando tus compras...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUBPANTALLA: BUZÓN DE MENSAJES -->
-    <div id="modalBuzon" class="modal">
-        <div class="modal-content" style="max-width: 450px;">
-            <span class="close-btn" onclick="cerrarSubpantalla('modalBuzon')">&times;</span>
-            <h2 style="color: #22c55e;"><i class="fa-solid fa-envelope"></i> Buzón de Mensajes</h2>
-            <div style="background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-top: 15px;">
-                <p style="color: #fff; font-size: 0.95rem; margin-bottom: 5px;"><b>🎉 ¡Bienvenido a Nexus Gaming!</b></p>
-                <p style="color: #94a3b8; font-size: 0.85rem;">Gracias por registrarte. Tienes un descuento disponible en tu primera compra y acceso anticipado a la ruleta.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SUBPANTALLA: CHAT DE SOPORTE -->
-    <div id="modalSoporteChat" class="modal">
-        <div class="modal-content" style="max-width: 450px;">
-            <span class="close-btn" onclick="cerrarSubpantalla('modalSoporteChat')">&times;</span>
-            <h2 style="color: #fbbf24;"><i class="fa-solid fa-headset"></i> Soporte Técnico Nexus</h2>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px;">¿Tienes algún problema con tu recarga? Escríbenos directamente:</p>
-            <div style="background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; height: 180px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="background: #1e293b; padding: 10px; border-radius: 6px; font-size: 0.85rem; max-width: 80%;">
-                    <b>Soporte Nexus:</b> ¡Hola! ¿En qué podemos ayudarte hoy con tu ID o pago?
-                </div>
-            </div>
-            <input type="text" id="mensajeSoporteInput" placeholder="Escribe tu inconveniente..." style="width: 100%; padding: 10px; background: #07090e; border: 1px solid #334155; color: #fff; border-radius: 6px; margin-bottom: 10px; box-sizing: border-box;">
-            <button type="button" class="btn-primary" onclick="enviarMensajeSoporte()" style="width: 100%;">Enviar Mensaje</button>
-        </div>
-    </div>
-
-    <!-- SUBPANTALLA: CUPÓN DE DESCUENTO -->
-    <div id="modalCupon" class="modal">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <span class="close-btn" onclick="cerrarSubpantalla('modalCupon')">&times;</span>
-            <h2 style="color: #a855f7;"><i class="fa-solid fa-ticket"></i> Tu Cupón Exclusivo</h2>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Usa este código en tu próxima recarga para aplicar tu beneficio:</p>
-            <div style="background: #0f172a; border: 2px dashed #a855f7; padding: 15px; border-radius: 10px; font-size: 1.3rem; font-weight: bold; color: #fff; letter-spacing: 2px; margin-bottom: 15px;">
-                NEXUSFIRST
-            </div>
-            <p style="color: #22c55e; font-size: 0.85rem;">10% de descuento aplicado automáticamente en cuentas nuevas.</p>
         </div>
     </div>
 
@@ -356,7 +334,7 @@
                     <select id="metodoPagoSelect" onchange="manejarMetodoPago()">
                         <option value="" disabled selected>Seleccione un método de pago</option>
                         <option value="Tarjeta de débito de Banco Pedro Carbo">Tarjeta de débito de Banco Pedro Carbo</option>
-                        <option value="Transferencia Bancaria" disabled style="color: #9ca3af;">Transferencia Bancaria (No disponible)</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria (Guayaquil, Bolivariano, Pichincha)</option>
                     </select>
                     <div id="camposTarjetaContainer"></div>
                     <div style="display: flex; gap: 10px; margin-top: 15px;">
@@ -373,17 +351,46 @@
                     </div>
                     <div style="display: flex; gap: 10px; margin-top: 15px;">
                         <button type="button" class="btn-card" style="flex: 1;" onclick="irPaso(3)">Volver</button>
-                        <button type="submit" id="btnSubmitForm" class="btn-primary" style="flex: 1;">Confirmar Pago</button>
+                        <button type="submit" id="btnSubmitForm" class="btn-primary" style="flex: 1;">Confirmar y Continuar</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer con la Versión de Actualización -->
+    <!-- MODAL DE CHAT PARA VERIFICACIÓN DE TRANSFERENCIA BANCARIA -->
+    <div id="modalChatVerificacion" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 520px; background: #1e293b;">
+            <span class="close-btn" onclick="cerrarModalChat()">&times;</span>
+            <h2 style="color: #38bdf8; text-align: center; margin-top: 0; font-size: 1.3rem;">
+                <i class="fa-solid fa-user-check"></i> Verificación Humana
+            </h2>
+            <p style="text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">
+                Atención en vivo para validar tu pago por transferencia.
+            </p>
+
+            <div id="chatContainer" class="chat-box"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label for="inputFotoComprobante" style="background: #334155; color: #fff; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.9rem; border: 1px dashed #38bdf8;">
+                    <i class="fa-solid fa-camera"></i> Subir Foto del Comprobante
+                    <input type="file" id="inputFotoComprobante" accept="image/*" style="display: none;" onchange="subirFotoCloudinary(event)">
+                </label>
+                
+                <div id="statusSubidaFoto" style="font-size: 0.8rem; color: #fbbf24; text-align: center; display: none;">Subiendo foto a Cloudinary...</div>
+
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="msgUsuarioInput" placeholder="Escribe un mensaje..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff;">
+                    <button onclick="enviarMensajeChatUsuario()" class="btn-primary" style="width: auto; padding: 0 16px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <footer>
         <p>&copy; 2026 Nexus Gaming & Stream. Todos los derechos reservados.</p>
-        <p style="color: #38bdf8; font-size: 0.8rem; margin-top: 5px;">Versión 2.5.0 — Actualizado (Octubre 2026)</p>
+        <p style="color: #38bdf8; font-size: 0.8rem; margin-top: 5px;">Versión 2.6.0 — Transferencias Bancarias Habilitadas</p>
     </footer>
 
     <!-- Script Principal y Lógica de Firebase -->
