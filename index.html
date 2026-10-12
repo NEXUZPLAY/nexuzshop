@@ -37,7 +37,7 @@
             border: 1px solid #334155;
             border-radius: 12px;
             padding: 15px;
-            max-height: 300px;
+            max-height: 280px;
             overflow-y: auto;
             margin-bottom: 12px;
             display: flex;
@@ -384,6 +384,28 @@
                     <button onclick="enviarMensajeChatUsuario()" class="btn-primary" style="width: auto; padding: 0 16px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- SUBPANTALLA: ESTADO DE COMPRA -->
+    <div id="modalEstadoCompra" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 480px; background: #1e293b;">
+            <span class="close-btn" onclick="cerrarSubpantalla('modalEstadoCompra')">&times;</span>
+            <h2 style="color: #38bdf8; text-align: center; margin-top: 0; font-size: 1.2rem;"><i class="fa-solid fa-box-archive"></i> Estado de tus Compras</h2>
+            <div id="listaEstadoCompras" style="max-height: 350px; overflow-y: auto; margin-top: 15px;">
+                <p style="text-align: center; color: #94a3b8;">Cargando historial...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBPANTALLA: CHAT DE SOPORTE -->
+    <div id="modalSoporteChat" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px; background: #1e293b; text-align: center;">
+            <span class="close-btn" onclick="cerrarSubpantalla('modalSoporteChat')">&times;</span>
+            <h2 style="color: #fbbf24; margin-top: 0; font-size: 1.2rem;"><i class="fa-solid fa-headset"></i> Soporte Técnico</h2>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">¿Tienes algún inconveniente con tu recarga o pago? Escríbenos.</p>
+            <textarea id="mensajeSoporteInput" placeholder="Describe tu problema aquí..." style="width: 100%; height: 100px; padding: 10px; border-radius: 8px; background: #0f172a; color: #fff; border: 1px solid #334155; box-sizing: border-box; margin-bottom: 15px;"></textarea>
+            <button onclick="enviarMensajeSoporte()" class="btn-primary" style="width: 100%;">Enviar Mensaje</button>
         </div>
     </div>
 
