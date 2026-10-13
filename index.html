@@ -387,13 +387,24 @@
         </div>
     </div>
 
-    <!-- SUBPANTALLA: ESTADO DE COMPRA -->
+    <!-- SUBPANTALLA: ESTADO DE COMPRA CON BARRAS DE PROGRESO Y FACTURA -->
     <div id="modalEstadoCompra" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 480px; background: #1e293b;">
+        <div class="modal-content" style="max-width: 650px; background: #0b0f19; border: 1px solid #334155; padding: 25px;">
             <span class="close-btn" onclick="cerrarSubpantalla('modalEstadoCompra')">&times;</span>
-            <h2 style="color: #38bdf8; text-align: center; margin-top: 0; font-size: 1.2rem;"><i class="fa-solid fa-box-archive"></i> Estado de tus Compras</h2>
-            <div id="listaEstadoCompras" style="max-height: 350px; overflow-y: auto; margin-top: 15px;">
-                <p style="text-align: center; color: #94a3b8;">Cargando historial...</p>
+            <h2 style="color: #38bdf8; text-align: center; margin-top: 0; font-size: 1.4rem;"><i class="fa-solid fa-box-archive"></i> Estado de tus Compras</h2>
+            
+            <div id="listaMisPedidos" style="max-height: 480px; overflow-y: auto; margin-top: 15px; padding-right: 5px;">
+                <p style="text-align: center; color: #94a3b8;">Cargando tus compras...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INTERNO DE FACTURA DIGITAL -->
+    <div id="modalFactura" class="modal" style="display: none; z-index: 1100;">
+        <div class="modal-content" style="max-width: 450px; background: #0f172a; border: 2px solid #38bdf8; padding: 25px;">
+            <span class="close-btn" onclick="document.getElementById('modalFactura').style.display='none'">&times;</span>
+            <div id="contenidoFacturaTicket">
+                <!-- Se llena dinámicamente -->
             </div>
         </div>
     </div>
