@@ -379,3 +379,83 @@ footer {
     margin-top: 60px;
     font-size: 0.95rem;
 }
+/* ========================================== */
+/* ESTILOS RESPONSIVOS PARA TELÉFONOS MÓVILES */
+/* ========================================== */
+
+@media (max-width: 768px) {
+    /* Barra de navegación adaptable */
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 15px;
+        text-align: center;
+    }
+
+    .navbar nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px !important;
+    }
+
+    .navbar nav a {
+        font-size: 0.85rem;
+    }
+
+    /* Sección Principal (Hero) */
+    .hero {
+        padding: 40px 15px;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 1.6rem;
+        line-height: 1.3;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    /* Catálogo y Tarjetas */
+    .catalog-section {
+        padding: 15px 10px;
+    }
+
+    .catalog-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .grid-container {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+        padding: 0 5px;
+    }
+
+    .card {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 340px;
+    }
+
+    /* Modales adaptados a pantallas de celular */
+    .modal-content {
+        width: 92% !important;
+        max-width: 92% !important;
+        margin: 15px auto;
+        padding: 20px 15px !important;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    /* Botones y formularios en móviles */
+    input, select, textarea, button {
+        font-size: 16px !important; /* Evita que iOS haga zoom automático molesto al enfocar inputs */
+    }
+
+    /* Sección de beneficios */
+    .benefits-section {
+        padding: 30px 15px !important;
+        margin: 20px 10px !important;
+    }
+}
