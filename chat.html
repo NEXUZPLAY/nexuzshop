@@ -32,13 +32,16 @@
     <div class="container">
         <h2>💬 Centro de Atención y Soporte</h2>
 
-        <!-- VISTA USUARIO NORMAL -->
+<!-- VISTA USUARIO NORMAL -->
         <div id="vistaUsuario" style="display: none;">
-            <p style="color: #94a3b8; font-size: 0.9rem; text-align: center;">Escribe tu consulta sobre tu transferencia bancaria o soporte general.</p>
+            <p style="color: #94a3b8; font-size: 0.9rem; text-align: center;">Escribe tu consulta o sube el comprobante de tu transferencia.</p>
             <div id="chatUsuarioContainer" class="chat-box">
-                <div class="msg system">🤖 ¡Hola! Un operador te atenderá en breve o puedes dejarnos tu comprobante/consulta.</div>
+                <div class="msg system">🤖 ¡Hola! Sube tu comprobante o escribe tu duda aquí.</div>
             </div>
+            <div id="statusSubidaUsuario" style="display: none; color: #38bdf8; font-size: 0.8rem; margin-bottom: 5px; text-align: center;">Subiendo imagen a Cloudinary...</div>
             <div class="input-area">
+                <input type="file" id="inputFileUsuario" accept="image/*" style="display: none;" onchange="subirImagenChat(event, 'user')">
+                <button type="button" onclick="document.getElementById('inputFileUsuario').click()" style="background: #334155; color: #38bdf8;" title="Adjuntar Comprobante"><i class="fa-solid fa-camera"></i></button>
                 <input type="text" id="inputMsgUsuario" placeholder="Escribe tu mensaje...">
                 <button onclick="enviarMensajeUsuario()">Enviar</button>
             </div>
@@ -46,7 +49,7 @@
 
         <!-- VISTA ADMINISTRADOR -->
         <div id="vistaAdmin" style="display: none;">
-            <p style="color: #38bdf8; font-size: 0.9rem;">Panel de operador: Selecciona un chat de cliente para responder.</p>
+            <p style="color: #38bdf8; font-size: 0.9rem;">Panel de operador: Selecciona un chat de cliente para responder o enviar capturas.</p>
             <div class="admin-chat-layout">
                 <div class="lista-conversaciones" id="listaConversacionesAdmin">
                     <p style="color: #94a3b8; font-size: 0.85rem; text-align: center;">Cargando chats...</p>
@@ -55,14 +58,16 @@
                     <div id="chatAdminContainer" class="chat-box" style="flex: 1; height: auto;">
                         <div class="msg system">Selecciona una conversación a la izquierda para comenzar a chatear.</div>
                     </div>
+                    <div id="statusSubidaAdmin" style="display: none; color: #38bdf8; font-size: 0.8rem; margin-bottom: 5px; text-align: center;">Subiendo imagen a Cloudinary...</div>
                     <div class="input-area" style="margin-top: 10px;">
+                        <input type="file" id="inputFileAdmin" accept="image/*" style="display: none;" onchange="subirImagenChat(event, 'admin')">
+                        <button type="button" onclick="document.getElementById('inputFileAdmin').click()" style="background: #334155; color: #38bdf8;" title="Adjuntar Imagen"><i class="fa-solid fa-camera"></i></button>
                         <input type="text" id="inputMsgAdmin" placeholder="Responde al cliente...">
-                        <button onclick="enviarMensajeAdmin()">Enviar Respuesta</button>
+                        <button onclick="enviarMensajeAdmin()">Enviar</button>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script type="module" src="chat.js"></script>
