@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Soporte y Chats - Nexus Gaming</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; }
+        h2 { color: #38bdf8; text-align: center; }
+        .chat-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; height: 400px; overflow-y: auto; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 14px; border-radius: 8px; max-width: 75%; font-size: 0.9rem; word-break: break-word; }
+        .msg.user { background: #38bdf8; color: #000; align-self: flex-end; }
+        .msg.admin { background: #334155; color: #fff; align-self: flex-start; }
+        .msg.system { background: #1e293b; color: #fbbf24; align-self: center; text-align: center; width: 100%; border: 1px dashed #475569; }
+        .input-area { display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; }
+        button { background: #38bdf8; color: #000; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #0ea5e9; }
+        
+        /* Vista de Administrador: Lista de Chats */
+        .admin-chat-layout { display: grid; grid-template-columns: 300px 1fr; gap: 15px; height: 500px; }
+        .lista-conversaciones { background: #0f172a; border-radius: 8px; border: 1px solid #334155; overflow-y: auto; padding: 10px; }
+        .conversacion-item { padding: 10px; border-bottom: 1px solid #334155; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+        .conversacion-item:hover, .conversacion-item.active { background: #334155; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>💬 Centro de Atención y Soporte</h2>
+
+        <!-- VISTA USUARIO NORMAL -->
+        <div id="vistaUsuario" style="display: none;">
+            <p style="color: #94a3b8; font-size: 0.9rem; text-align: center;">Escribe tu consulta sobre tu transferencia bancaria o soporte general.</p>
+            <div id="chatUsuarioContainer" class="chat-box">
+                <div class="msg system">🤖 ¡Hola! Un operador te atenderá en breve o puedes dejarnos tu comprobante/consulta.</div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="inputMsgUsuario" placeholder="Escribe tu mensaje...">
+                <button onclick="enviarMensajeUsuario()">Enviar</button>
+            </div>
+        </div>
+
+        <!-- VISTA ADMINISTRADOR -->
+        <div id="vistaAdmin" style="display: none;">
+            <p style="color: #38bdf8; font-size: 0.9rem;">Panel de operador: Selecciona un chat de cliente para responder.</p>
+            <div class="admin-chat-layout">
+                <div class="lista-conversaciones" id="listaConversacionesAdmin">
+                    <p style="color: #94a3b8; font-size: 0.85rem; text-align: center;">Cargando chats...</p>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <div id="chatAdminContainer" class="chat-box" style="flex: 1; height: auto;">
+                        <div class="msg system">Selecciona una conversación a la izquierda para comenzar a chatear.</div>
+                    </div>
+                    <div class="input-area" style="margin-top: 10px;">
+                        <input type="text" id="inputMsgAdmin" placeholder="Responde al cliente...">
+                        <button onclick="enviarMensajeAdmin()">Enviar Respuesta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="chat.js"></script>
+</body>
+</html>
