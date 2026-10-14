@@ -25,12 +25,12 @@
         .chat-topbar h2 { color: var(--accent); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
         .btn-volver { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
 
-        /* Contenedor Principal (Admin vs Cliente) */
+        /* Contenedor Principal */
         .chat-layout { display: flex; flex: 1; height: calc(100vh - 55px); overflow: hidden; position: relative; }
 
-        /* Panel Lateral para Admin (Lista de Clientes) */
-        .admin-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: none; flex-direction: column; z-index: 10; }
-        .admin-sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; font-weight: bold; color: var(--accent); }
+        /* Panel Lateral (Dinamico: Admin o Cliente) */
+        .admin-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; }
+        .admin-sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 8px; }
         .lista-conversaciones { flex: 1; overflow-y: auto; }
         .conv-item { padding: 14px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
         .conv-item:hover, .conv-item.active { background: var(--bg-inner); border-left: 4px solid var(--accent); }
@@ -45,13 +45,13 @@
         .chat-msg.system { background: #0f172a; color: #38bdf8; align-self: flex-start; border: 1px solid #334155; width: 100%; max-width: 100%; }
         .chat-msg.admin { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; align-self: flex-start; }
 
-        /* Barra de Entrada de Mensajes y Comprobantes */
+        /* Barra de Entrada */
         .chat-input-bar { background: var(--bg-panel); border-top: 1px solid var(--border-color); padding: 12px 15px; display: flex; align-items: center; gap: 10px; }
         .chat-input-bar input[type="text"] { flex: 1; background: var(--bg-inner); border: 1px solid #334155; padding: 10px 14px; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; }
         .btn-enviar { background: #38bdf8; color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-adjuntar { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
 
-        /* Vista exclusiva para móviles Android */
+        /* Responsive Móvil Android */
         @media (max-width: 768px) {
             .admin-sidebar { position: absolute; width: 100%; height: 100%; }
             .admin-sidebar.oculto-movil { display: none !important; }
@@ -62,13 +62,15 @@
 
     <div class="chat-topbar">
         <h2><i class="fa-solid fa-headset"></i> Soporte y Comprobantes</h2>
-        <a href="index.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver a la Tienda</a>
+        <a href="index.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
     </div>
 
     <div class="chat-layout">
-        <!-- Panel lateral de clientes (Oculto por defecto para evitar que clientes lo vean) -->
-        <div id="adminSidebar" class="admin-sidebar" style="display: none;">
-            <div class="admin-sidebar-header"><i class="fa-solid fa-users"></i> Clientes con Solicitudes</div>
+        <!-- Panel Lateral Dinámico -->
+        <div id="adminSidebar" class="admin-sidebar">
+            <div id="sidebarHeaderTitle" class="admin-sidebar-header">
+                <i class="fa-solid fa-users"></i> Cargando...
+            </div>
             <div id="listaConversacionesAdmin" class="lista-conversaciones">
                 <!-- Se llena dinámicamente -->
             </div>
