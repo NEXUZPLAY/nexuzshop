@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Soporte y Chat - Nexus Gaming</title>
+    <title>Soporte y Comprobantes - Nexus Gaming</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -26,17 +26,17 @@
         .btn-volver { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
 
         /* Contenedor Principal (Admin vs Cliente) */
-        .chat-layout { display: flex; flex: 1; height: calc(100vh - 55px); overflow: hidden; }
+        .chat-layout { display: flex; flex: 1; height: calc(100vh - 55px); overflow: hidden; position: relative; }
 
         /* Panel Lateral para Admin (Lista de Clientes) */
-        .admin-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: none; flex-direction: column; }
+        .admin-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: none; flex-direction: column; z-index: 10; }
         .admin-sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; font-weight: bold; color: var(--accent); }
         .lista-conversaciones { flex: 1; overflow-y: auto; }
         .conv-item { padding: 14px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
         .conv-item:hover, .conv-item.active { background: var(--bg-inner); border-left: 4px solid var(--accent); }
 
         /* Área de Chat Principal */
-        .chat-main-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); height: 100%; }
+        .chat-main-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); height: 100%; overflow: hidden; }
         .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
         /* Burbujas de Mensajes */
@@ -53,9 +53,8 @@
 
         /* Vista exclusiva para móviles Android */
         @media (max-width: 768px) {
-            .admin-sidebar { width: 100%; }
+            .admin-sidebar { position: absolute; width: 100%; height: 100%; }
             .admin-sidebar.oculto-movil { display: none !important; }
-            .chat-main-area.oculto-movil { display: none !important; }
         }
     </style>
 </head>
@@ -67,8 +66,8 @@
     </div>
 
     <div class="chat-layout">
-        <!-- Panel lateral de clientes (Solo visible para el Admin) -->
-        <div id="adminSidebar" class="admin-sidebar">
+        <!-- Panel lateral de clientes (Oculto por defecto para evitar que clientes lo vean) -->
+        <div id="adminSidebar" class="admin-sidebar" style="display: none;">
             <div class="admin-sidebar-header"><i class="fa-solid fa-users"></i> Clientes con Solicitudes</div>
             <div id="listaConversacionesAdmin" class="lista-conversaciones">
                 <!-- Se llena dinámicamente -->
