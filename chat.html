@@ -47,6 +47,20 @@
             </div>
         </div>
 
+        <!-- PANEL DE ADMINISTRACIÓN DE CHATS (Solo visible para jeremymatiasdelrosario@gmail.com) -->
+<div id="panelAdminChat" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
+        <h3 style="color: #38bdf8; margin: 0;"><i class="fa-solid fa-headset"></i> Panel Admin - Chats de Soporte</h3>
+        <button onclick="cerrarSesionChat()" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Salir</button>
+    </div>
+    <p style="font-size: 0.85rem; color: #94a3b8;">Lista de chats activos de usuarios. Los chats inactivos por más de 45 minutos se eliminan automáticamente.</p>
+    
+    <!-- Contenedor donde se listan los chats -->
+    <div id="listaChatsAdminContainer" style="max-height: 450px; overflow-y: auto;">
+        <!-- Se cargan dinámicamente -->
+    </div>
+</div>
+
         <!-- 2. INTERFAZ DEL CHAT ACTIVO -->
         <div id="contenedorChatActivo" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
             
