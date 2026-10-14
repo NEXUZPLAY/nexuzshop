@@ -2,97 +2,93 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Soporte y Comprobantes - Nexus Gaming</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat de Soporte y Comprobantes - PC Recarga</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-main: #0b0f19;
-            --bg-panel: #131b2e;
-            --bg-inner: #0f172a;
-            --border-color: #1e293b;
-            --accent: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+        body {
+            background-color: #0b0f19;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* Barra superior */
-        .chat-topbar { background: var(--bg-panel); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .chat-topbar h2 { color: var(--accent); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-        .btn-volver { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
-
-        /* Contenedor Principal */
-        .chat-layout { display: flex; flex: 1; height: calc(100vh - 55px); overflow: hidden; position: relative; }
-
-        /* Panel Lateral (Dinamico: Admin o Cliente) */
-        .admin-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; }
-        .admin-sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-        .lista-conversaciones { flex: 1; overflow-y: auto; }
-        .conv-item { padding: 14px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
-        .conv-item:hover, .conv-item.active { background: var(--bg-inner); border-left: 4px solid var(--accent); }
-
-        /* Área de Chat Principal */
-        .chat-main-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); height: 100%; overflow: hidden; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-
-        /* Burbujas de Mensajes */
-        .chat-msg { max-width: 80%; padding: 10px 14px; border-radius: 10px; font-size: 0.88rem; line-height: 1.4; word-break: break-word; }
-        .chat-msg.user { background: #1e293b; color: #fff; align-self: flex-end; border: 1px solid #334155; }
-        .chat-msg.system { background: #0f172a; color: #38bdf8; align-self: flex-start; border: 1px solid #334155; width: 100%; max-width: 100%; }
-        .chat-msg.admin { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; align-self: flex-start; }
-
-        /* Barra de Entrada */
-        .chat-input-bar { background: var(--bg-panel); border-top: 1px solid var(--border-color); padding: 12px 15px; display: flex; align-items: center; gap: 10px; }
-        .chat-input-bar input[type="text"] { flex: 1; background: var(--bg-inner); border: 1px solid #334155; padding: 10px 14px; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; }
-        .btn-enviar { background: #38bdf8; color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-adjuntar { background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
-
-        /* Responsive Móvil Android */
-        @media (max-width: 768px) {
-            .admin-sidebar { position: absolute; width: 100%; height: 100%; }
-            .admin-sidebar.oculto-movil { display: none !important; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
 
-    <div class="chat-topbar">
-        <h2><i class="fa-solid fa-headset"></i> Soporte y Comprobantes</h2>
-        <a href="index.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
-    </div>
+    <div class="container">
+        <!-- 1. PANTALLA DE LOGIN OBLIGATORIA (Si no hay sesión activa) -->
+        <div id="contenedorLoginChat" style="display: none; margin-top: 50px; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <h3 style="color: #38bdf8; margin-top: 0; font-size: 1.4rem;"><i class="fa-solid fa-lock"></i> Acceso Restringido</h3>
+            <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 25px;">Para ver el chat de soporte y enviar tu comprobante de transferencia, debes iniciar sesión:</p>
+            
+            <!-- Botón Google -->
+            <button onclick="loginConGoogleChat()" style="width: 100%; background: #ffffff; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.95rem; transition: 0.2s;">
+                <i class="fa-brands fa-google" style="color: #ea4335; font-size: 1.1rem;"></i> Continuar con Google
+            </button>
 
-    <div class="chat-layout">
-        <!-- Panel Lateral Dinámico -->
-        <div id="adminSidebar" class="admin-sidebar">
-            <div id="sidebarHeaderTitle" class="admin-sidebar-header">
-                <i class="fa-solid fa-users"></i> Cargando...
+            <div style="margin: 20px 0; color: #64748b; font-size: 0.85rem; position: relative;">
+                <span style="background: #1e293b; padding: 0 10px; position: relative; z-index: 2;">O ingresa con correo y contraseña</span>
+                <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #334155; z-index: 1;"></div>
             </div>
-            <div id="listaConversacionesAdmin" class="lista-conversaciones">
-                <!-- Se llena dinámicamente -->
+
+            <!-- Formulario Correo / Contraseña -->
+            <form onsubmit="loginConEmailChat(event)">
+                <input type="email" id="chatLoginEmail" placeholder="Correo electrónico" required style="width: 100%; padding: 12px; margin-bottom: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem;">
+                <input type="password" id="chatLoginPassword" placeholder="Contraseña" required style="width: 100%; padding: 12px; margin-bottom: 20px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem;">
+                <button type="submit" style="width: 100%; background: #38bdf8; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">Iniciar Sesión</button>
+            </form>
+
+            <div style="margin-top: 20px;">
+                <a href="index.html" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-arrow-left"></i> Volver a la tienda principal</a>
             </div>
         </div>
 
-        <!-- Área de mensajes -->
-        <div id="chatMainArea" class="chat-main-area">
-            <div id="chatContainer" class="chat-messages">
-                <div class="chat-msg system">Cargando historial de mensajes...</div>
+        <!-- 2. INTERFAZ DEL CHAT ACTIVO (Visible solo cuando el usuario está logueado) -->
+        <div id="contenedorChatActivo" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            
+            <!-- Cabecera del Chat -->
+            <div style="background: #0f172a; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
+                <div>
+                    <b style="color: #38bdf8; font-size: 1rem;"><i class="fa-solid fa-headset"></i> Soporte y Validación de Comprobantes</b><br>
+                    <span style="font-size: 0.78rem; color: #94a3b8;" id="emailUsuarioChatActivo">Cargando cuenta...</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a href="index.html" style="background: #334155; color: #fff; padding: 7px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">Tienda</a>
+                    <button onclick="cerrarSesionChat()" style="background: #ef4444; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer;">Cerrar Sesión</button>
+                </div>
             </div>
 
-            <div class="chat-input-bar">
-                <label class="btn-adjuntar" title="Subir Comprobante">
+            <!-- Cuerpo de Mensajes en Tiempo Real -->
+            <div id="chatContainer" style="padding: 20px; height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #131b2e;">
+                <!-- Los mensajes de Firestore se cargan aquí automáticamente -->
+            </div>
+
+            <!-- Alerta visual de subida de imagen -->
+            <div id="statusSubidaFoto" style="display: none; padding: 10px; text-align: center; font-size: 0.85rem; color: #fbbf24; background: #0f172a; border-top: 1px solid #334155;">
+                ⏳ Subiendo imagen a Cloudinary, por favor espera...
+            </div>
+
+            <!-- Barra inferior para escribir mensajes y adjuntar fotos -->
+            <div style="padding: 15px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 10px; align-items: center;">
+                <label style="background: #334155; color: #fff; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.2s;" title="Subir Comprobante">
                     <i class="fa-solid fa-image"></i>
-                    <input type="file" id="inputFotoComprobante" accept="image/*" style="display: none;" onchange="subirComprobanteChat(event)">
+                    <input type="file" accept="image/*" onchange="subirComprobanteChat(event)" style="display: none;">
                 </label>
-                <input type="text" id="msgUsuarioInput" placeholder="Escribe un mensaje o sube tu comprobante..." onkeypress="if(event.key === 'Enter') enviarMensajeChat()">
-                <button class="btn-enviar" onclick="enviarMensajeChat()"><i class="fa-solid fa-paper-plane"></i></button>
+                <input type="text" id="msgUsuarioInput" placeholder="Escribe un mensaje o detalla tu transferencia..." style="flex: 1; padding: 11px 14px; background: #1e293b; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none;" onkeypress="if(event.key === 'Enter') enviarMensajeSoporteChat()">
+                <button onclick="enviarMensajeSoporteChat()" style="background: #38bdf8; color: #000; border: none; padding: 11px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Enlace al script del chat como módulo -->
     <script type="module" src="chat.js"></script>
 </body>
 </html>
