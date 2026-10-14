@@ -127,22 +127,20 @@
         const dbTienda = getFirestore(appMiTienda);
         const authTienda = getAuth(appMiTienda);
 
-        // Identificador único para este visitante sin cuenta (se guarda en la pestaña actual)
-        const sessionId = 'visitor_' + Math.random().toString(36.substring(2, 15));
+        // Identificador único corregido para este visitante sin cuenta
+        const sessionId = 'visitor_' + Math.random().toString(36).substring(2, 15);
 
-        // Registrar presencia en Firestore en tiempo real (Heartbeat / Presencia)
+        // Registrar presencia en Firestore en tiempo real
         onAuthStateChanged(authTienda, async (user) => {
             const presenciaRef = doc(dbTienda, "usuarios_en_linea", user ? user.uid : sessionId);
 
             if (user) {
-                // Registrar usuario con cuenta
                 await setDoc(presenciaRef, {
                     tipo: "con_cuenta",
                     email: user.email,
                     ultimaConexion: serverTimestamp()
                 });
             } else {
-                // Registrar visitante sin cuenta
                 await setDoc(presenciaRef, {
                     tipo: "sin_cuenta",
                     identifier: sessionId,
@@ -150,7 +148,6 @@
                 });
             }
 
-            // Limpiar al cerrar pestaña o salir
             window.addEventListener('beforeunload', () => {
                 deleteDoc(presenciaRef);
             });
@@ -178,7 +175,6 @@
                 }
             });
 
-            // Actualizar contadores en pantalla
             document.getElementById('contadorConCuenta').textContent = conCuenta;
             document.getElementById('contadorSinCuenta').textContent = sinCuenta;
 
