@@ -2,41 +2,78 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Compras - Nexus Gaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Panel de Verificación - Nexus Gaming</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 15px; box-sizing: border-box; }
-        .container { max-width: 1000px; margin: 0 auto; background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
-        h2 { color: #38bdf8; text-align: center; margin-bottom: 20px; }
-        
-        .grid-transacciones { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 768px) { .grid-transacciones { grid-template-columns: repeat(2, 1fr); } }
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-card-inner: #0f172a;
+            --border-color: #1e293b;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-        .card-tx { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-        .card-tx b { color: #38bdf8; }
-        .comprobante-img { max-width: 100%; height: 180px; object-fit: cover; border-radius: 6px; border: 1px solid #475569; cursor: pointer; margin-top: 5px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg-main); color: var(--text-main); padding: 12px; -webkit-tap-highlight-color: transparent; }
+
+        .container { max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
         
-        .acciones-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-aceptar { background: #22c55e; color: #fff; flex: 1; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-aceptar:hover { background: #16a34a; }
-        .btn-rechazar { background: #ef4444; color: #fff; flex: 1; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-rechazar:hover { background: #dc2626; }
+        .header-box { text-align: center; margin-bottom: 20px; padding: 15px 10px; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-color); }
+        h2 { color: var(--accent-color); font-size: 1.3rem; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        p.subtitle { color: var(--text-muted); font-size: 0.82rem; line-height: 1.4; }
+
+        .grid-transacciones { display: flex; flex-direction: column; gap: 15px; }
+
+        /* Tarjeta de Pedido Optimizada para Android */
+        .card-tx { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; box-shadow: 0 6px 15px rgba(0,0,0,0.5); }
         
-        .badge-estado { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
-        .badge-pendiente { background: #fbbf24; color: #000; }
-        .badge-verificacion { background: #38bdf8; color: #000; }
+        .card-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .card-title { font-size: 0.95rem; color: #fff; font-weight: bold; }
+        
+        .badge-estado { padding: 5px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .info-group { background: var(--bg-card-inner); padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+        .info-group span { color: var(--text-muted); font-size: 0.78rem; }
+        .info-group b { color: #fff; }
+
+        .comprobante-box { margin-bottom: 15px; text-align: center; background: #080c14; padding: 8px; border-radius: 8px; border: 1px dashed #334155; }
+        .comprobante-img { width: 100%; max-height: 200px; object-fit: contain; border-radius: 6px; cursor: pointer; }
+
+        /* Botones de Control de Pasos (Responsive Grid para Móvil) */
+        .steps-control-container { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; background: var(--bg-card-inner); padding: 12px; border-radius: 10px; border: 1px solid #334155; }
+        .steps-label { font-size: 0.75rem; color: var(--accent-color); font-weight: bold; text-transform: uppercase; margin-bottom: 2px; }
+        
+        .steps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        
+        .btn-paso { padding: 10px 8px; border-radius: 8px; font-size: 0.78rem; font-weight: bold; cursor: pointer; border: 1px solid #334155; color: #fff; text-align: center; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-paso:active { transform: scale(0.97); }
+
+        .btn-rechazar-full { width: 100%; background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.8rem; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-rechazar-full:active { background: #dc2626; }
+
+        /* Estados dinámicos para botones de pasos */
+        .paso-activo { background: #f97316 !important; border-color: #ea580c !important; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
+        .paso-inactivo { background: #1e293b !important; color: #94a3b8 !important; }
+        .paso-entregado { background: #22c55e !important; border-color: #16a34a !important; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+
+        /* Vista de carga o vacío */
+        .empty-state { text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>🔍 Panel de Verificación de Pagos y Transferencias</h2>
-        <p style="color: #94a3b8; font-size: 0.88rem; text-align: center; margin-bottom: 20px;">Revisa los comprobantes enviados por los clientes y aprueba o rechaza sus recargas.</p>
+        <div class="header-box">
+            <h2><i class="fa-solid fa-shield-halved"></i> Verificación Admin</h2>
+            <p class="subtitle">Gestiona, revisa comprobantes y avanza el estado de los pedidos de forma instantánea.</p>
+        </div>
 
         <div id="listaTransaccionesVerificacion" class="grid-transacciones">
-            <p style="color: #94a3b8; text-align: center; width: 100%;">Cargando solicitudes pendientes...</p>
+            <div class="empty-state">Cargando solicitudes pendientes...</div>
         </div>
     </div>
 
