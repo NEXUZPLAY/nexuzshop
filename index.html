@@ -358,34 +358,17 @@
         </div>
     </div>
 
-    <!-- MODAL DE CHAT PARA VERIFICACIÓN DE TRANSFERENCIA BANCARIA -->
-    <div id="modalChatVerificacion" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 520px; background: #1e293b;">
-            <span class="close-btn" onclick="cerrarModalChat()">&times;</span>
-            <h2 style="color: #38bdf8; text-align: center; margin-top: 0; font-size: 1.3rem;">
-                <i class="fa-solid fa-user-check"></i> Verificación Humana
-            </h2>
-            <p style="text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">
-                Atención en vivo para validar tu pago por transferencia.
-            </p>
+<!-- MODAL DE SOPORTE INTEGRADO EN UNA SOLA PÁGINA -->
+<div id="modalChatIframe" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 10px;">
+    <div style="background: #0f172a; border: 1px solid #334155; border-radius: 14px; width: 100%; max-width: 800px; height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.9); position: relative;">
+        
+        <!-- Botón flotante para cerrar la subpantalla -->
+        <button onclick="cerrarSubpantallaChatIframe()" style="position: absolute; top: 12px; right: 15px; background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 2010; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-xmark"></i></button>
 
-            <div id="chatContainer" class="chat-box"></div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="inputFotoComprobante" style="background: #334155; color: #fff; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.9rem; border: 1px dashed #38bdf8;">
-                    <i class="fa-solid fa-camera"></i> Subir Foto del Comprobante
-                    <input type="file" id="inputFotoComprobante" accept="image/*" style="display: none;" onchange="subirFotoCloudinary(event)">
-                </label>
-                
-                <div id="statusSubidaFoto" style="font-size: 0.8rem; color: #fbbf24; text-align: center; display: none;">Subiendo foto a Cloudinary...</div>
-
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="msgUsuarioInput" placeholder="Escribe un mensaje..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff;">
-                    <button onclick="enviarMensajeChatUsuario()" class="btn-primary" style="width: auto; padding: 0 16px;"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-            </div>
-        </div>
+        <!-- Iframe que carga tu chat.html completo sin salir de la página -->
+        <iframe src="chat.html" style="width: 100%; height: 100%; border: none; background: #0b0f19;"></iframe>
     </div>
+</div>
 
     <!-- SUBPANTALLA: ESTADO DE COMPRA CON BARRAS DE PROGRESO Y FACTURA -->
     <div id="modalEstadoCompra" class="modal" style="display: none;">
