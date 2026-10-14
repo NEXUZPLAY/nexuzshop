@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios en Línea - PC Recarga</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-top: 5px;
+        }
+        .user-list {
+            max-height: 250px;
+            overflow-y: auto;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .user-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #1e293b;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2 style="margin: 0; color: #38bdf8; font-size: 1.2rem;"><i class="fa-solid fa-users-viewfinder"></i> Monitor de Actividad</h2>
+            <a href="index.html" style="background: #334155; color: #fff; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">Volver a Tienda</a>
+        </div>
+
+        <!-- Tarjeta de Usuarios con Cuenta -->
+        <div class="stat-card">
+            <div style="color: #94a3b8; font-size: 0.9rem;"><i class="fa-solid fa-user-check"></i> Usuarios con cuenta en línea</div>
+            <div class="stat-number" id="contadorConCuenta">0</div>
+        </div>
+
+        <!-- Tarjeta de Visitantes sin Cuenta -->
+        <div class="stat-card">
+            <div style="color: #94a3b8; font-size: 0.9rem;"><i class="fa-solid fa-user-secret"></i> Visitantes sin cuenta (Anónimos)</div>
+            <div class="stat-number" id="contadorSinCuenta" style="color: #fbbf24;">0</div>
+        </div>
+
+        <!-- Lista detallada de usuarios con cuenta conectados -->
+        <h4 style="margin: 15px 0 8px 0; font-size: 0.9rem; color: #94a3b8;">Correos con sesión activa:</h4>
+        <div class="user-list" id="listaUsuariosConCuenta">
+            <div style="color: #64748b; text-align: center; padding: 15px; font-size: 0.85rem;">Cargando lista...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            onSnapshot, 
+            doc, 
+            setDoc, 
+            deleteDoc,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const miFirebaseConfig = {
+            apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
+            authDomain: "pc-recarga-77d05.firebaseapp.com",
+            projectId: "pc-recarga-77d05",
+            storageBucket: "pc-recarga-77d05.firebasestorage.app",
+            messagingSenderId: "381158278092",
+            appId: "1:381158278092:web:a4abad0bae8ad046e11369",
+            measurementId: "G-3G3GLFY81L"
+        };
+
+        const appMiTienda = initializeApp(miFirebaseConfig, "tiendaAppPresencia");
+        const dbTienda = getFirestore(appMiTienda);
+        const authTienda = getAuth(appMiTienda);
+
+        // Identificador único para este visitante sin cuenta (se guarda en la pestaña actual)
+        const sessionId = 'visitor_' + Math.random().toString(36.substring(2, 15));
+
+        // Registrar presencia en Firestore en tiempo real (Heartbeat / Presencia)
+        onAuthStateChanged(authTienda, async (user) => {
+            const presenciaRef = doc(dbTienda, "usuarios_en_linea", user ? user.uid : sessionId);
+
+            if (user) {
+                // Registrar usuario con cuenta
+                await setDoc(presenciaRef, {
+                    tipo: "con_cuenta",
+                    email: user.email,
+                    ultimaConexion: serverTimestamp()
+                });
+            } else {
+                // Registrar visitante sin cuenta
+                await setDoc(presenciaRef, {
+                    tipo: "sin_cuenta",
+                    identifier: sessionId,
+                    ultimaConexion: serverTimestamp()
+                });
+            }
+
+            // Limpiar al cerrar pestaña o salir
+            window.addEventListener('beforeunload', () => {
+                deleteDoc(presenciaRef);
+            });
+        });
+
+        // Escuchar cambios en tiempo real de todos los conectados
+        const colRef = collection(dbTienda, "usuarios_en_linea");
+        onSnapshot(colRef, (snapshot) => {
+            let conCuenta = 0;
+            let sinCuenta = 0;
+            let htmlUsuarios = "";
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                if (data.tipo === "con_cuenta") {
+                    conCuenta++;
+                    htmlUsuarios += `
+                        <div class="user-item">
+                            <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 0.5rem;"></i>
+                            <span style="color: #e2e8f0; word-break: break-all;">${data.email}</span>
+                        </div>
+                    `;
+                } else if (data.tipo === "sin_cuenta") {
+                    sinCuenta++;
+                }
+            });
+
+            // Actualizar contadores en pantalla
+            document.getElementById('contadorConCuenta').textContent = conCuenta;
+            document.getElementById('contadorSinCuenta').textContent = sinCuenta;
+
+            const listaContainer = document.getElementById('listaUsuariosConCuenta');
+            if (conCuenta === 0) {
+                listaContainer.innerHTML = `<div style="color: #64748b; text-align: center; padding: 15px; font-size: 0.85rem;">Ningún usuario con cuenta conectado en este momento.</div>`;
+            } else {
+                listaContainer.innerHTML = htmlUsuarios;
+            }
+        });
+    </script>
+</body>
+</html>
