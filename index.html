@@ -359,36 +359,41 @@
         </div>
     </div>
 
-<!-- Modal / Formulario para Subir Comprobante de Transferencia -->
-<div id="modalTransferencia" style="background: #1e293b; padding: 25px; border-radius: 12px; max-width: 450px; margin: 20px auto; border: 1px solid #334155; color: #fff;">
-    <h3 style="color: #38bdf8; margin-top: 0; text-align: center;">
-        <i class="fa-solid fa-receipt"></i> Confirmar Transferencia
-    </h3>
-    <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-bottom: 20px;">
-        Ingresa tus datos y sube la foto de tu factura/comprobante para procesar tu pedido.
-    </p>
+    <!-- MODAL FLOTANTE: Confirmar Transferencia (Oculto por defecto) -->
+    <div id="modalTransferencia" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); justify-content: center; align-items: center; z-index: 2000; padding: 15px;">
+        <div style="background: #1e293b; padding: 25px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #334155; color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.6); position: relative;">
+            
+            <button type="button" onclick="document.getElementById('modalTransferencia').style.display='none'" style="position: absolute; top: 12px; right: 15px; background: transparent; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer;">✕</button>
 
-    <form id="formComprobanteTransferencia">
-        <div style="margin-bottom: 12px;">
-            <label style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Nombre:</label>
-            <input type="text" id="clienteNombre" placeholder="Ej: Juan" required style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; box-sizing: border-box;">
+            <h3 style="color: #38bdf8; margin-top: 0; text-align: center;">
+                <i class="fa-solid fa-receipt"></i> Confirmar Transferencia
+            </h3>
+            <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin-bottom: 20px;">
+                Ingresa tus datos y sube la foto de tu factura/comprobante para procesar tu pedido.
+            </p>
+
+            <form id="formComprobanteTransferencia">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Nombre:</label>
+                    <input type="text" id="clienteNombre" placeholder="Ej: Juan" required style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Apellido:</label>
+                    <input type="text" id="clienteApellido" placeholder="Ej: Pérez" required style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Foto del Comprobante / Factura:</label>
+                    <input type="file" id="fotoFactura" accept="image/*" required style="width: 100%; padding: 8px; background: #0f172a; border: 1px solid #334155; color: #94a3b8; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <button type="submit" id="btnEnviarComprobante" style="width: 100%; background: #22c55e; color: #0b0f19; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Enviar Comprobante
+                </button>
+            </form>
         </div>
-
-        <div style="margin-bottom: 12px;">
-            <label style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Apellido:</label>
-            <input type="text" id="clienteApellido" placeholder="Ej: Pérez" required style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; box-sizing: border-box;">
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            <label style="font-size: 0.85rem; color: #cbd5e1; display: block; margin-bottom: 4px;">Foto del Comprobante / Factura:</label>
-            <input type="file" id="fotoFactura" accept="image/*" required style="width: 100%; padding: 8px; background: #0f172a; border: 1px solid #334155; color: #94a3b8; border-radius: 6px; box-sizing: border-box;">
-        </div>
-
-        <button type="submit" id="btnEnviarComprobante" style="width: 100%; background: #22c55e; color: #0b0f19; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Enviar Comprobante
-        </button>
-    </form>
-</div>
+    </div>
 
     <!-- SUBPANTALLA: ESTADO DE COMPRA CON BARRAS DE PROGRESO Y FACTURA -->
     <div id="modalEstadoCompra" class="modal" style="display: none;">
