@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat de Soporte y Comprobantes - PC Recarga</title>
+    <title>Soporte y Chat - NEXUZ PLAY</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -11,112 +12,144 @@
             color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            max-width: 650px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+            height: 90vh;
+            background: #1e293b;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .header {
+            background: #0f172a;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background: #0b0f19;
+        }
+        .chat-footer {
+            padding: 15px;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #fff;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .btn-primary {
+            background: #38bdf8;
+            color: #0b0f19;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-google {
+            background: #db4437;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- 1. PANTALLA DE LOGIN OBLIGATORIA -->
-        <div id="contenedorLoginChat" style="display: none; margin-top: 50px; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            <h3 style="color: #38bdf8; margin-top: 0; font-size: 1.4rem;"><i class="fa-solid fa-lock"></i> Acceso Restringido</h3>
-            <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 25px;">Para ver el chat de soporte y enviar tu comprobante, debes iniciar sesión:</p>
+        <!-- SECCIÓN DE AUTENTICACIÓN (Se muestra si NO ha iniciado sesión) -->
+        <div id="authSection" style="padding: 30px; margin: auto; width: 100%; max-width: 400px; display: none;">
+            <h2 style="color: #38bdf8; text-align: center; margin-bottom: 20px;"><i class="fa-solid fa-gamepad"></i> NEXUZ PLAY</h2>
+            <p style="text-align: center; color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Inicia sesión para ingresar al soporte y chat en línea.</p>
             
-            <button onclick="loginConGoogleChat()" style="width: 100%; background: #ffffff; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.95rem;">
-                <i class="fa-brands fa-google" style="color: #ea4335; font-size: 1.1rem;"></i> Continuar con Google
-            </button>
-
-            <div style="margin: 20px 0; color: #64748b; font-size: 0.85rem; position: relative;">
-                <span style="background: #1e293b; padding: 0 10px; position: relative; z-index: 2;">O ingresa con tu correo</span>
-                <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #334155; z-index: 1;"></div>
-            </div>
-
-            <form onsubmit="loginConEmailChat(event)">
-                <input type="email" id="chatLoginEmail" placeholder="Correo electrónico" required style="width: 100%; padding: 12px; margin-bottom: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem;">
-                <input type="password" id="chatLoginPassword" placeholder="Contraseña" required style="width: 100%; padding: 12px; margin-bottom: 20px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem;">
-                <button type="submit" style="width: 100%; background: #38bdf8; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem;">Iniciar Sesión</button>
-            </form>
-
-            <div style="margin-top: 20px;">
-                <a href="index.html" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;"><i class="fa-solid fa-arrow-left"></i> Volver a la tienda principal</a>
+            <input type="email" id="loginEmail" class="form-input" placeholder="Correo electrónico">
+            <input type="password" id="loginPassword" class="form-input" placeholder="Contraseña">
+            
+            <button id="btnLoginEmail" class="btn-primary">Entrar con Correo</button>
+            <button id="btnLoginGoogle" class="btn-google"><i class="fa-brands fa-google"></i> Entrar con Google</button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="index.html" style="color: #94a3b8; font-size: 0.85rem; text-decoration: none;">← Volver a la Tienda</a>
             </div>
         </div>
 
-        <!-- 2. INTERFAZ DEL CHAT ACTIVO (Usuario Normal) -->
-        <div id="contenedorChatActivo" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            <div style="background: #0f172a; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
+        <!-- SECCIÓN DE CHAT PRINCIPAL (Se muestra cuando YA inició sesión) -->
+        <div id="chatMainContainer" style="display: none; width: 100%; height: 100%; flex-direction: column;">
+            <div class="header">
                 <div>
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-                        <b style="color: #38bdf8; font-size: 1rem;"><i class="fa-solid fa-headset"></i> Soporte en Línea</b>
-                        <div style="display: flex; align-items: center; gap: 5px; background: #1e293b; padding: 3px 8px; border-radius: 12px; border: 1px solid #334155;">
-                            <span id="indicadorEnVivoDot" style="width: 8px; height: 8px; background: #94a3b8; border-radius: 50%; display: inline-block;"></span>
-                            <span id="indicadorEnVivoText" style="font-size: 0.72rem; color: #94a3b8; font-weight: bold;">Fuera de línea</span>
-                        </div>
-                    </div>
-                    <span style="font-size: 0.78rem; color: #94a3b8;" id="emailUsuarioChatActivo">Cargando cuenta...</span>
+                    <h3 id="chatHeaderTitle" style="margin: 0; color: #38bdf8; font-size: 1.1rem;">Soporte NEXUZ PLAY</h3>
+                    <span id="userLoggedEmail" style="font-size: 0.75rem; color: #94a3b8;"></span>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <a href="index.html" style="background: #334155; color: #fff; padding: 7px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">Tienda</a>
-                    <button onclick="cerrarSesionChat()" style="background: #ef4444; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer;">Salir</button>
+                <div>
+                    <a href="index.html" style="background: #334155; color: #fff; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-size: 0.75rem; margin-right: 5px;">Tienda</a>
+                    <button id="btnLogout" style="background: #ef4444; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">Salir</button>
                 </div>
             </div>
 
-            <div id="chatContainer" style="padding: 20px; height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #131b2e;"></div>
-
-            <div id="statusSubidaFoto" style="display: none; padding: 10px; text-align: center; font-size: 0.85rem; color: #fbbf24; background: #0f172a; border-top: 1px solid #334155;">
-                ⏳ Subiendo imagen a Cloudinary, por favor espera...
+            <!-- VISTA USUARIO -->
+            <div id="viewUser" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="chat-body" id="chatMessages"></div>
+                <form id="chatForm" class="chat-footer" style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="messageInput" placeholder="Escribe tu mensaje o duda..." style="flex: 1; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; outline: none;">
+                    <label style="background: #334155; color: #fff; padding: 10px 12px; border-radius: 6px; cursor: pointer;">
+                        <i class="fa-solid fa-image"></i>
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    </label>
+                    <button type="submit" style="background: #38bdf8; color: #0b0f19; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
             </div>
 
-            <div style="padding: 15px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 10px; align-items: center;">
-                <label style="background: #334155; color: #fff; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 1rem;" title="Subir Comprobante">
-                    <i class="fa-solid fa-image"></i>
-                    <input type="file" accept="image/*" onchange="subirComprobanteChat(event)" style="display: none;">
-                </label>
-                <input type="text" id="msgUsuarioInput" placeholder="Escribe un mensaje o detalla tu transferencia..." style="flex: 1; padding: 11px 14px; background: #1e293b; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none;" onkeypress="if(event.key === 'Enter') enviarMensajeSoporteChat()">
-                <button onclick="enviarMensajeSoporteChat()" style="background: #38bdf8; color: #000; border: none; padding: 11px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- 3. PANEL DE ADMINISTRACIÓN DE CHATS (Solo para jeremymatiasdelrosario@gmail.com) -->
-        <div id="panelAdminChat" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            
-            <!-- VISTA A: Lista de usuarios esperando -->
-            <div id="vistaListaAdmin">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
-                    <h3 style="color: #38bdf8; margin: 0;"><i class="fa-solid fa-headset"></i> Panel Admin - Chats de Soporte</h3>
-                    <button onclick="cerrarSesionChat()" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Salir</button>
+            <!-- VISTA ADMINISTRADOR -->
+            <div id="viewAdmin" style="display: none; flex-direction: column; height: 100%; overflow: hidden;">
+                <div style="padding: 10px 15px; background: #0f172a; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                    <span id="adminChatTitle" style="font-weight: bold; color: #38bdf8; font-size: 0.9rem;">Chats Activos</span>
+                    <button id="btnVolverAdmin" onclick="window.volverAListaAdmin()" style="display: none; background: #334155; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">← Volver a lista</button>
                 </div>
-                <p style="font-size: 0.85rem; color: #94a3b8;">Haz clic en "Entrar en el chat" para atender al cliente o confirmar su pago.</p>
-                <div id="listaChatsAdminContainer" style="max-height: 450px; overflow-y: auto;"></div>
-            </div>
-
-            <!-- VISTA B: Conversación activa con el usuario seleccionado -->
-            <div id="vistaConversacionAdmin" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 12px;">
-                    <div>
-                        <button onclick="volverAListaAdmin()" style="background: #334155; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; margin-bottom: 6px;"><i class="fa-solid fa-arrow-left"></i> Volver a la lista</button>
-                        <h4 id="adminChatTituloUsuario" style="color: #38bdf8; margin: 0; font-size: 1rem;">Chat con usuario</h4>
-                    </div>
-                    <button onclick="cerrarChatYConfirmarCompra()" style="background: #22c55e; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">
-                        <i class="fa-solid fa-check-circle"></i> Cerrar Chat y Confirmar Compra
-                    </button>
+                <div id="adminUsersList" style="flex: 1; padding: 15px; overflow-y: auto;"></div>
+                
+                <!-- Acciones del Admin al estar dentro de un chat -->
+                <div id="adminActions" style="display: none; padding: 10px; background: #1e293b; border-top: 1px solid #334155; justify-content: space-between; align-items: center;">
+                    <button onclick="window.cerrarChatYConfirmarCompra()" style="background: #22c55e; color: #0b0f19; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;"><i class="fa-solid fa-check"></i> Cerrar Chat y Confirmar Compra</button>
                 </div>
 
-                <div id="chatContainerAdmin" style="height: 320px; overflow-y: auto; background: #131b2e; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;"></div>
-
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="msgAdminInput" placeholder="Escribe tu respuesta al cliente..." style="flex: 1; padding: 11px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') enviarMensajeAdmin()">
-                    <button onclick="enviarMensajeAdmin()" style="background: #38bdf8; color: #000; border: none; padding: 11px 18px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
+                <!-- Footer de escritura del admin -->
+                <form id="chatFormAdmin" class="chat-footer" style="display: flex; gap: 8px; align-items: center;">
+                    <!-- Nota: Usa el mismo chatForm para enviar mensajes como admin -->
+                </form>
             </div>
         </div>
     </div>
