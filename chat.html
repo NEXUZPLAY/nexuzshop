@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
         }
     </style>
@@ -47,54 +47,12 @@
             </div>
         </div>
 
-        <!-- PANEL DE ADMINISTRACIÓN DE CHATS -->
-<div id="panelAdminChat" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-width: 650px; margin: 0 auto;">
-    
-    <!-- VISTA 1: Lista de usuarios esperando -->
-    <div id="vistaListaAdmin">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
-            <h3 style="color: #38bdf8; margin: 0;"><i class="fa-solid fa-headset"></i> Panel Admin - Chats de Soporte</h3>
-            <button onclick="cerrarSesionChat()" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Salir</button>
-        </div>
-        <p style="font-size: 0.85rem; color: #94a3b8;">Selecciona un chat para atender al cliente, responderle o confirmar su pago.</p>
-        <div id="listaChatsAdminContainer" style="max-height: 450px; overflow-y: auto;"></div>
-    </div>
-
-    <!-- VISTA 2: Conversación individual con el usuario seleccionado -->
-    <div id="vistaConversacionAdmin" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 12px;">
-            <div>
-                <button onclick="volverAListaAdmin()" style="background: #334155; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; margin-bottom: 6px;"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-                <h4 id="adminChatTituloUsuario" style="color: #38bdf8; margin: 0; font-size: 1rem;">Chat con usuario</h4>
-            </div>
-            <!-- Botón clave para cerrar el chat y enviar mensaje de compra confirmada -->
-            <button onclick="cerrarChatYConfirmarCompra()" style="background: #22c55e; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">
-                <i class="fa-solid fa-check-circle"></i> Cerrar Chat y Confirmar Compra
-            </button>
-        </div>
-
-        <!-- Caja de mensajes del admin -->
-        <div id="chatContainerAdmin" style="height: 300px; overflow-y: auto; background: #131b2e; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px;"></div>
-
-        <!-- Input para que el admin escriba -->
-        <div style="display: flex; gap: 8px;">
-            <input type="text" id="msgAdminInput" placeholder="Escribe tu respuesta al cliente..." style="flex: 1; padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') enviarMensajeAdmin()">
-            <button onclick="enviarMensajeAdmin()" style="background: #38bdf8; color: #000; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>
-</div>
-
-        <!-- 2. INTERFAZ DEL CHAT ACTIVO -->
+        <!-- 2. INTERFAZ DEL CHAT ACTIVO (Usuario Normal) -->
         <div id="contenedorChatActivo" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            
-            <!-- Cabecera del Chat con Indicador En Vivo -->
             <div style="background: #0f172a; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
                         <b style="color: #38bdf8; font-size: 1rem;"><i class="fa-solid fa-headset"></i> Soporte en Línea</b>
-                        <!-- Indicador Dinámico En Vivo / Fuera de línea -->
                         <div style="display: flex; align-items: center; gap: 5px; background: #1e293b; padding: 3px 8px; border-radius: 12px; border: 1px solid #334155;">
                             <span id="indicadorEnVivoDot" style="width: 8px; height: 8px; background: #94a3b8; border-radius: 50%; display: inline-block;"></span>
                             <span id="indicadorEnVivoText" style="font-size: 0.72rem; color: #94a3b8; font-weight: bold;">Fuera de línea</span>
@@ -108,15 +66,12 @@
                 </div>
             </div>
 
-            <!-- Cuerpo de Mensajes -->
             <div id="chatContainer" style="padding: 20px; height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #131b2e;"></div>
 
-            <!-- Alerta de subida -->
             <div id="statusSubidaFoto" style="display: none; padding: 10px; text-align: center; font-size: 0.85rem; color: #fbbf24; background: #0f172a; border-top: 1px solid #334155;">
                 ⏳ Subiendo imagen a Cloudinary, por favor espera...
             </div>
 
-            <!-- Barra de Entrada -->
             <div style="padding: 15px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 10px; align-items: center;">
                 <label style="background: #334155; color: #fff; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 1rem;" title="Subir Comprobante">
                     <i class="fa-solid fa-image"></i>
@@ -126,6 +81,42 @@
                 <button onclick="enviarMensajeSoporteChat()" style="background: #38bdf8; color: #000; border: none; padding: 11px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
+            </div>
+        </div>
+
+        <!-- 3. PANEL DE ADMINISTRACIÓN DE CHATS (Solo para jeremymatiasdelrosario@gmail.com) -->
+        <div id="panelAdminChat" style="display: none; background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            
+            <!-- VISTA A: Lista de usuarios esperando -->
+            <div id="vistaListaAdmin">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px; margin-bottom: 15px;">
+                    <h3 style="color: #38bdf8; margin: 0;"><i class="fa-solid fa-headset"></i> Panel Admin - Chats de Soporte</h3>
+                    <button onclick="cerrarSesionChat()" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Salir</button>
+                </div>
+                <p style="font-size: 0.85rem; color: #94a3b8;">Haz clic en "Entrar en el chat" para atender al cliente o confirmar su pago.</p>
+                <div id="listaChatsAdminContainer" style="max-height: 450px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- VISTA B: Conversación activa con el usuario seleccionado -->
+            <div id="vistaConversacionAdmin" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 12px;">
+                    <div>
+                        <button onclick="volverAListaAdmin()" style="background: #334155; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; margin-bottom: 6px;"><i class="fa-solid fa-arrow-left"></i> Volver a la lista</button>
+                        <h4 id="adminChatTituloUsuario" style="color: #38bdf8; margin: 0; font-size: 1rem;">Chat con usuario</h4>
+                    </div>
+                    <button onclick="cerrarChatYConfirmarCompra()" style="background: #22c55e; color: #000; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">
+                        <i class="fa-solid fa-check-circle"></i> Cerrar Chat y Confirmar Compra
+                    </button>
+                </div>
+
+                <div id="chatContainerAdmin" style="height: 320px; overflow-y: auto; background: #131b2e; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;"></div>
+
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="msgAdminInput" placeholder="Escribe tu respuesta al cliente..." style="flex: 1; padding: 11px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #fff; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') enviarMensajeAdmin()">
+                    <button onclick="enviarMensajeAdmin()" style="background: #38bdf8; color: #000; border: none; padding: 11px 18px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
