@@ -76,10 +76,129 @@
             font-size: 0.9rem;
         }
         .volver-link:hover { text-decoration: underline; }
+
+        /* Estilos idénticos al modal de inicio de sesión de tu imagen */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .auth-modal-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            position: relative;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+        }
+        .auth-tab-btn {
+            flex: 1;
+            background: #1e293b;
+            color: #94a3b8;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .auth-tab-btn.active {
+            background: #38bdf8;
+            color: #000;
+        }
+        .btn-google {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .btn-google:hover { background: #f1f5f9; }
+        .auth-divider {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .auth-input {
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 8px;
+            color: #fff;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+        .auth-input:focus { border-color: #38bdf8; outline: none; }
+        .btn-ingresar {
+            width: 100%;
+            background: #22c55e;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-ingresar:hover { background: #16a34a; }
     </style>
 </head>
 <body>
 
+    <!-- MODAL DE INICIO DE SESIÓN FLOTANTE (Igual al de tu imagen) -->
+    <div id="modalAuthAdmin" class="modal-overlay" style="display: none;">
+        <div class="auth-modal-box">
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active">Iniciar Sesión</button>
+                <button class="auth-tab-btn" onclick="window.location.href='index.html'">Crear Cuenta</button>
+            </div>
+
+            <!-- Botón de Google -->
+            <button class="btn-google" onclick="loginConGoogleAdmin()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18"> Continuar con Google
+            </button>
+
+            <div class="auth-divider">— O usa tu correo electrónico —</div>
+
+            <form id="formLoginEmail" onsubmit="loginConEmailAdmin(event)">
+                <input type="email" id="loginCorreo" placeholder="Correo electrónico" class="auth-input" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" class="auth-input" required>
+                <button type="submit" class="btn-ingresar">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONTENIDO DEL PANEL DE VERIFICACIÓN -->
     <div class="admin-container">
         <a href="index.html" class="volver-link"><i class="fa-solid fa-arrow-left"></i> Volver a la Tienda</a>
         
@@ -88,30 +207,17 @@
             <p>Monitorea los comprobantes pendientes o revisa el historial de pedidos completados.</p>
         </div>
 
-        <!-- PANTALLA DE ACCESO RESTRINGIDO / LOGIN CON GOOGLE -->
-        <div id="loginAdminBox" style="display: none; text-align: center; padding: 50px; background: #1e293b; border-radius: 12px; border: 1px solid #334155; max-width: 450px; margin: 40px auto;">
-            <i class="fa-solid fa-lock" style="font-size: 3rem; color: #f59e0b; margin-bottom: 15px;"></i>
-            <h3 style="color: #fff; margin-bottom: 10px;">Acceso de Administrador Requerido</h3>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">Inicia sesión con la cuenta de administrador autorizada para gestionar las transacciones.</p>
-            <button onclick="loginConGoogleAdmin()" style="background: #ea4335; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; font-size: 1rem;">
-                <i class="fa-brands fa-google"></i> Iniciar sesión con Google
+        <div class="tabs-container">
+            <button id="btnTabEnVerificacion" class="tab-btn active" onclick="cambiarSeccionAdmin('enVerificacion')">
+                <i class="fa-solid fa-clock"></i> Verificación En Verificación
+            </button>
+            <button id="btnTabComprobada" class="tab-btn" onclick="cambiarSeccionAdmin('comprobada')">
+                <i class="fa-solid fa-circle-check"></i> Verificación Comprobada
             </button>
         </div>
 
-        <!-- CONTENIDO DEL PANEL (Oculto hasta que se verifique el admin) -->
-        <div id="panelAdminContenido" style="display: none;">
-            <div class="tabs-container">
-                <button id="btnTabEnVerificacion" class="tab-btn active" onclick="cambiarSeccionAdmin('enVerificacion')">
-                    <i class="fa-solid fa-clock"></i> Verificación En Verificación
-                </button>
-                <button id="btnTabComprobada" class="tab-btn" onclick="cambiarSeccionAdmin('comprobada')">
-                    <i class="fa-solid fa-circle-check"></i> Verificación Comprobada
-                </button>
-            </div>
-
-            <div id="listaPedidosVerificacion" class="grid-verificacion">
-                <!-- Se llena dinámicamente -->
-            </div>
+        <div id="listaPedidosVerificacion" class="grid-verificacion">
+            <!-- Se llena dinámicamente -->
         </div>
     </div>
 
