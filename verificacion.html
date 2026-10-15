@@ -2,81 +2,141 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Panel de Verificación - Nexus Gaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Gaming & Stream - Verificación de Pagos</title>
     <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    
     <style>
-        :root {
-            --bg-main: #0b0f19;
-            --bg-card: #131b2e;
-            --bg-card-inner: #0f172a;
-            --border-color: #1e293b;
-            --accent-color: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+        body {
+            margin: 0;
+            padding: 0;
+            background: #090d16;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg-main); color: var(--text-main); padding: 12px; -webkit-tap-highlight-color: transparent; }
-
-        .container { max-width: 800px; margin: 0 auto; padding-bottom: 40px; }
-        
-        .header-box { text-align: center; margin-bottom: 20px; padding: 15px 10px; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-color); }
-        h2 { color: var(--accent-color); font-size: 1.3rem; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        p.subtitle { color: var(--text-muted); font-size: 0.82rem; line-height: 1.4; }
-
-        .grid-transacciones { display: flex; flex-direction: column; gap: 15px; }
-
-        /* Tarjeta de Pedido Optimizada para Android */
-        .card-tx { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; box-shadow: 0 6px 15px rgba(0,0,0,0.5); }
-        
-        .card-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .card-title { font-size: 0.95rem; color: #fff; font-weight: bold; }
-        
-        .badge-estado { padding: 5px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .info-group { background: var(--bg-card-inner); padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
-        .info-group span { color: var(--text-muted); font-size: 0.78rem; }
-        .info-group b { color: #fff; }
-
-        .comprobante-box { margin-bottom: 15px; text-align: center; background: #080c14; padding: 8px; border-radius: 8px; border: 1px dashed #334155; }
-        .comprobante-img { width: 100%; max-height: 200px; object-fit: contain; border-radius: 6px; cursor: pointer; }
-
-        /* Botones de Control de Pasos (Responsive Grid para Móvil) */
-        .steps-control-container { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; background: var(--bg-card-inner); padding: 12px; border-radius: 10px; border: 1px solid #334155; }
-        .steps-label { font-size: 0.75rem; color: var(--accent-color); font-weight: bold; text-transform: uppercase; margin-bottom: 2px; }
-        
-        .steps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        
-        .btn-paso { padding: 10px 8px; border-radius: 8px; font-size: 0.78rem; font-weight: bold; cursor: pointer; border: 1px solid #334155; color: #fff; text-align: center; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-paso:active { transform: scale(0.97); }
-
-        .btn-rechazar-full { width: 100%; background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.8rem; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-rechazar-full:active { background: #dc2626; }
-
-        /* Estados dinámicos para botones de pasos */
-        .paso-activo { background: #f97316 !important; border-color: #ea580c !important; box-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
-        .paso-inactivo { background: #1e293b !important; color: #94a3b8 !important; }
-        .paso-entregado { background: #22c55e !important; border-color: #16a34a !important; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
-
-        /* Vista de carga o vacío */
-        .empty-state { text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 0.9rem; }
+        .admin-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .admin-header h1 {
+            color: #38bdf8;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .admin-header p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+        .grid-verificacion {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .card-pedido {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-pedido h3 {
+            margin-top: 0;
+            color: #fbbf24;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .info-row {
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+        .info-row b {
+            color: #38bdf8;
+        }
+        .comprobante-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            margin: 12px 0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .comprobante-img:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+        .btn-acciones {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-aprobar {
+            flex: 1;
+            background: #22c55e;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-aprobar:hover { background: #16a34a; color: #fff; }
+        .btn-rechazar {
+            flex: 1;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-rechazar:hover { background: #dc2626; }
+        .volver-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .volver-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-box">
-            <h2><i class="fa-solid fa-shield-halved"></i> Verificación Admin</h2>
-            <p class="subtitle">Gestiona, revisa comprobantes y avanza el estado de los pedidos de forma instantánea.</p>
+    <div class="admin-container">
+        <a href="index.html" class="volver-link"><i class="fa-solid fa-arrow-left"></i> Volver a la Tienda</a>
+        
+        <div class="admin-header">
+            <h1><i class="fa-solid fa-shield-halved"></i> Panel de Verificación de Pagos</h1>
+            <p>Gestiona y revisa los comprobantes de transferencia subidos por los usuarios en tiempo real.</p>
         </div>
 
-        <div id="listaTransaccionesVerificacion" class="grid-transacciones">
-            <div class="empty-state">Cargando solicitudes pendientes...</div>
+        <!-- Contenedor dinámico de pedidos en verificación -->
+        <div id="listaPedidosVerificacion" class="grid-verificacion">
+            <p style="text-align: center; color: #94a3b8; grid-column: 1 / -1;">Cargando pedidos en verificación...</p>
         </div>
     </div>
 
+    <!-- Script dedicado para la verificación -->
     <script type="module" src="verificacion.js"></script>
 </body>
 </html>
