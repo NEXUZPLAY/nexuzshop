@@ -142,30 +142,31 @@
 
         <!-- Cuadrícula de Productos -->
         <div class="grid-container">
-            <!-- Free Fire -->
-<div class="card" data-category="games">
-    <div class="card-img" style="background: linear-gradient(135deg, #ff512f, #dd2476);">
-        <i class="fa-solid fa-fire"></i>
-    </div>
-    <div class="card-body">
-        <h3>Free Fire</h3>
-        <p>Diamantes, Pases y Tarjetas al instante con tu ID.</p>
-        <button class="btn-card" onclick="abrirModal('Free Fire', [
-            {nombre: 'Token EVO', precio: 0.08},
-            {nombre: 'Caja EVO', precio: 0.23},
-            {nombre: 'Tarjeta semanal básica', precio: 0.55},
-            {nombre: 'Tarjeta semanal', precio: 2.00},
-            {nombre: 'Tarjeta mensual', precio: 9.50},
-            {nombre: 'Pase Booyah', precio: 1.60},
-            {nombre: '110 Diamantes', precio: 0.96},
-            {nombre: '341 Diamantes', precio: 2.71},
-            {nombre: '572 Diamantes (Recomendado)', precio: 4.71},
-            {nombre: '1166 Diamantes', precio: 8.70},
-            {nombre: '2398 Diamantes', precio: 17.70},
-            {nombre: '6160 Diamantes', precio: 45.03}
-        ])">Recargar</button>
-    </div>
-</div>
+            <!-- Free Fire con todos los productos de la imagen -->
+            <div class="card" data-category="games">
+                <div class="card-img" style="background: linear-gradient(135deg, #ff512f, #dd2476);">
+                    <i class="fa-solid fa-fire"></i>
+                </div>
+                <div class="card-body">
+                    <h3>Free Fire</h3>
+                    <p>Diamantes, Pases y Tarjetas al instante con tu ID.</p>
+                    <button class="btn-card" onclick="abrirModal('Free Fire', [
+                        {nombre: 'Token EVO', precio: 0.08},
+                        {nombre: 'Caja EVO', precio: 0.23},
+                        {nombre: 'Tarjeta semanal básica', precio: 0.55},
+                        {nombre: 'Tarjeta semanal', precio: 2.00},
+                        {nombre: 'Tarjeta mensual', precio: 9.50},
+                        {nombre: 'Pase Booyah', precio: 1.60},
+                        {nombre: '110 Diamantes', precio: 0.96},
+                        {nombre: '341 Diamantes', precio: 2.71},
+                        {nombre: 'Tarjeta Pase Booyah', precio: 4.50},
+                        {nombre: '572 Diamantes (Recomendado)', precio: 4.71},
+                        {nombre: '1166 Diamantes', precio: 8.70},
+                        {nombre: '2398 Diamantes', precio: 17.70},
+                        {nombre: '6160 Diamantes', precio: 45.03}
+                    ])">Recargar</button>
+                </div>
+            </div>
 
             <!-- Roblox -->
             <div class="card" data-category="games">
@@ -399,7 +400,7 @@
         </div>
     </div>
 
-<!-- SUBPANTALLA: ESTADO DE COMPRA CON BARRAS DE PROGRESO Y FACTURA -->
+    <!-- SUBPANTALLA: ESTADO DE COMPRA CON BARRAS DE PROGRESO Y FACTURA -->
     <div id="modalEstadoCompra" class="modal" style="display: none;">
         <div class="modal-content" style="max-width: 650px; background: #0b0f19; border: 1px solid #334155; padding: 25px;">
             <span class="close-btn" onclick="cerrarSubpantalla('modalEstadoCompra')">&times;</span>
@@ -462,5 +463,28 @@
 
     <!-- Script Principal y Lógica de Firebase -->
     <script type="module" src="script.js"></script>
+
+    <!-- SCRIPT DE CONFIGURACIÓN DE COMISIONES (Sobrescribe la regla de menor a 10ctv y pases) -->
+    <script>
+        window.calcularComision = function(precioBase) {
+            let precio = parseFloat(precioBase) || 0;
+            
+            // Si el producto cuesta menos de $0.10 (ej. Token EVO $0.08), la comisión es $0.00
+            if (precio < 0.10) {
+                return 0.00;
+            }
+            
+            // Si es un pase o tarjeta de pase, la comisión es $0.25
+            const select = document.getElementById('opcionSelect');
+            if (select && select.options[select.selectedIndex]) {
+                const textoOpcion = select.options[select.selectedIndex].text.toLowerCase();
+                if (textoOpcion.includes('pase')) {
+                    return 0.25;
+                }
+            }
+            
+            return 0.10; // Comisión estándar por defecto
+        };
+    </script>
 </body>
 </html>
