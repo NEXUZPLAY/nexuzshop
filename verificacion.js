@@ -12,7 +12,8 @@ import {
     getAuth, 
     onAuthStateChanged, 
     GoogleAuthProvider, 
-    signInWithPopup 
+    signInWithPopup,
+    signInWithEmailAndPassword 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const miFirebaseConfig = {
@@ -34,40 +35,48 @@ let unsubscribeActual = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     onAuthStateChanged(authTienda, (user) => {
-        const loginBox = document.getElementById('loginAdminBox');
-        const panelContenido = document.getElementById('panelAdminContenido');
+        const modalAuth = document.getElementById('modalAuthAdmin');
 
         if (!user) {
-            // Mostrar cuadro de inicio de sesión
-            if (loginBox) loginBox.style.display = 'block';
-            if (panelContenido) panelContenido.style.display = 'none';
+            // Mostrar modal de login si no hay sesión
+            if (modalAuth) modalAuth.style.display = 'flex';
             return;
         }
 
         if (user.email !== "jeremymatiasdelrosario@gmail.com") {
-            alert(`Acceso denegado. La cuenta (${user.email}) no tiene permisos de administrador.`);
-            if (loginBox) loginBox.style.display = 'block';
-            if (panelContenido) panelContenido.style.display = 'none';
+            alert(`Acceso denegado. La cuenta (${user.email}) no es el administrador.`);
+            if (modalAuth) modalAuth.style.display = 'flex';
             return;
         }
 
-        // Si es el administrador correcto, ocultamos el login y mostramos el panel
-        if (loginBox) loginBox.style.display = 'none';
-        if (panelContenido) panelContenido.style.display = 'block';
-
+        // Si es el administrador, ocultamos el modal y cargamos los pedidos
+        if (modalAuth) modalAuth.style.display = 'none';
         cargarPedidosAdmin();
     });
 });
 
-// Función global para iniciar sesión con Google desde el panel
+// Función para iniciar sesión con Google
 window.loginConGoogleAdmin = async function() {
     const provider = new GoogleAuthProvider();
     try {
         await signInWithPopup(authTienda, provider);
-        // El onAuthStateChanged detectará el ingreso y recargará los datos automáticamente
     } catch (error) {
         console.error("Error al iniciar sesión con Google:", error);
-        alert("No se pudo completar el inicio de sesión.");
+        alert("No se pudo completar el inicio de sesión con Google.");
+    }
+}
+
+// Función para iniciar sesión con correo y contraseña desde el modal
+window.loginConEmailAdmin = async function(event) {
+    event.preventDefault();
+    const correo = document.getElementById('loginCorreo').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+        await signInWithEmailAndPassword(authTienda, correo, password);
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        alert("Correo o contraseña incorrectos.");
     }
 }
 
