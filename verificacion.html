@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Gaming & Stream - Verificación de Pagos</title>
+    <title>Nexus Gaming & Stream - Panel de Verificación</title>
     <link rel="stylesheet" href="style.css">
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,7 @@
         }
         .admin-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .admin-header h1 {
             color: #38bdf8;
@@ -35,6 +35,37 @@
         .admin-header p {
             color: #94a3b8;
             font-size: 0.95rem;
+        }
+        /* Botones de Pestañas / Secciones */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .tab-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn:hover {
+            background: #334155;
+            color: #fff;
+        }
+        .tab-btn.active {
+            background: #38bdf8;
+            color: #000;
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
         .grid-verificacion {
             display: grid;
@@ -68,11 +99,11 @@
         }
         .comprobante-img {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #475569;
-            margin: 12px 0;
+            margin: 10px 0;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -80,35 +111,6 @@
             opacity: 0.9;
             transform: scale(1.02);
         }
-        .btn-acciones {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .btn-aprobar {
-            flex: 1;
-            background: #22c55e;
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-aprobar:hover { background: #16a34a; color: #fff; }
-        .btn-rechazar {
-            flex: 1;
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-rechazar:hover { background: #dc2626; }
         .volver-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -127,12 +129,22 @@
         
         <div class="admin-header">
             <h1><i class="fa-solid fa-shield-halved"></i> Panel de Verificación de Pagos</h1>
-            <p>Gestiona y revisa los comprobantes de transferencia subidos por los usuarios en tiempo real.</p>
+            <p>Monitorea los comprobantes pendientes o revisa el historial de pedidos completados.</p>
         </div>
 
-        <!-- Contenedor dinámico de pedidos en verificación -->
+        <!-- BOTONES DE NAVEGACIÓN ENTRE SECCIONES -->
+        <div class="tabs-container">
+            <button id="btnTabEnVerificacion" class="tab-btn active" onclick="cambiarSeccionAdmin('enVerificacion')">
+                <i class="fa-solid fa-clock"></i> Verificación En Verificación
+            </button>
+            <button id="btnTabComprobada" class="tab-btn" onclick="cambiarSeccionAdmin('comprobada')">
+                <i class="fa-solid fa-circle-check"></i> Verificación Comprobada
+            </button>
+        </div>
+
+        <!-- CONTENEDOR DINÁMICO DE PEDIDOS -->
         <div id="listaPedidosVerificacion" class="grid-verificacion">
-            <p style="text-align: center; color: #94a3b8; grid-column: 1 / -1;">Cargando pedidos en verificación...</p>
+            <!-- Se llenará dinámicamente con JavaScript -->
         </div>
     </div>
 
