@@ -10,10 +10,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { 
     getAuth, 
-    onAuthStateChanged 
+    onAuthStateChanged, 
+    GoogleAuthProvider, 
+    signInWithPopup 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Configuración de tu Tienda
 const miFirebaseConfig = {
     apiKey: "AIzaSyCOzTgyw5GqN9OeGvot45rqXAcjs5w848M",
     authDomain: "pc-recarga-77d05.firebaseapp.com",
@@ -33,21 +34,42 @@ let unsubscribeActual = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     onAuthStateChanged(authTienda, (user) => {
+        const loginBox = document.getElementById('loginAdminBox');
+        const panelContenido = document.getElementById('panelAdminContenido');
+
         if (!user) {
-            alert("Debes iniciar sesión para acceder al panel de administración.");
-            window.location.href = "index.html";
+            // Mostrar cuadro de inicio de sesión
+            if (loginBox) loginBox.style.display = 'block';
+            if (panelContenido) panelContenido.style.display = 'none';
             return;
         }
 
         if (user.email !== "jeremymatiasdelrosario@gmail.com") {
-            alert("Acceso denegado. No tienes permisos de administrador.");
-            window.location.href = "index.html";
+            alert(`Acceso denegado. La cuenta (${user.email}) no tiene permisos de administrador.`);
+            if (loginBox) loginBox.style.display = 'block';
+            if (panelContenido) panelContenido.style.display = 'none';
             return;
         }
+
+        // Si es el administrador correcto, ocultamos el login y mostramos el panel
+        if (loginBox) loginBox.style.display = 'none';
+        if (panelContenido) panelContenido.style.display = 'block';
 
         cargarPedidosAdmin();
     });
 });
+
+// Función global para iniciar sesión con Google desde el panel
+window.loginConGoogleAdmin = async function() {
+    const provider = new GoogleAuthProvider();
+    try {
+        await signInWithPopup(authTienda, provider);
+        // El onAuthStateChanged detectará el ingreso y recargará los datos automáticamente
+    } catch (error) {
+        console.error("Error al iniciar sesión con Google:", error);
+        alert("No se pudo completar el inicio de sesión.");
+    }
+}
 
 window.cambiarSeccionAdmin = function(seccion) {
     seccionActual = seccion;
@@ -167,7 +189,6 @@ function cargarPedidosAdmin() {
             });
         }, (error) => {
             console.error("Error en snapshot:", error);
-            contenedor.innerHTML = `<p style="color: #ef4444; text-align: center; grid-column: 1 / -1;">Error de permisos al leer la base de datos. Asegúrate de haber publicado las nuevas reglas en Firebase.</p>`;
         });
     } catch (error) {
         console.error("Error al configurar consulta:", error);
